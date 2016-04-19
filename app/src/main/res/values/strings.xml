@@ -1,0 +1,128 @@
+<resources>
+    <string name="app_name">In Situ</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!-- Activity detection strings -->
+    <string name="in_vehicle">In a vehicle</string>
+    <string name="on_bicycle">On a bicycle</string>
+    <string name="on_foot">On foot</string>
+    <string name="running">Running</string>
+    <string name="still">Still</string>
+    <string name="tilting">Tilting</string>
+    <string name="unknown">Unknown activity</string>
+    <string name="walking">Walking</string>
+    <string name="unidentifiable_activity">Unidentifiable activity: %1$d</string>
+
+    <string name="detected_activities_title">Detected Activities</string>
+
+    <string name="request_activity_updates">Request updates</string>
+    <string name="remove_activity_updates">Remove updates</string>
+    <string name="activity_updates_added">Activity updates added</string>
+    <string name="activity_updates_removed">Activity updates removed</string>
+
+    <string name="not_connected">GoogleApiClient not yet connected. Try again.</string>
+    <string name="title_activity_activity_recognition">ActivityRecognitionActivity</string>
+    <string name="title_activity_moves">MovesActivity</string>
+
+    <string-array name="API_Names">
+        <!-- 0 -->
+        <item>Authenticate</item>
+        <!-- 1 -->
+        <item>Get Auth Data</item>
+        <!-- 2 -->
+        <item>Get Profile</item>
+        <!-- 3 -->
+        <item>------</item>
+        <!-- 4 -->
+        <item>Get Summary Day</item>
+        <!-- 5 -->
+        <item>Get Summary Week</item>
+        <!-- 6 -->
+        <item>Get Summary Month</item>
+        <!-- 7 -->
+        <item>Get Summary Range</item>
+        <!-- 8 -->
+        <item>Get Summary Past Days</item>
+        <!-- 9 -->
+        <item>------</item>
+        <!-- 10-->
+        <item>Get Storyline Day</item>
+        <!-- 11-->
+        <item>Get Storyline Week</item>
+        <!-- 12-->
+        <item>Get Storyline Month</item>
+        <!-- 13-->
+        <item>Get Storyline Range</item>
+        <!-- 14-->
+        <item>Get Storyline Past Days</item>
+        <!-- 15-->
+        <item>------</item>
+        <!-- 16-->
+        <item>Get Activities Day</item>
+        <!-- 17-->
+        <item>Get Activities Week</item>
+        <!-- 18-->
+        <item>Get Activities Month</item>
+        <!-- 19-->
+        <item>Get Activities Range</item>
+        <!-- 20-->
+        <item>Get Activities Past Days</item>
+    </string-array>
+    <string name="title_activity_weather">WeatherActivity</string>
+    <string name="title_activity_caldroid">CaldroidActivity</string>
+
+    <string name="customize">Customize</string>
+    <string name="show_dialog">Show Dialog</string>
+    <string name="undo">Undo</string>
+    <string name="title_activity_second_intro">Create Diary</string>
+
+
+    <!-- App intro-->
+    <string name="skip">Y U DO DIS TO ME?</string>
+
+    <string name="speech_prompt">Say something…</string>
+    <string name="speech_not_supported">Sorry! Your device doesn\'t support speech input</string>
+    <string name="permission_location_rationale">We need to save your location so that we can combine information about the context in which these symptoms occured and provide you with better treatment</string>
+    <string name="ok">Permit</string>
+    <string name="permision_available_location">Permission to get your location is granted</string>
+    <string name="permissions_not_granted">Permission to access this device location was denied.</string>
+    <string name="manage_profile">Edit your profile</string>
+    <string name="profile_name">Hi %1$s</string>
+
+    <string name="input_text">Looking for...</string>
+    <string name="button_send">Go!</string>
+    <string name="police_stations">Police Stations in Victoria</string>
+    <string name="medicare">Medicare Offices</string>
+    <string name="attrib_format">Data from &lt;a href = "%s">data.gov.au&lt;/a>, modified under &lt;a href = \"http://creativecommons.org/licenses/by/3.0/au/\">CC BY 3.0 AU&lt;/a></string>
+    <string name="police_stations_url">http://data.gov.au/dataset/police-station-locations/resource/76110b24-0f0a-4c29-9583-3f99eaba486c</string>
+    <string name="medicare_url">http://data.gov.au/dataset/location-of-medicare-offices/resource/5d38e1be-4011-49c4-8b8b-75405eeb1088</string>
+    <string name="remove">Remove</string>
+    <string name="add">Add</string>
+    <string name="visibility">Toggle Vis</string>
+    <string name="settings_no_mode">No Flic button? Log symptom occurrence traditionally</string>
+    <string name="settings_binary_mode">Log symptom occurrence using a Flic button</string>
+    <string name="settings_full_button_mode">Log intensity and symptom occurrence using a Flic button</string>
+    <string name="settings_mode_text">Choose a mode to log symptoms</string>
+    <string name="settings_activate_api_consumption">Choose a third party app to integrate data from</string>
+    <string name="activate_moves_switch">Moves</string>
+    <string name="activate_lifelog_switch">Lifelog</string>
+    <string name="settings_activate_flic">Connect Flic button</string>
+    <string name="activate_flic_switch">Flic Button</string>
+    <string name="apply_changes">Apply</string>
+    <string name="discard_changes">Discard</string>
+    <string name="intro_ask_name">How shall we call you?</string>
+    <string name="save_patient_info">Next</string>
+    <string name="male_female">Pick your genre</string>
+    <string-array name="heatmaps_datasets_array">
+        <item>@string/police_stations</item>
+        <item>@string/medicare</item>
+    </string-array>
+    <string name="title_activity_main2">Main2Activity</string>
+</resources>

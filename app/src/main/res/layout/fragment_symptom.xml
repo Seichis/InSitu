@@ -1,0 +1,41 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:dragAndDrop="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="fragments.SymptomFragment">
+
+    <ScrollView
+        android:id="@+id/scrollViewSymptoms"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <webinar.pubnub.insitu.dragNdrop.CoolDragAndDropGridView
+                android:id="@+id/coolDragAndDropGridViewSymptom"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                dragAndDrop:itemMargin="5dp"
+                dragAndDrop:numColumns="@integer/col_count" />
+
+            <Button
+                android:id="@+id/add_symptom_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Add new symptom" />
+
+            <EditText
+                android:id="@+id/input_symptom_type"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Pain" />
+        </LinearLayout>
+
+    </ScrollView>
+
+
+</RelativeLayout>
