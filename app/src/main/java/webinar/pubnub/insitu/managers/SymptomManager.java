@@ -8,12 +8,14 @@ import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.TreeMap;
 
 import io.realm.Realm;
+import io.realm.RealmResults;
+import webinar.pubnub.insitu.Constants;
+import webinar.pubnub.insitu.Utils;
 import webinar.pubnub.insitu.model.Diary;
+import webinar.pubnub.insitu.model.MyChartData;
 import webinar.pubnub.insitu.model.Symptom;
 
 /**
@@ -59,12 +61,6 @@ public class SymptomManager {
             dataManager.fetchWeatherData();
             isCountDown = true;
 
-//            SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd", Locale.UK);
-
-
-//            dataManager.movesStorylineDay(format.format(new Date()),true);
-
-
             countDownTimer = new CountDownTimer(15000, 1000) {
 
                 public void onTick(long millisUntilFinished) {
@@ -80,37 +76,17 @@ public class SymptomManager {
                     symptom.setContext(dataManager.getSymptomContext());
                     Log.i(TAG, "Symptom context: " + symptom.getContext());
 
-                    symptom.setIntensity(Collections.max(symptomInputList));
+                    symptom.setIntensity(Float.valueOf(String.valueOf(Collections.max(symptomInputList))));
                     diary = DiaryManager.getInstance().getActiveDiary();
                     symptom.setDiary(diary);
 
-                    int symptomT = symptomInputList.size() - 1;
-                    TreeMap<Integer, String> symptomTypes = diary.getSymptomTypes();
-                    if (!symptomTypes.isEmpty()) {
-                        for (TreeMap.Entry<Integer, String> st : symptomTypes.entrySet()) {
-                            int position = st.getKey();
-                            String type = st.getValue();
-                            Log.i(TAG, "symptom type" + type);
-
-                            if (position == symptomT) {
-                                Log.i(TAG, "symptom type" + position);
-                                symptom.setSymptomType(type);
-                            }
-                        }
-                    }
                     saveSymptomInput();
-
-
-//                    //TODO save the completed symptom in the db
-//                    if (symptom.isValid()) {
-//                        Log.i(TAG, "Symptom saved");
-//                    }
                     isCountDown = false;
                 }
             }.start();
 //            Log.i(TAG, timeStamp);
         }
-        if (symptomInputList.size() < 4) {
+        if (isCountDown && symptomInputList.size() < 4) {
             symptomInputList.add(input);
             Log.i(TAG, "  " + symptomInputList.size());
         } else {
@@ -136,26 +112,66 @@ public class SymptomManager {
         return realm.where(Symptom.class).findAll();
     }
 
-    public HashMap<String, List<Symptom>> getSymptomsByDiary(Diary diary) {
-        TreeMap<Integer, String> symptomTypes = diary.getSymptomTypes();
-        HashMap<String, List<Symptom>> symptomsMap = new HashMap<>();
-        if (symptomTypes != null) {
-            for (String type : symptomTypes.values()) {
-                symptomsMap.put(type, realm.where(Symptom.class).contains("type", type).findAll());
-            }
-        }
-        return symptomsMap;
+    public List<Symptom> getAllSymptomsRS() {
+        return realm.allObjects(Symptom.class);
     }
+
+    public RealmResults<Symptom> getAllSymptomsByActivity(int activityId) {
+        return realm.allObjects(Symptom.class).where().equalTo("activityId", Constants.SAVED_ACTIVITIES[activityId]).findAll();
+    }
+
+//    public RealmResults<Symptom> getAllSymptomsBicycle() {
+//        return realm.allObjects(Symptom.class).where().equalTo("activityIdFloat", (float) Constants.ON_BICYCLE).findAll();
+//    }
+//
+//    public RealmResults<Symptom> getAllSymptomsVehicle() {
+//        return realm.allObjects(Symptom.class).where().equalTo("activityIdFloat", (float) Constants.IN_VEHICLE).findAll();
+//    }
+//
+//    public RealmResults<Symptom> getAllSymptomsRunning() {
+//        return realm.allObjects(Symptom.class).where().equalTo("activityIdFloat", (float) Constants.RUNNING).findAll();
+//    }
+//
+//    public RealmResults<Symptom> getAllSymptomsStill() {
+//        return realm.allObjects(Symptom.class).where().equalTo("activityIdFloat", (float) Constants.STILL).findAll();
+//    }
 
     public ArrayList<LatLng> getSymptomslatLonByType(String type) {
         ArrayList<LatLng> mlist = new ArrayList<>();
         List<Symptom> symptoms;
         symptoms = realm.where(Symptom.class).contains("type", type).findAll();
         for (Symptom s : symptoms) {
-            mlist.add(s.getContext().getLatLng());
+            mlist.add(new LatLng(s.getContext().getLatitude(), s.getContext().getLongitude()));
         }
         return mlist;
     }
 
+
+    public void fillData() {
+        realm.beginTransaction();
+        realm.clear(Symptom.class);
+        realm.clear(MyChartData.class);
+        realm.commitTransaction();
+        for (int i = 0; i < 1000; i++) {
+            realm.beginTransaction();
+            int activity = Utils.randInt(0, 4);
+            Symptom s = realm.createObject(Symptom.class);
+            s.setActivityId(activity);
+            s.setActivityIdFloat((float) activity);
+            s.setId(i);
+            s.setIntensity((float) (Math.random() * 10));
+            s.setDuringActivity(Constants.getSavedActivityString(context, Constants.SAVED_ACTIVITIES[activity]));
+            realm.commitTransaction();
+        }
+        realm.beginTransaction();
+        float totalSymptoms=(float)getAllSymptoms().size();
+        for (int i = 0; i < Constants.SAVED_ACTIVITIES.length; i++) {
+            float count = 100*((float) getAllSymptomsByActivity(Constants.SAVED_ACTIVITIES[i]).size())/totalSymptoms;
+            MyChartData myChartData = new MyChartData(Constants.getSavedActivityString(context,Constants.SAVED_ACTIVITIES[i]),count,i);
+            realm.copyToRealm(myChartData);
+        }
+        realm.commitTransaction();
+
+    }
 
 }

@@ -15,9 +15,7 @@ import io.realm.RealmObject;
 public class Diary extends RealmObject {
 
     private String name;
-    private String color;
     private String description;
-    private String symptomTypes;
     long id;
     boolean isActive;
 
@@ -42,14 +40,6 @@ public class Diary extends RealmObject {
 //        super(updatedAt, createdAt);
     }
 
-    public TreeMap<Integer, String> getSymptomTypes() {
-        return new Gson().fromJson(symptomTypes, new TypeToken<TreeMap<Integer, String>>() {
-        }.getType());
-    }
-
-    public void setSymptomTypes(String symptomTypes) {
-        this.symptomTypes = symptomTypes;
-    }
 
     public String getName() {
         return name;
@@ -57,14 +47,6 @@ public class Diary extends RealmObject {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getColor() {
-        return color;
-    }
-
-    public void setColor(String color) {
-        this.color = color;
     }
 
     public String getDescription() {

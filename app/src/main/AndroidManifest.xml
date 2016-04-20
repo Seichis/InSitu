@@ -76,12 +76,10 @@
         <service
             android:name=".activityrecognition.DetectedActivitiesIntentService"
             android:exported="false" />
-
         <service
             android:name=".BackgroundService"
             android:enabled="true"
             android:exported="true" />
-
 
         <meta-data
             android:name="com.google.android.gms.version"
@@ -89,7 +87,6 @@
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value=" AIzaSyAR5w-zKoPHGaiDYBW0CcleWXtKI5JWNV0" />
-
     </application>
 
 </manifest>

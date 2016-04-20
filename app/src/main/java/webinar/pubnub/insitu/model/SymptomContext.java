@@ -27,8 +27,7 @@ public class SymptomContext extends RealmObject {
     private String pressure;
     private String baroPressureRising;
     private String visibility;
-    private String duringActivity;
-    private String afterActivity;
+
     private String altitude;
 
     public SymptomContext() {
@@ -43,21 +42,6 @@ public class SymptomContext extends RealmObject {
         return longitude;
     }
 
-    public String getDuringActivity() {
-        return duringActivity;
-    }
-
-    public void setDuringActivity(String duringActivity) {
-        this.duringActivity = duringActivity;
-    }
-
-    public String getAfterActivity() {
-        return afterActivity;
-    }
-
-    public void setAfterActivity(String afterActivity) {
-        this.afterActivity = afterActivity;
-    }
 
     public String getAltitude() {
         return altitude;

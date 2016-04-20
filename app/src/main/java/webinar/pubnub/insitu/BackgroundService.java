@@ -137,7 +137,7 @@ public class BackgroundService extends Service implements IBackgroundSettingsSer
         settingsManager = SettingsManager.getInstance();
         settingsManager.init(backgroundService,realm);
 
-
+        symptomManager.fillData();
     }
 
     private void setupActivityRecognition() {

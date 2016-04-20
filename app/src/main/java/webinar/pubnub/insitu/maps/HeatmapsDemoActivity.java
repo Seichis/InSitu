@@ -74,7 +74,6 @@ public class HeatmapsDemoActivity extends BaseDemoActivity {
     };
     public static final Gradient ALT_HEATMAP_GRADIENT = new Gradient(ALT_HEATMAP_GRADIENT_COLORS,
             ALT_HEATMAP_GRADIENT_START_POINTS);
-    TreeMap<Integer, String> symptomTypes;
     private HeatmapTileProvider mProvider;
     private TileOverlay mOverlay;
     private boolean mDefaultGradient = true;
@@ -94,18 +93,17 @@ public class HeatmapsDemoActivity extends BaseDemoActivity {
     @Override
     protected void startDemo() {
 
-        symptomTypes = DiaryManager.getInstance().getActiveDiary().getSymptomTypes();
-        for (Integer key : symptomTypes.keySet()) {
-
-            ArrayList<LatLng> pos = SymptomManager.getInstance().getSymptomslatLonByType(symptomTypes.get(key));
-//            Log.i(TAG, "pos "+ String.valueOf(pos));
-            if (!pos.isEmpty()) {
-                Log.i(TAG, symptomTypes.get(key) + String.valueOf(pos));
-
-                mLists.put(symptomTypes.get(key), new DataSet(pos,
-                        symptomTypes.get(key)));
-            }
-        }
+//        for (Integer key : symptomTypes.keySet()) {
+//
+//            ArrayList<LatLng> pos = SymptomManager.getInstance().getSymptomslatLonByType(symptomTypes.get(key));
+////            Log.i(TAG, "pos "+ String.valueOf(pos));
+//            if (!pos.isEmpty()) {
+//                Log.i(TAG, symptomTypes.get(key) + String.valueOf(pos));
+//
+//                mLists.put(symptomTypes.get(key), new DataSet(pos,
+//                        symptomTypes.get(key)));
+//            }
+//        }
 
         getMap().moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(55.6761, 12.5683), 10));
 
@@ -115,7 +113,7 @@ public class HeatmapsDemoActivity extends BaseDemoActivity {
 
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
-        spinner.setOnItemSelectedListener(new SpinnerActivity());
+//        spinner.setOnItemSelectedListener(new SpinnerActivity());
 
 
         // Make the handler deal with the map
@@ -154,33 +152,33 @@ public class HeatmapsDemoActivity extends BaseDemoActivity {
         mDefaultOpacity = !mDefaultOpacity;
     }
 
-    // Dealing with spinner choices
-    public class SpinnerActivity implements AdapterView.OnItemSelectedListener {
-        public void onItemSelected(AdapterView<?> parent, View view,
-                                   int pos, long id) {
-            TextView attribution = ((TextView) findViewById(R.id.attribution));
-
-            // Check if need to instantiate (avoid setData etc twice)
-            if (mProvider == null) {
-                mProvider = new HeatmapTileProvider.Builder().data(
-                        mLists.get(symptomTypes.get(pos + 1)).getData()).build();
-                mOverlay = getMap().addTileOverlay(new TileOverlayOptions().tileProvider(mProvider));
-                // Render links
-                attribution.setMovementMethod(LinkMovementMethod.getInstance());
-            } else {
-                mProvider.setData(mLists.get(symptomTypes.get(pos + 1)).getData());
-                mOverlay.clearTileCache();
-            }
-            // Update attribution
-            attribution.setText(Html.fromHtml(String.format(getString(R.string.attrib_format),
-                    mLists.get(symptomTypes.get(pos + 1)).getUrl())));
-
-        }
-
-        public void onNothingSelected(AdapterView<?> parent) {
-            // Another interface callback
-        }
-    }
+//    // Dealing with spinner choices
+//    public class SpinnerActivity implements AdapterView.OnItemSelectedListener {
+//        public void onItemSelected(AdapterView<?> parent, View view,
+//                                   int pos, long id) {
+//            TextView attribution = ((TextView) findViewById(R.id.attribution));
+//
+//            // Check if need to instantiate (avoid setData etc twice)
+//            if (mProvider == null) {
+//                mProvider = new HeatmapTileProvider.Builder().data(
+//                        mLists.get(symptomTypes.get(pos + 1)).getData()).build();
+//                mOverlay = getMap().addTileOverlay(new TileOverlayOptions().tileProvider(mProvider));
+//                // Render links
+//                attribution.setMovementMethod(LinkMovementMethod.getInstance());
+//            } else {
+//                mProvider.setData(mLists.get(symptomTypes.get(pos + 1)).getData());
+//                mOverlay.clearTileCache();
+//            }
+//            // Update attribution
+//            attribution.setText(Html.fromHtml(String.format(getString(R.string.attrib_format),
+//                    mLists.get(symptomTypes.get(pos + 1)).getUrl())));
+//
+//        }
+//
+//        public void onNothingSelected(AdapterView<?> parent) {
+//            // Another interface callback
+//        }
+//    }
 
     /**
      * Helper class - stores data sets and sources.

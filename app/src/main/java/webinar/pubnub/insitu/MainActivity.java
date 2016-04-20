@@ -1,6 +1,7 @@
 package webinar.pubnub.insitu;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -17,6 +18,7 @@ import android.widget.Toast;
 
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
 import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItemAdapter;
+import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItems;
 
 import java.util.HashMap;
 
@@ -26,12 +28,13 @@ import io.flic.lib.FlicBroadcastReceiverFlags;
 import io.flic.lib.FlicButton;
 import io.flic.lib.FlicManager;
 import io.flic.lib.FlicManagerInitializedCallback;
+import webinar.pubnub.insitu.fragments.HomeFragment;
 import webinar.pubnub.insitu.managers.SettingsManager;
 import webinar.pubnub.insitu.maps.HeatmapsDemoActivity;
 import webinar.pubnub.insitu.model.Settings;
 
 public class MainActivity extends BaseActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener,HomeFragment.OnHomeInteractionListener {
 
     private static final String TAG = "MainActivity";
     static MainActivity mainActivity;
@@ -59,7 +62,18 @@ public class MainActivity extends BaseActivity
 
         setupLayout();
         startBackgroundService();
+        setupTabs();
+    }
 
+    private void setupTabs() {
+        FragmentPagerItemAdapter adapter = new FragmentPagerItemAdapter(
+                getSupportFragmentManager(), FragmentPagerItems.with(this)
+                .add("Home", HomeFragment.class)
+                .create());
+
+        viewPager.setAdapter(adapter);
+
+        viewPagerTab.setViewPager(viewPager);
     }
 
     private void setupLayout() {
@@ -176,5 +190,11 @@ public class MainActivity extends BaseActivity
 
     public FlicButton getButton() {
         return button;
+    }
+
+
+    @Override
+    public void OnHomeInteraction(Uri uri) {
+
     }
 }

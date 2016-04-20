@@ -1,10 +1,10 @@
 package webinar.pubnub.insitu;
 
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -20,14 +20,10 @@ import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItems;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import io.realm.Realm;
-import webinar.pubnub.insitu.fragments.DiaryFragment;
-import webinar.pubnub.insitu.fragments.SymptomFragment;
+import webinar.pubnub.insitu.fragments.ManageDiariesFragment;
 import webinar.pubnub.insitu.managers.PatientManager;
-import webinar.pubnub.insitu.managers.SettingsManager;
-import webinar.pubnub.insitu.model.Patient;
 
-public class CreatePatientActivity extends AppCompatActivity implements SymptomFragment.OnSymptomFragmentInteractionListener, DiaryFragment.OnDiaryFragmentListener {
+public class CreatePatientActivity extends AppCompatActivity implements ManageDiariesFragment.OnManageDiariesInteractionListener {
     // 0 male,1 female
     static int GENDER = -1;
     @Bind(R.id.viewpagerCreatePatient)
@@ -53,7 +49,7 @@ public class CreatePatientActivity extends AppCompatActivity implements SymptomF
         GENDER = 0;
         maleButton.setBackgroundColor(ContextCompat.getColor(this, R.color.high));
         femaleButton.setBackgroundColor(ContextCompat.getColor(this, android.R.color.transparent));
-        Log.i("gender","male"+GENDER);
+        Log.i("gender", "male" + GENDER);
     }
 
     @OnClick(R.id.female)
@@ -65,22 +61,22 @@ public class CreatePatientActivity extends AppCompatActivity implements SymptomF
 
     @OnClick(R.id.save_patient_info)
     void savePatient() {
-        String name,gender="";
+        String name, gender = "";
 
         if (nameInputEditText.getText().length() > 0) {
-            name=nameInputEditText.getText().toString();
+            name = nameInputEditText.getText().toString();
             switch (GENDER) {
                 case 0:
-                    gender="f";
+                    gender = "f";
                     break;
                 case 1:
-                    gender="m";
+                    gender = "m";
                     break;
                 default:
-                    gender="NA";
+                    gender = "NA";
                     break;
             }
-            PatientManager.getInstance().createNewProfile(name,gender);
+            PatientManager.getInstance().createNewProfile(name, gender);
 
             noPatientLayout.setVisibility(View.GONE);
             setupDiaryLayout();
@@ -88,11 +84,15 @@ public class CreatePatientActivity extends AppCompatActivity implements SymptomF
         }
     }
 
+    boolean isPatientValid() {
+        return (PatientManager.getInstance().getPatient() != null);
+    }
+
     private void setupDiaryLayout() {
         diarySymptomsLayout.setVisibility(View.VISIBLE);
         FragmentPagerItems.Creator creator = FragmentPagerItems.with(this);
-        creator.add("Diary", DiaryFragment.class);
-        creator.add("Symptoms", SymptomFragment.class);
+        creator.add("Diary", ManageDiariesFragment.class);
+//        creator.add("Symptoms", SymptomFragment.class);
         adapter = new FragmentPagerItemAdapter(getSupportFragmentManager(), creator.create());
         viewPager.setAdapter(adapter);
         viewPagerTab.setViewPager(viewPager);
@@ -109,15 +109,17 @@ public class CreatePatientActivity extends AppCompatActivity implements SymptomF
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_patient);
         ButterKnife.bind(this);
+        if (isPatientValid()) {
+            noPatientLayout.setVisibility(View.GONE);
+            diarySymptomsLayout.setVisibility(View.VISIBLE);
+        } else {
+            noPatientLayout.setVisibility(View.VISIBLE);
+            diarySymptomsLayout.setVisibility(View.GONE);
+        }
     }
 
     @Override
-    public void onDiaryFragmentInteraction(Uri uri) {
-
-    }
-
-    @Override
-    public void onFragmentInteraction(Uri uri) {
+    public void OnManageDiariesInteraction(Uri uri) {
 
     }
 }

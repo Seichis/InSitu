@@ -45,42 +45,6 @@ public class DiaryManager {
         realm.commitTransaction();
     }
 
-    public boolean addSymptomType(Diary diary, String symType) {
-        TreeMap<Integer, String> symTypes = diary.getSymptomTypes();
-
-        if (symTypes == null) {
-            symTypes = new TreeMap<>();
-            symTypes.put(1, symType);
-            realm.beginTransaction();
-            diary.setSymptomTypes(new Gson().toJson(symTypes));
-            realm.commitTransaction();
-            return true;
-        } else {
-            if (symTypes.containsValue(symType) || symTypes.size() >= 3) {
-                // TODO Show the user feedback that the symptom list is full for this diary:
-
-                Log.i(TAG, "This Diary has no more room for more symptoms");
-                return false;
-            } else {
-                int size = symTypes.size() + 1;
-                symTypes.put(size, symType);
-                realm.beginTransaction();
-                diary.setSymptomTypes(new Gson().toJson(symTypes));
-                realm.commitTransaction();
-                Log.i(TAG, "More symptom types existed.Symptom type added." + symTypes.size());
-                return true;
-            }
-        }
-    }
-
-//    public void updateDiary(Diary diary) {
-//        // All writes must be wrapped in a transaction to facilitate safe multi threading
-//        realm.beginTransaction();
-//        Diary toUpdate=realm.where(Diary.class).contains("id",diary.getName()).findFirst();
-//        toUpdate=diary
-//        // When the transaction is committed, all changes a synced to disk.
-//        realm.commitTransaction();
-//    }
 
     public void deleteDiary() {
 
@@ -98,10 +62,5 @@ public class DiaryManager {
         return realm.where(Diary.class).equalTo("isActive", true).findFirst();
     }
 
-    public void refreshSymptoms(String s) {
-        realm.beginTransaction();
-        getActiveDiary().setSymptomTypes(s);
-        realm.commitTransaction();
-    }
 }
 

@@ -125,4 +125,6 @@
         <item>@string/medicare</item>
     </string-array>
     <string name="title_activity_main2">Main2Activity</string>
+    <string name="create_diary">Create a diary</string>
+    <string name="add_symptoms_to_diary">Add symptoms</string>
 </resources>

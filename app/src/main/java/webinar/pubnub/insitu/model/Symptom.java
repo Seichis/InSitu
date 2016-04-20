@@ -23,9 +23,46 @@ public class Symptom extends RealmObject {
     }
 
     SymptomContext context;
-    double intensity;
+    float intensity;
+
+    public int getActivityId() {
+        return activityId;
+    }
+
+    public void setActivityId(int activityId) {
+        this.activityId = activityId;
+    }
+
+    int activityId;
+
+    public float getActivityIdFloat() {
+        return activityIdFloat;
+    }
+
+    public void setActivityIdFloat(float activityIdFloat) {
+        this.activityIdFloat = activityIdFloat;
+    }
+
+    float activityIdFloat;
     private Diary diary;
     boolean isError;
+    private String duringActivity;
+    private String afterActivity;
+    public String getDuringActivity() {
+        return duringActivity;
+    }
+
+    public void setDuringActivity(String duringActivity) {
+        this.duringActivity = duringActivity;
+    }
+
+    public String getAfterActivity() {
+        return afterActivity;
+    }
+
+    public void setAfterActivity(String afterActivity) {
+        this.afterActivity = afterActivity;
+    }
 
     public boolean isError() {
         return isError;
@@ -57,11 +94,11 @@ public class Symptom extends RealmObject {
         this.diary = diary;
     }
 
-    public double getIntensity() {
+    public float getIntensity() {
         return intensity;
     }
 
-    public void setIntensity(double intensity) {
+    public void setIntensity(float intensity) {
         this.intensity = intensity;
     }
 
