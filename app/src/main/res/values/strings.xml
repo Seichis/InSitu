@@ -134,4 +134,11 @@
     <string name="more_info_message">It only takes 2 minutes</string>
     <string name="symptom_data_overview">Intensity : %1$.0f\nTime :%2$s</string>
     <string name="fixed_diary_name">%1$s\\\' diary</string>
+    <string name="pie_center"><![CDATA[
+    <p style="color:#F44336;font-size:large;text-alignment:center">At a glance<br>
+    %1$d<br>
+   %2$.0f</p>
+    ]]>
+</string>
+
 </resources>

@@ -1,5 +1,7 @@
 package webinar.pubnub.insitu.model;
 
+import java.util.Date;
+
 import io.realm.RealmObject;
 
 /**
@@ -14,6 +16,15 @@ public class Symptom extends RealmObject {
     boolean isError;
     long id;
     private Diary diary;
+    long timestamp;
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
+    }
 
     public Symptom() {
     }

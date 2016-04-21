@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.Html;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
@@ -18,12 +19,11 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 
 import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.realm.implementation.RealmPieData;
 import com.github.mikephil.charting.data.realm.implementation.RealmPieDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
-import java.util.List;
+import org.joda.time.DateTime;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -32,16 +32,9 @@ import webinar.pubnub.insitu.MainActivity;
 import webinar.pubnub.insitu.R;
 import webinar.pubnub.insitu.adapters.HomeSymptomsAdapter;
 import webinar.pubnub.insitu.managers.ChartManager;
+import webinar.pubnub.insitu.managers.SymptomManager;
 import webinar.pubnub.insitu.model.MyChartData;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link HomeFragment.OnHomeInteractionListener} interface
- * to handle interaction events.
- * Use the {@link HomeFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class HomeFragment extends Fragment {
     static HomeFragment homeFragment;
     ChartManager chartManager;
@@ -57,20 +50,6 @@ public class HomeFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @return A new instance of fragment HomeFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static HomeFragment newInstance() {
-        HomeFragment fragment = new HomeFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        homeFragment = fragment;
-        return fragment;
-    }
 
     public static HomeFragment getInstance() {
         return homeFragment;
@@ -93,30 +72,14 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
+        homeFragment = this;
 
         mainActivity = MainActivity.getInstance();
         chartManager = ChartManager.getInstance();
         chartManager.setup(pieChart);
         setData();
-        pieChart.setCenterText("20");
-
-        symptomsAdapter = new HomeSymptomsAdapter(getContext());
-        listView.setAdapter(symptomsAdapter);
-
-//        MyChartData chartData = Realm.getDefaultInstance().where(MyChartData.class).findFirst();
-//
-//        if (chartData != null) {
-//            chartData.addChangeListener(new RealmChangeListener() {
-//                @Override
-//                public void onChange() {
-//                    Log.i("onChange","changed");
-//                    updatePiechart();
-//                }
-//            });
-//        }
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.OnHomeInteraction(uri);
@@ -129,18 +92,14 @@ public class HomeFragment extends Fragment {
         RealmResults<MyChartData> result = ChartManager.getInstance().getChartData();
 
 
-        //RealmBarDataSet<RealmDemoData> set = new RealmBarDataSet<RealmDemoData>(result, "stackValues", "xIndex"); // normal entries
         RealmPieDataSet<MyChartData> set = new RealmPieDataSet<>(result, "count", "id"); // stacked entries
 
-        set.setIndexField("");
-        set.setColors(new int[]{R.color.high, R.color.low, R.color.very_low, R.color.common_action_bar_splitter, R.color.colorPrimary}, getContext());
+        set.setColors(new int[]{R.color.high, R.color.colorAccent, R.color.very_low, R.color.common_google_signin_btn_text_light, R.color.colorPrimary}, getContext());
         Log.i("pie chart", "entries" + set.getEntryCount());
 
         set.setLabel("");
-//        set.setLabel("Example activity vs intensity");
 
         set.setSliceSpace(2);
-
         // create a data object with the dataset list
         RealmPieData data = new RealmPieData(result, "activity", set);
         chartManager.styleData(data);
@@ -150,16 +109,22 @@ public class HomeFragment extends Fragment {
         // set data
         pieChart.setData(data);
         pieChart.animateY(1400);
+        pieChart.setCenterText(generateCenterSpannableText());
+        symptomsAdapter = null;
+        symptomsAdapter = new HomeSymptomsAdapter(getContext(), SymptomManager.getInstance().getAllSymptomsByDay(DateTime.now().getMillis()));
+        listView.setAdapter(symptomsAdapter);
+
+
     }
 
     private SpannableString generateCenterSpannableText() {
-
-        SpannableString s = new SpannableString("Realm.io\nmobile database");
-        s.setSpan(new ForegroundColorSpan(Color.rgb(240, 115, 126)), 0, 8, 0);
-        s.setSpan(new RelativeSizeSpan(2.2f), 0, 8, 0);
-        s.setSpan(new StyleSpan(Typeface.ITALIC), 9, s.length(), 0);
-        s.setSpan(new ForegroundColorSpan(ColorTemplate.getHoloBlue()), 9, s.length(), 0);
-        s.setSpan(new RelativeSizeSpan(0.85f), 9, s.length(), 0);
+        int symptomCountToday = (int) ChartManager.getInstance().getSymptomsCount();
+        SpannableString s = new SpannableString(Html.fromHtml(getString(R.string.pie_center, symptomCountToday, 4.5f)));
+//        s.setSpan(new ForegroundColorSpan(Color.rgb(240, 115, 126)), 0, 10, 0);
+//        s.setSpan(new RelativeSizeSpan(2.2f), 0, 10, 0);
+        s.setSpan(new StyleSpan(Typeface.ITALIC), 11, s.length(), 0);
+        s.setSpan(new ForegroundColorSpan(ColorTemplate.getHoloBlue()), 11, s.length(), 0);
+        s.setSpan(new RelativeSizeSpan(2f), 9, s.length(), 0);
         return s;
     }
 
@@ -178,11 +143,14 @@ public class HomeFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+        homeFragment = null;
     }
 
     public void updatePiechart() {
+        chartManager.setup(pieChart);
         setData();
-        pieChart.invalidate();
+        Log.i("update", "called");
+//        pieChart.invalidate();
     }
 
     /**

@@ -4,7 +4,11 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.util.Log;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+
 import java.util.Random;
+import java.util.TimeZone;
 
 /**
  * Created by Konstantinos Michail on 1/16/2016.
@@ -45,5 +49,18 @@ public class Utils {
         }
         return false;
     }
+
+    public static long getDayStart(long date,int pastDays){
+        DateTime inDate = new DateTime(date, DateTimeZone.forTimeZone(TimeZone.getDefault()));
+        return (pastDays<=1)?inDate.withTimeAtStartOfDay().getMillis():inDate.minus(pastDays-1).withTimeAtStartOfDay().getMillis();
+
+    }
+
+    public static long getDaysEnd(long date){
+        DateTime inDate = new DateTime(date, DateTimeZone.forTimeZone(TimeZone.getDefault()));
+        return inDate.plusDays(1).withTimeAtStartOfDay().getMillis();
+    }
+
+
 
 }

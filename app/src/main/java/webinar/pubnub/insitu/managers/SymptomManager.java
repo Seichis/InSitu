@@ -1,15 +1,20 @@
 package webinar.pubnub.insitu.managers;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.os.CountDownTimer;
 import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.Interval;
+
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
@@ -20,7 +25,7 @@ import webinar.pubnub.insitu.model.Diary;
 import webinar.pubnub.insitu.model.MyChartData;
 import webinar.pubnub.insitu.model.Symptom;
 
-public class SymptomManager {
+public class SymptomManager implements ISymptomManager {
     static SymptomManager symptomManager = new SymptomManager();
     static String TAG = "SymptomManager";
     List<Double> symptomInputList = new ArrayList<>();
@@ -50,37 +55,39 @@ public class SymptomManager {
         realm = Realm.getDefaultInstance();
     }
 
-    public void manageSymptomInput(double input){
+    public void manageSymptomInput(double input) {
 
         if (symptomInputList.size() == 0) {
 //            timeStamp = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.UK).format(new Date());
             symptom = new Symptom();
+            symptom.setError(false);
+            symptom.setTimestamp(DateTime.now().getMillis());
             // Add activity
             String s = dataManager.getLast30MinutesActivity();
-            if (s.equals(context.getString(R.string.still))){
+            if (s.equals(context.getString(R.string.still))) {
                 symptom.setActivityId(Constants.STILL);
-            }else if(s.equals(context.getString(R.string.walking))){
+            } else if (s.equals(context.getString(R.string.walking))) {
                 symptom.setActivityId(Constants.WALKING);
 
-            }else if(s.equals(context.getString(R.string.on_foot))){
+            } else if (s.equals(context.getString(R.string.on_foot))) {
                 symptom.setActivityId(Constants.WALKING);
 
-            }else if(s.equals(context.getString(R.string.on_bicycle))){
+            } else if (s.equals(context.getString(R.string.on_bicycle))) {
                 symptom.setActivityId(Constants.ON_BICYCLE);
 
-            }else if(s.equals(context.getString(R.string.in_vehicle))){
+            } else if (s.equals(context.getString(R.string.in_vehicle))) {
                 symptom.setActivityId(Constants.IN_VEHICLE);
 
-            }else if(s.equals(context.getString(R.string.unknown))){
+            } else if (s.equals(context.getString(R.string.unknown))) {
                 symptom.setActivityId(Constants.STILL);
 
-            }else if(s.equals(context.getString(R.string.tilting))){
+            } else if (s.equals(context.getString(R.string.tilting))) {
                 symptom.setActivityId(Constants.STILL);
 
-            }else if(s.equals(context.getString(R.string.running))){
+            } else if (s.equals(context.getString(R.string.running))) {
                 symptom.setActivityId(Constants.RUNNING);
 
-            }else{
+            } else {
                 symptom.setActivityId(Constants.STILL);
 
             }
@@ -140,16 +147,68 @@ public class SymptomManager {
         realm.commitTransaction();
         resetSymptomInput();
         // Update the data for the charts
-        ChartManager.getInstance().updateChartData();
+//        ChartManager.getInstance().updateChartDataByDay(DateTime.now().minus(84000000).getMillis());
+        ChartManager.getInstance().updateChartDataByDay(DateTime.now().getMillis());
     }
 
-    public List<Symptom> getAllSymptoms() {
+    @Override
+    public RealmResults<Symptom> getAllSymptomsByDay(long date) {
+//        DateTime now = DateTime.now(DateTimeZone.forTimeZone(TimeZone.getDefault()));
+        long yesterdayStart=Utils.getDayStart(date,1);
+        long tomorrowStart=Utils.getDaysEnd(date);
+        Log.i(TAG,"yest  "+ yesterdayStart+ "today  "+tomorrowStart);
+        return getAllSymptomsByRange(yesterdayStart,tomorrowStart);  }
+
+
+
+    @Override
+    public RealmResults<Symptom> getAllSymptoms() {
         return realm.where(Symptom.class).findAll();
     }
 
+    @Override
+    public RealmResults<Symptom> getAllSymptomsByRange(long from, long until) {
+        return realm.where(Symptom.class).greaterThanOrEqualTo("timestamp",from).lessThanOrEqualTo("timestamp",until).findAll();
+
+    }
+
+
+    @Override
     public RealmResults<Symptom> getAllSymptomsByActivity(int activityId) {
         return realm.allObjects(Symptom.class).where().equalTo("activityId", Constants.SAVED_ACTIVITIES[activityId]).findAll();
     }
+
+    @Override
+    public float getMeanIntensityByDay(long date) {
+        return 0;
+    }
+
+    @Override
+    public float getMeanIntensityByRange(long from, long until) {
+        return 0;
+    }
+
+    @Override
+    public float getMeanDistressByDay(long date) {
+        return 0;
+    }
+
+    @Override
+    public float getMeanDistressByRange(long from, long until) {
+        return 0;
+    }
+
+    @Override
+    public RealmResults<Symptom> getAllSymptomsByActivityByDay(int activityId, long date) {
+        Log.i(TAG,""+getAllSymptomsByDay(date).size());
+        return getAllSymptomsByDay(date).where().equalTo("activityId", Constants.SAVED_ACTIVITIES[activityId]).findAll();
+    }
+
+    @Override
+    public RealmResults<Symptom> getAllSymptomsByActivityByRange(int activityId, long from, long until) {
+        return getAllSymptomsByRange(from,until).where().equalTo("activityId", Constants.SAVED_ACTIVITIES[activityId]).findAll();
+    }
+
 
     public ArrayList<LatLng> getSymptomslatLonByType(String type) {
         ArrayList<LatLng> mlist = new ArrayList<>();
@@ -168,17 +227,20 @@ public class SymptomManager {
         realm.clear(MyChartData.class);
         realm.commitTransaction();
 //        realm.beginTransaction();
+//        DateTime now = DateTime.now(DateTimeZone.forTimeZone(TimeZone.getDefault()));
 //
-//        for (int i = 0; i < 50; i++) {
+//        for (int i = 0; i < 500; i++) {
 //            int activity = Utils.randInt(0, 4);
 //            Symptom s = new Symptom();
 //            s.setActivityId(activity);
+//            s.setTimestamp(now.minusDays(Utils.randInt(0,50)).minus(Utils.randInt(0,84000000)).getMillis());
 //            s.setId(i);
 //            s.setIntensity((float) (Math.random() * 10));
 //            realm.copyToRealm(s);
 //        }
 //        realm.commitTransaction();
-//
+//        ChartManager.getInstance().updateChartDataByRange(DateTime.now().minusDays(20).getMillis(),DateTime.now().minusDays(10).getMillis());
+
 //        realm.beginTransaction();
 //        float totalSymptoms = (float) getAllSymptoms().size();
 //        for (int i = 0; i < Constants.SAVED_ACTIVITIES.length; i++) {
@@ -190,6 +252,8 @@ public class SymptomManager {
 
     }
 
+
+    @Override
     public Symptom getSymptomById(int id) {
         return realm.where(Symptom.class).equalTo("id", id).findFirst();
     }

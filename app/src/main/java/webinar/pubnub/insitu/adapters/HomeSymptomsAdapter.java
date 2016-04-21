@@ -33,9 +33,9 @@ public class HomeSymptomsAdapter extends BaseSwipeAdapter {
 
     private Context mContext;
     List<Symptom> symptoms;
-    public HomeSymptomsAdapter(Context mContext) {
+    public HomeSymptomsAdapter(Context mContext,List<Symptom> symptoms) {
         this.mContext = mContext;
-        symptoms=SymptomManager.getInstance().getAllSymptoms();
+        this.symptoms=symptoms;
     }
     @Bind(R.id.tell_us_more)Button addMoreInfoButton;
     @OnClick(R.id.tell_us_more) void openMoreDialog(){

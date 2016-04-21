@@ -2,10 +2,10 @@ package webinar.pubnub.insitu.managers;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Log;
 
 import com.github.mikephil.charting.charts.BarLineChartBase;
 import com.github.mikephil.charting.charts.Chart;
-import com.github.mikephil.charting.components.MarkerView;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.ChartData;
@@ -14,25 +14,28 @@ import com.github.mikephil.charting.formatter.PercentFormatter;
 import io.realm.Realm;
 import io.realm.RealmResults;
 import webinar.pubnub.insitu.Constants;
-import webinar.pubnub.insitu.MainActivity;
 import webinar.pubnub.insitu.fragments.HomeFragment;
 import webinar.pubnub.insitu.model.MyChartData;
+import webinar.pubnub.insitu.model.Symptom;
 
 /**
  * Created by Konstantinos Michail on 4/20/2016.
  */
 public class ChartManager implements IChartManager {
     static ChartManager chartManager = new ChartManager();
-SymptomManager symptomManager;
+    SymptomManager symptomManager;
     Context context;
+    Realm realm;
+    RealmResults<Symptom> symptoms;
+
     public static ChartManager getInstance() {
         return chartManager;
     }
-    Realm realm;
-    public void init(Context context){
-        this.context=context;
-        realm=Realm.getDefaultInstance();
-        symptomManager=SymptomManager.getInstance();
+
+    public void init(Context context) {
+        this.context = context;
+        realm = Realm.getDefaultInstance();
+        symptomManager = SymptomManager.getInstance();
     }
 
     @Override
@@ -85,21 +88,78 @@ SymptomManager symptomManager;
     public void updateChartData() {
         realm.beginTransaction();
         realm.clear(MyChartData.class);
-        float totalSymptoms = (float) symptomManager.getAllSymptoms().size();
+        symptoms=symptomManager.getAllSymptoms();
+        float totalSymptoms =getSymptomsCount();
         for (int i = 0; i < Constants.SAVED_ACTIVITIES.length; i++) {
             float count = 100 * ((float) symptomManager.getAllSymptomsByActivity(Constants.SAVED_ACTIVITIES[i]).size()) / totalSymptoms;
+            if (count==0f){
+                continue;
+            }
             MyChartData myChartData = new MyChartData(Constants.getSavedActivityString(context, Constants.SAVED_ACTIVITIES[i]), count, i);
             realm.copyToRealm(myChartData);
         }
         realm.commitTransaction();
-        if (HomeFragment.getInstance()!=null) {
+        if (HomeFragment.getInstance() != null) {
+            Log.i("Chartmanager", "update called");
             HomeFragment.getInstance().updatePiechart();
+        } else {
+            Log.i("Chartmanager", "null fragment");
+
         }
     }
 
 
-    public RealmResults<MyChartData> getChartData(){
+    public RealmResults<MyChartData> getChartData() {
         return realm.allObjects(MyChartData.class);
+    }
+
+    public void updateChartDataByDay(long date) {
+        realm.beginTransaction();
+        realm.clear(MyChartData.class);
+        symptoms=symptomManager.getAllSymptomsByDay(date);
+        float totalSymptoms = getSymptomsCount();
+        for (int i = 0; i < Constants.SAVED_ACTIVITIES.length; i++) {
+            float count = 100 * ((float) symptomManager.getAllSymptomsByActivityByDay(Constants.SAVED_ACTIVITIES[i], date).size()) / totalSymptoms;
+            if (count==0f){
+                continue;
+            }
+            MyChartData myChartData = new MyChartData(Constants.getSavedActivityString(context, Constants.SAVED_ACTIVITIES[i]), count, i);
+            realm.copyToRealm(myChartData);
+        }
+        realm.commitTransaction();
+        if (HomeFragment.getInstance() != null) {
+            Log.i("Chartmanager", "update called");
+            HomeFragment.getInstance().updatePiechart();
+        } else {
+            Log.i("Chartmanager", "null fragment");
+        }
+    }
+
+    public float getSymptomsCount(){
+        return (symptoms==null)?0f:(float)this.symptoms.size();
+    }
+
+    public void updateChartDataByRange(long from, long until) {
+        realm.beginTransaction();
+        realm.clear(MyChartData.class);
+        symptoms=symptomManager.getAllSymptomsByRange(from, until);
+        float totalSymptoms = getSymptomsCount();
+        for (int i = 0; i < Constants.SAVED_ACTIVITIES.length; i++) {
+            float count = 100 * ((float) symptomManager.getAllSymptomsByActivityByRange(Constants.SAVED_ACTIVITIES[i], from, until).size()) / totalSymptoms;
+            if (count==0f){
+                continue;
+            }
+            MyChartData myChartData = new MyChartData(Constants.getSavedActivityString(context, Constants.SAVED_ACTIVITIES[i]), count, i);
+            realm.copyToRealm(myChartData);
+        }
+        realm.commitTransaction();
+        if (HomeFragment.getInstance() != null) {
+            Log.i("Chartmanager", "update called");
+            HomeFragment.getInstance().updatePiechart();
+        } else {
+            Log.i("Chartmanager", "null fragment");
+
+        }
     }
 
 
