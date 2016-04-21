@@ -1,10 +1,5 @@
 package webinar.pubnub.insitu.model;
 
-import android.util.Log;
-
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-
 import io.realm.RealmObject;
 
 /**
@@ -13,6 +8,15 @@ import io.realm.RealmObject;
 public class Symptom extends RealmObject {
 
     String symptomType;
+    SymptomContext context;
+    float intensity;
+    int activityId;
+    boolean isError;
+    long id;
+    private Diary diary;
+
+    public Symptom() {
+    }
 
     public SymptomContext getContext() {
         return context;
@@ -22,46 +26,12 @@ public class Symptom extends RealmObject {
         this.context = context;
     }
 
-    SymptomContext context;
-    float intensity;
-
     public int getActivityId() {
         return activityId;
     }
 
     public void setActivityId(int activityId) {
         this.activityId = activityId;
-    }
-
-    int activityId;
-
-    public float getActivityIdFloat() {
-        return activityIdFloat;
-    }
-
-    public void setActivityIdFloat(float activityIdFloat) {
-        this.activityIdFloat = activityIdFloat;
-    }
-
-    float activityIdFloat;
-    private Diary diary;
-    boolean isError;
-    private String duringActivity;
-    private String afterActivity;
-    public String getDuringActivity() {
-        return duringActivity;
-    }
-
-    public void setDuringActivity(String duringActivity) {
-        this.duringActivity = duringActivity;
-    }
-
-    public String getAfterActivity() {
-        return afterActivity;
-    }
-
-    public void setAfterActivity(String afterActivity) {
-        this.afterActivity = afterActivity;
     }
 
     public boolean isError() {
@@ -78,11 +48,6 @@ public class Symptom extends RealmObject {
 
     public void setId(long id) {
         this.id = id;
-    }
-
-    long id;
-
-    public Symptom() {
     }
 
     public Diary getDiary() {
@@ -109,7 +74,6 @@ public class Symptom extends RealmObject {
     public void setSymptomType(String symptomType) {
         this.symptomType = symptomType;
     }
-
 
 
 }

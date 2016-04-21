@@ -43,7 +43,6 @@ public class MainActivity extends BaseActivity
     ViewPager viewPager;
     @Bind(R.id.viewpagertab)
     SmartTabLayout viewPagerTab;
-    FragmentPagerItemAdapter adapter;
     Intent serviceIntent;
     FlicButton button;
     HashMap<String, Class<? extends Fragment>> fragmentTitleMap;
@@ -64,9 +63,9 @@ public class MainActivity extends BaseActivity
         startBackgroundService();
         setupTabs();
     }
-
+    FragmentPagerItemAdapter adapter;
     private void setupTabs() {
-        FragmentPagerItemAdapter adapter = new FragmentPagerItemAdapter(
+        adapter = new FragmentPagerItemAdapter(
                 getSupportFragmentManager(), FragmentPagerItems.with(this)
                 .add("Home", HomeFragment.class)
                 .create());
@@ -197,4 +196,5 @@ public class MainActivity extends BaseActivity
     public void OnHomeInteraction(Uri uri) {
 
     }
+
 }

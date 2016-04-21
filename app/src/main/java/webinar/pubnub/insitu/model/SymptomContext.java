@@ -8,12 +8,19 @@ import io.realm.annotations.Ignore;
 public class SymptomContext extends RealmObject {
     // Location variables
 
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
     double latitude;
     double longitude;
     private String address;
     private String postCode;
-    @Ignore
-    private LatLng latLng;
+
     private String country;
     private String placeType;
     private String city;
@@ -23,10 +30,28 @@ public class SymptomContext extends RealmObject {
     private String windChill;
     private String windDirection;
     private String windSpeed;
-    private String humidity;
+    private float humidity;
     private String pressure;
     private String baroPressureRising;
     private String visibility;
+    private String duringActivity;
+    private String afterActivity;
+
+    public String getDuringActivity() {
+        return duringActivity;
+    }
+
+    public void setDuringActivity(String duringActivity) {
+        this.duringActivity = duringActivity;
+    }
+
+    public String getAfterActivity() {
+        return afterActivity;
+    }
+
+    public void setAfterActivity(String afterActivity) {
+        this.afterActivity = afterActivity;
+    }
 
     private String altitude;
 
@@ -121,11 +146,11 @@ public class SymptomContext extends RealmObject {
         this.windSpeed = windSpeed;
     }
 
-    public String getHumidity() {
+    public float getHumidity() {
         return humidity;
     }
 
-    public void setHumidity(String humidity) {
+    public void setHumidity(float humidity) {
         this.humidity = humidity;
     }
 
@@ -214,21 +239,7 @@ public class SymptomContext extends RealmObject {
         this.postCode = postCode;
     }
 
-    /**
-     * @return Latitude and longitude as a {@link LatLng} object
-     */
-    public LatLng getLatLng() {
-        return latLng;
-    }
 
-    /**
-     * @param latLng Latitude and longitude as a {@link LatLng} object
-     */
-    public void setLatLng(LatLng latLng) {
-        this.latLng = latLng;
-        this.latitude=latLng.latitude;
-        this.longitude=latLng.longitude;
-    }
 
     /**
      * @return Country name ("Denmark")

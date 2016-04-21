@@ -91,11 +91,12 @@
     <string name="speech_not_supported">Sorry! Your device doesn\'t support speech input</string>
     <string name="permission_location_rationale">We need to save your location so that we can combine information about the context in which these symptoms occured and provide you with better treatment</string>
     <string name="ok">Permit</string>
+    <string name="done">Done</string>
     <string name="permision_available_location">Permission to get your location is granted</string>
     <string name="permissions_not_granted">Permission to access this device location was denied.</string>
     <string name="manage_profile">Edit your profile</string>
     <string name="profile_name">Hi %1$s</string>
-
+    <string name="google_app_id">symptoms-1218</string>
     <string name="input_text">Looking for...</string>
     <string name="button_send">Go!</string>
     <string name="police_stations">Police Stations in Victoria</string>
@@ -127,4 +128,10 @@
     <string name="title_activity_main2">Main2Activity</string>
     <string name="create_diary">Create a diary</string>
     <string name="add_symptoms_to_diary">Add symptoms</string>
+    <string name="mark_error">Mark as error</string>
+    <string name="add_more_info">Tell us some more</string>
+    <string name="more_info_title">Add some more details</string>
+    <string name="more_info_message">It only takes 2 minutes</string>
+    <string name="symptom_data_overview">Intensity : %1$.0f\nTime :%2$s</string>
+    <string name="fixed_diary_name">%1$s\\\' diary</string>
 </resources>

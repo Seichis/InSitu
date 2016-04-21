@@ -18,9 +18,11 @@ public class PatientManager {
     public static PatientManager getInstance() {
         return patientManager;
     }
+    Context context;
+    public void init(Context context) {
+        this.context=context;
+        realm=Realm.getDefaultInstance();
 
-    public void init(Context context, Realm realm) {
-        this.realm=realm;
     }
 
     public Patient getPatient() {

@@ -11,13 +11,14 @@ public class SettingsManager {
     Realm realm;
     Patient patient;
     PatientManager patientManager;
-
+    Context context;
     public static SettingsManager getInstance() {
         return settingsManager;
     }
 
-    public void init(Context context, Realm realm) {
-        this.realm = realm;
+    public void init(Context context) {
+        this.context=context;
+        realm=Realm.getDefaultInstance();
         patientManager = PatientManager.getInstance();
         patient = patientManager.getPatient();
     }

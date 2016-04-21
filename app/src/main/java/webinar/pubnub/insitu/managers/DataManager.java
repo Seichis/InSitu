@@ -6,11 +6,9 @@ import android.location.Geocoder;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
-import com.google.android.gms.maps.model.LatLng;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 import com.google.common.collect.Multisets;
-
 import com.midhunarmid.movesapi.MovesAPI;
 import com.midhunarmid.movesapi.MovesHandler;
 import com.midhunarmid.movesapi.activity.ActivityData;
@@ -257,8 +255,9 @@ public class DataManager {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                symptomContext.setLatLng(new LatLng(location.getLatitude(), location.getLongitude()));
-                Log.i(TAG, "setLatLng" + String.valueOf(new LatLng(location.getLatitude(), location.getLongitude())));
+                symptomContext.setLatitude(location.getLatitude());
+                symptomContext.setLongitude(location.getLongitude());
+                symptomContext.setHumidity(currentWeather.weather.currentCondition.getHumidity());
 
                 Log.i(TAG, "condition" + currentWeather.weather.currentCondition.getCondition());
                 Log.i(TAG, "description" + currentWeather.weather.currentCondition.getDescr());
@@ -466,10 +465,14 @@ public class DataManager {
 //        for (String activity : Multisets.copyHighestCountFirst(activityCount).elementSet()) {
 //            Log.i(TAG, activity + "  " + activityCount.count(activity));
 //        }
-        String activity = Multisets.copyHighestCountFirst(activityCount).elementSet().toArray()[0].toString();
-        Log.i(TAG, activity + "  " + activityCount.count(activity));
+        if (activityCount.isEmpty()) {
+            return "";
+        } else {
+            String activity = Multisets.copyHighestCountFirst(activityCount).elementSet().toArray()[0].toString();
+            Log.i(TAG, activity + "  " + activityCount.count(activity));
+            return activity;
+        }
 
-        return activity;
     }
 }
 

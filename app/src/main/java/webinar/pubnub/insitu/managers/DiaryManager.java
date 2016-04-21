@@ -1,14 +1,11 @@
 package webinar.pubnub.insitu.managers;
 
 import android.content.Context;
-import android.util.Log;
-
-import com.google.gson.Gson;
 
 import java.util.List;
-import java.util.TreeMap;
 
 import io.realm.Realm;
+import io.realm.RealmResults;
 import webinar.pubnub.insitu.model.Diary;
 
 
@@ -26,21 +23,34 @@ public class DiaryManager {
         return diaryManager;
     }
 
-    public void init(Context context, Realm realm) {
+    public void init(Context context) {
         this.context = context;
-        this.realm = realm;
+        realm=Realm.getDefaultInstance();
     }
 
     public void createDiary(String name, String description) {
         // All writes must be wrapped in a transaction to facilitate safe multi threading
-        realm.beginTransaction();
+        RealmResults<Diary> existingDiaries = realm.allObjects(Diary.class);
 
-        // Add a person
-        Diary diary = realm.createObject(Diary.class);
-        diary.setId(1);
-        diary.setName(name);
-        diary.setDescription(description);
-        diary.setActive(true);
+        realm.beginTransaction();
+        if (existingDiaries.isEmpty()) {
+            // Add a person
+            Diary diary = realm.createObject(Diary.class);
+            diary.setId(1);
+            diary.setName(name);
+            diary.setDescription(description);
+            diary.setActive(true);
+        } else {
+            long maxId = existingDiaries.max("id").longValue();
+            for (Diary d : existingDiaries){
+                d.setActive(false);
+            }
+            Diary diary = realm.createObject(Diary.class);
+            diary.setId(maxId+1);
+            diary.setName(name);
+            diary.setDescription(description);
+            diary.setActive(true);
+        }
         // When the transaction is committed, all changes a synced to disk.
         realm.commitTransaction();
     }

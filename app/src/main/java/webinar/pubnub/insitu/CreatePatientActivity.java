@@ -21,6 +21,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import webinar.pubnub.insitu.fragments.ManageDiariesFragment;
+import webinar.pubnub.insitu.managers.DiaryManager;
 import webinar.pubnub.insitu.managers.PatientManager;
 
 public class CreatePatientActivity extends AppCompatActivity implements ManageDiariesFragment.OnManageDiariesInteractionListener {
@@ -77,7 +78,7 @@ public class CreatePatientActivity extends AppCompatActivity implements ManageDi
                     break;
             }
             PatientManager.getInstance().createNewProfile(name, gender);
-
+            DiaryManager.getInstance().createDiary(getString(R.string.fixed_diary_name,name),"Pain management");
             noPatientLayout.setVisibility(View.GONE);
             setupDiaryLayout();
 

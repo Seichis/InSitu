@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="BodyParts">
+        <item>Select one</item>
+        <item>Head</item>
+        <item>Neck</item>
+        <item>Breast</item>
+        <item>Back</item>
+        <item>Arm</item>
+        <item>Forearm</item>
+        <item>Hand</item>
+        <item>Abdomen</item>
+        <item>Pelvis</item>
+        <item>Leg</item>
+        <item>Knee</item>
+    </string-array>
+    <string-array name="NonDrugTechniques">
+        <item>Massage</item>
+        <item>Relaxation</item>
+        <item>Acupuncture</item>
+        <item>Physical therapy</item>
+        <item>Pet therapy</item>
+        <item>Gel packs</item>
+
+    </string-array>
+</resources>

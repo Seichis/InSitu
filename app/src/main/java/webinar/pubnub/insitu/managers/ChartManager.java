@@ -1,9 +1,11 @@
 package webinar.pubnub.insitu.managers;
 
+import android.content.Context;
 import android.graphics.Color;
 
 import com.github.mikephil.charting.charts.BarLineChartBase;
 import com.github.mikephil.charting.charts.Chart;
+import com.github.mikephil.charting.components.MarkerView;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.ChartData;
@@ -11,6 +13,9 @@ import com.github.mikephil.charting.formatter.PercentFormatter;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
+import webinar.pubnub.insitu.Constants;
+import webinar.pubnub.insitu.MainActivity;
+import webinar.pubnub.insitu.fragments.HomeFragment;
 import webinar.pubnub.insitu.model.MyChartData;
 
 /**
@@ -18,11 +23,17 @@ import webinar.pubnub.insitu.model.MyChartData;
  */
 public class ChartManager implements IChartManager {
     static ChartManager chartManager = new ChartManager();
-
+SymptomManager symptomManager;
+    Context context;
     public static ChartManager getInstance() {
         return chartManager;
     }
-
+    Realm realm;
+    public void init(Context context){
+        this.context=context;
+        realm=Realm.getDefaultInstance();
+        symptomManager=SymptomManager.getInstance();
+    }
 
     @Override
     public void setup(Chart<?> chart) {
@@ -71,12 +82,25 @@ public class ChartManager implements IChartManager {
     }
 
     @Override
-    public void preparePieData() {
-
+    public void updateChartData() {
+        realm.beginTransaction();
+        realm.clear(MyChartData.class);
+        float totalSymptoms = (float) symptomManager.getAllSymptoms().size();
+        for (int i = 0; i < Constants.SAVED_ACTIVITIES.length; i++) {
+            float count = 100 * ((float) symptomManager.getAllSymptomsByActivity(Constants.SAVED_ACTIVITIES[i]).size()) / totalSymptoms;
+            MyChartData myChartData = new MyChartData(Constants.getSavedActivityString(context, Constants.SAVED_ACTIVITIES[i]), count, i);
+            realm.copyToRealm(myChartData);
+        }
+        realm.commitTransaction();
+        if (HomeFragment.getInstance()!=null) {
+            HomeFragment.getInstance().updatePiechart();
+        }
     }
+
 
     public RealmResults<MyChartData> getChartData(){
-        return Realm.getDefaultInstance().allObjects(MyChartData.class);
+        return realm.allObjects(MyChartData.class);
     }
+
 
 }

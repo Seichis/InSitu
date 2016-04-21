@@ -53,6 +53,7 @@ import io.flic.lib.FlicManagerInitializedCallback;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import webinar.pubnub.insitu.activityrecognition.DetectedActivitiesIntentService;
+import webinar.pubnub.insitu.managers.ChartManager;
 import webinar.pubnub.insitu.managers.DataManager;
 import webinar.pubnub.insitu.managers.DiaryManager;
 import webinar.pubnub.insitu.managers.PatientManager;
@@ -79,6 +80,7 @@ public class BackgroundService extends Service implements IBackgroundSettingsSer
     SymptomManager symptomManager;
     Settings settings;
     SettingsManager settingsManager;
+    ChartManager chartManager;
     private Location currentLocation;
     private GoogleApiClient locationClient;
     private Realm realm;
@@ -102,7 +104,7 @@ public class BackgroundService extends Service implements IBackgroundSettingsSer
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         mainActivity = MainActivity.getInstance();
-        activityQueue = EvictingQueue.create(3);
+        activityQueue = EvictingQueue.create(30);
         backgroundService = this;
         initializeManagers();
         runAsForeground();
@@ -126,16 +128,19 @@ public class BackgroundService extends Service implements IBackgroundSettingsSer
         dataManager.init(backgroundService);
 
         diaryManager = DiaryManager.getInstance();
-        diaryManager.init(backgroundService,realm);
+        diaryManager.init(backgroundService);
 
         symptomManager = SymptomManager.getInstance();
-        symptomManager.init(backgroundService,realm);
+        symptomManager.init(backgroundService);
 
         patientManager = PatientManager.getInstance();
-        patientManager.init(backgroundService,realm);
+        patientManager.init(backgroundService);
 
         settingsManager = SettingsManager.getInstance();
-        settingsManager.init(backgroundService,realm);
+        settingsManager.init(backgroundService);
+
+        chartManager=ChartManager.getInstance();
+        chartManager.init(backgroundService);
 
         symptomManager.fillData();
     }

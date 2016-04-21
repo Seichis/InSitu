@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.Entry;
@@ -29,10 +30,9 @@ import butterknife.ButterKnife;
 import io.realm.RealmResults;
 import webinar.pubnub.insitu.MainActivity;
 import webinar.pubnub.insitu.R;
+import webinar.pubnub.insitu.adapters.HomeSymptomsAdapter;
 import webinar.pubnub.insitu.managers.ChartManager;
-import webinar.pubnub.insitu.managers.SymptomManager;
 import webinar.pubnub.insitu.model.MyChartData;
-import webinar.pubnub.insitu.model.Symptom;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -43,9 +43,13 @@ import webinar.pubnub.insitu.model.Symptom;
  * create an instance of this fragment.
  */
 public class HomeFragment extends Fragment {
+    static HomeFragment homeFragment;
     ChartManager chartManager;
     @Bind(R.id.pie_chart_main)
     PieChart pieChart;
+    @Bind(R.id.home_listview)
+    ListView listView;
+    HomeSymptomsAdapter symptomsAdapter;
     MainActivity mainActivity;
     private OnHomeInteractionListener mListener;
 
@@ -64,7 +68,12 @@ public class HomeFragment extends Fragment {
         HomeFragment fragment = new HomeFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
+        homeFragment = fragment;
         return fragment;
+    }
+
+    public static HomeFragment getInstance() {
+        return homeFragment;
     }
 
     @Override
@@ -84,12 +93,27 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
+
         mainActivity = MainActivity.getInstance();
         chartManager = ChartManager.getInstance();
         chartManager.setup(pieChart);
         setData();
         pieChart.setCenterText("20");
 
+        symptomsAdapter = new HomeSymptomsAdapter(getContext());
+        listView.setAdapter(symptomsAdapter);
+
+//        MyChartData chartData = Realm.getDefaultInstance().where(MyChartData.class).findFirst();
+//
+//        if (chartData != null) {
+//            chartData.addChangeListener(new RealmChangeListener() {
+//                @Override
+//                public void onChange() {
+//                    Log.i("onChange","changed");
+//                    updatePiechart();
+//                }
+//            });
+//        }
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -98,6 +122,7 @@ public class HomeFragment extends Fragment {
             mListener.OnHomeInteraction(uri);
         }
     }
+
 
     private void setData() {
 
@@ -110,8 +135,6 @@ public class HomeFragment extends Fragment {
         set.setIndexField("");
         set.setColors(new int[]{R.color.high, R.color.low, R.color.very_low, R.color.common_action_bar_splitter, R.color.colorPrimary}, getContext());
         Log.i("pie chart", "entries" + set.getEntryCount());
-//        Log.i("pie chart", "entries" + );
-        List<Entry> entries = set.getValues();
 
         set.setLabel("");
 //        set.setLabel("Example activity vs intensity");
@@ -157,6 +180,11 @@ public class HomeFragment extends Fragment {
         mListener = null;
     }
 
+    public void updatePiechart() {
+        setData();
+        pieChart.invalidate();
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -170,5 +198,7 @@ public class HomeFragment extends Fragment {
     public interface OnHomeInteractionListener {
         // TODO: Update argument type and name
         void OnHomeInteraction(Uri uri);
+
     }
+
 }
