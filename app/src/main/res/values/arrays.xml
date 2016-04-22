@@ -23,4 +23,16 @@
         <item>Gel packs</item>
 
     </string-array>
+
+    <string-array name="WeatherConditions">
+        <item>sky is clear</item>
+        <item>few clouds</item>
+        <item>scattered clouds</item>
+        <item>broken clouds</item>
+        <item>shower rain</item>
+        <item>Rain</item>
+        <item>Thunderstorm</item>
+        <item>snow</item>
+        <item>mist</item>
+    </string-array>
 </resources>

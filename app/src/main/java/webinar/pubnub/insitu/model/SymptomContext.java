@@ -25,7 +25,7 @@ public class SymptomContext extends RealmObject {
     private String placeType;
     private String city;
     // Weather variables
-    private String temperature;
+    private float temperature;
     private String weatherCondition;
     private String windChill;
     private String windDirection;
@@ -79,14 +79,14 @@ public class SymptomContext extends RealmObject {
     /**
      * @return Temperature in Celsius
      */
-    public String getTemperature() {
+    public float getTemperature() {
         return temperature;
     }
 
     /**
      * @param temperature Temperature in Celsius ("20")
      */
-    public void setTemperature(String temperature) {
+    public void setTemperature(float temperature) {
         this.temperature = temperature;
     }
 

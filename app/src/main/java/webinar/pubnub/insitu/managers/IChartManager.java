@@ -11,6 +11,6 @@ import webinar.pubnub.insitu.model.MyChartData;
 public interface IChartManager {
     void setup(Chart<?> chart);
     void styleData(ChartData data);
-    void updateChartData();
+    void updatePieChartData();
 
 }

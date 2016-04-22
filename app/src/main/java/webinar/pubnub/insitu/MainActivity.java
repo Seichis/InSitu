@@ -28,13 +28,14 @@ import io.flic.lib.FlicBroadcastReceiverFlags;
 import io.flic.lib.FlicButton;
 import io.flic.lib.FlicManager;
 import io.flic.lib.FlicManagerInitializedCallback;
+import webinar.pubnub.insitu.fragments.ExplorationFragment;
 import webinar.pubnub.insitu.fragments.HomeFragment;
 import webinar.pubnub.insitu.managers.SettingsManager;
 import webinar.pubnub.insitu.maps.HeatmapsDemoActivity;
 import webinar.pubnub.insitu.model.Settings;
 
 public class MainActivity extends BaseActivity
-        implements NavigationView.OnNavigationItemSelectedListener,HomeFragment.OnHomeInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener,HomeFragment.OnHomeInteractionListener,ExplorationFragment.OnExplorationInteractionListener {
 
     private static final String TAG = "MainActivity";
     static MainActivity mainActivity;
@@ -68,6 +69,7 @@ public class MainActivity extends BaseActivity
         adapter = new FragmentPagerItemAdapter(
                 getSupportFragmentManager(), FragmentPagerItems.with(this)
                 .add("Home", HomeFragment.class)
+                .add("Explore", ExplorationFragment.class)
                 .create());
 
         viewPager.setAdapter(adapter);
@@ -197,4 +199,8 @@ public class MainActivity extends BaseActivity
 
     }
 
+    @Override
+    public void OnExplorationInteraction(Uri uri) {
+
+    }
 }

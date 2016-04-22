@@ -32,6 +32,9 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile project(path: ':movesAndroidAPI')
     compile project(path: ':fliclib')
+    //Swipe layout
+
+
     compile 'com.android.support:appcompat-v7:23.3.0'
     compile 'com.android.support:design:23.3.0'
     compile 'com.github.PhilJay:MPAndroidChart:v2.2.4'
@@ -50,10 +53,8 @@ dependencies {
     compile 'com.google.maps.android:android-maps-utils:0.4.3'
     compile 'com.github.vajro:MaterialDesignLibrary:1.6'
     compile 'com.github.clans:fab:1.6.3'
-//Swipe layout
     compile 'com.android.support:recyclerview-v7:23.3.0'
-    compile "com.daimajia.swipelayout:library:1.2.0@aar"
+    compile 'com.daimajia.swipelayout:library:1.2.0@aar'
     compile 'com.daimajia.androidanimations:library:1.1.2@aar'
     compile 'net.danlew:android.joda:2.9.3'
-
 }

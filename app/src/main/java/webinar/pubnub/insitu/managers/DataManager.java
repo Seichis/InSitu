@@ -258,7 +258,7 @@ public class DataManager {
                 symptomContext.setLatitude(location.getLatitude());
                 symptomContext.setLongitude(location.getLongitude());
                 symptomContext.setHumidity(currentWeather.weather.currentCondition.getHumidity());
-
+                symptomContext.setTemperature(currentWeather.weather.temperature.getTemp());
                 Log.i(TAG, "condition" + currentWeather.weather.currentCondition.getCondition());
                 Log.i(TAG, "description" + currentWeather.weather.currentCondition.getDescr());
                 Log.i(TAG, "heat index" + currentWeather.weather.currentCondition.getHeatIndex());
@@ -275,7 +275,7 @@ public class DataManager {
                 Log.i(TAG, "visibility" + currentWeather.weather.currentCondition.getVisibility());
                 Log.i(TAG, "tostring" + currentWeather.weather.currentCondition.toString());
 
-                Log.i(TAG, "temperature" + currentWeather.weather.temperature.getTemp());
+//                Log.i(TAG, "temperature" + currentWeather.weather.temperature.getTemp());
                 Log.i(TAG, "temperature max" + currentWeather.weather.temperature.getMaxTemp());
                 Log.i(TAG, "temperature min" + currentWeather.weather.temperature.getMinTemp());
 

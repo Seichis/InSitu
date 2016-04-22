@@ -17,6 +17,15 @@ public class Symptom extends RealmObject {
     long id;
     private Diary diary;
     long timestamp;
+    Description description;
+
+    public Description getDescription() {
+        return description;
+    }
+
+    public void setDescription(Description description) {
+        this.description = description;
+    }
 
     public long getTimestamp() {
         return timestamp;

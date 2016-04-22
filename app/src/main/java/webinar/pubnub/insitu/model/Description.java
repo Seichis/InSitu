@@ -18,7 +18,7 @@ public class Description extends RealmObject {
     String specificActivity;
     String medicineName;
     float medicineAmount;
-    Date dateMedicationConsumption;
+    long dateMedicationConsumption;
     String nonDrugTechniques;
 
     public Description() {
@@ -96,11 +96,11 @@ public class Description extends RealmObject {
         this.medicineAmount = medicineAmount;
     }
 
-    public Date getDateMedicationConsumption() {
+    public long getDateMedicationConsumption() {
         return dateMedicationConsumption;
     }
 
-    public void setDateMedicationConsumption(Date dateMedicationConsumption) {
+    public void setDateMedicationConsumption(long dateMedicationConsumption) {
         this.dateMedicationConsumption = dateMedicationConsumption;
     }
 

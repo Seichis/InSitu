@@ -89,12 +89,13 @@ public class HomeFragment extends Fragment {
 
     private void setData() {
 
-        RealmResults<MyChartData> result = ChartManager.getInstance().getChartData();
+        RealmResults<MyChartData> result = ChartManager.getInstance().getPieChartData();
 
 
         RealmPieDataSet<MyChartData> set = new RealmPieDataSet<>(result, "count", "id"); // stacked entries
+        set.setColors(ColorTemplate.JOYFUL_COLORS);
 
-        set.setColors(new int[]{R.color.high, R.color.colorAccent, R.color.very_low, R.color.common_google_signin_btn_text_light, R.color.colorPrimary}, getContext());
+//        set.setColors(new int[]{R.color.high, R.color.colorAccent, R.color.very_low, R.color.common_google_signin_btn_text_light, R.color.colorPrimary}, getContext());
         Log.i("pie chart", "entries" + set.getEntryCount());
 
         set.setLabel("");
@@ -147,7 +148,7 @@ public class HomeFragment extends Fragment {
     }
 
     public void updatePiechart() {
-        chartManager.setup(pieChart);
+//        chartManager.setup(pieChart);
         setData();
         Log.i("update", "called");
 //        pieChart.invalidate();

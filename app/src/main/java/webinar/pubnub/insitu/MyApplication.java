@@ -21,7 +21,7 @@ public class MyApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-        ButterKnife.setDebug(BuildConfig.DEBUG);
+//        ButterKnife.setDebug(BuildConfig.DEBUG);
         JodaTimeAndroid.init(this);
     }
 
