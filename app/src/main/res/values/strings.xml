@@ -140,5 +140,7 @@
    %2$.0f</p>
     ]]>
 </string>
+    <string name="pick_single_date">Single day</string>
+    <string name="pick_range_date">Range</string>
 
 </resources>

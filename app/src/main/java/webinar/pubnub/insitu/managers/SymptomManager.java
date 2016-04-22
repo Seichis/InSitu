@@ -151,7 +151,9 @@ public class SymptomManager implements ISymptomManager {
         // Update the data for the charts
 //        ChartManager.getInstance().updatePieChartDataByDay(DateTime.now().minus(84000000).getMillis());
         ChartManager.getInstance().updatePieChartDataByActivityByDay(DateTime.now().getMillis());
-        ChartManager.getInstance().updateBubbleChartDataByActivityByDay(DateTime.now().getMillis());
+//        ChartManager.getInstance().updateBubbleChartDataByActivityByDay(DateTime.now().getMillis());
+        ChartManager.getInstance().updateBubbleChartByRange(ChartManager.BY_ACTIVITIES,ChartManager.INTENSITY,DateTime.now().minusDays(5).getMillis(), DateTime.now().getMillis());
+
     }
 
     @Override
@@ -288,7 +290,7 @@ public class SymptomManager implements ISymptomManager {
         realm.commitTransaction();
         ChartManager.getInstance().updatePieChartDataByActivityByRange(DateTime.now().minusDays(1).getMillis(), DateTime.now().getMillis());
 //        ChartManager.getInstance().updateBubbleChartDataByDay(DateTime.now().getMillis());
-        ChartManager.getInstance().updateBubbleChartByRange(ChartManager.BY_WEATHER_CONDITION,ChartManager.TEMPERATURE,DateTime.now().minusDays(5).getMillis(), DateTime.now().getMillis());
+        ChartManager.getInstance().updateBubbleChartByRange(ChartManager.BY_ACTIVITIES,ChartManager.INTENSITY,DateTime.now().minusDays(5).getMillis(), DateTime.now().getMillis());
 
 
     }

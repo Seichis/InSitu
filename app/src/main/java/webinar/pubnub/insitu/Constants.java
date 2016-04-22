@@ -16,7 +16,7 @@ public class Constants {
      */
     public static final long DETECTION_INTERVAL_IN_MILLISECONDS = 60000;
 
-//    public static final String SHARED_PREFERENCES_DIARIES_NAME = PACKAGE_NAME + ".diaries";
+    //    public static final String SHARED_PREFERENCES_DIARIES_NAME = PACKAGE_NAME + ".diaries";
 //    public static final String SHARED_PREFERENCES_SYMPTOMS_ORDER_NAME = PACKAGE_NAME + ".symptoms";
     public static final String BROADCAST_ACTION = PACKAGE_NAME + ".BROADCAST_ACTION";
     public static final String ACTIVITY_EXTRA = PACKAGE_NAME + ".ACTIVITY_EXTRA";
@@ -75,10 +75,26 @@ public class Constants {
     //############ Intent rules main activity
     public static final int NEED_RESET = 2;
     public static final int UNKNOWN_ERROR = 3;
+    public static final int[] colors = new int[]{
+            R.color.graph_color1,
+            R.color.graph_color2,
+            R.color.graph_color3,
+            R.color.graph_color4,
+            R.color.graph_color5,
+            R.color.graph_color6,
+            R.color.graph_color7,
+            R.color.graph_color8,
+            R.color.graph_color9,
+            R.color.graph_color10,
+            R.color.graph_color11,
+            R.color.graph_color12,
+            R.color.graph_color13,
+            R.color.graph_color14,
+    };
+
+
     private Constants() {
     }
-
-
 
     /**
      * Returns a human readable String corresponding to a detected activity type.
@@ -106,7 +122,8 @@ public class Constants {
                 return resources.getString(R.string.unidentifiable_activity, detectedActivityType);
         }
     }
-/**
+
+    /**
      * Returns a human readable String corresponding to a detected activity type.
      */
     public static String getSavedActivityString(Context context, int detectedActivityType) {
@@ -126,5 +143,7 @@ public class Constants {
                 return resources.getString(R.string.unidentifiable_activity, detectedActivityType);
         }
     }
+
+
 
 }

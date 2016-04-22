@@ -298,11 +298,19 @@ public class ChartManager implements IChartManager {
         String[] bodyParts=context.getResources().getStringArray(R.array.BodyParts);
         realm.beginTransaction();
         realm.clear(MyBubbleChartData.class);
-        HashMap<Integer, RealmResults<Symptom>> symptomsBy = new HashMap<>();
+        HashMap<String, RealmResults<Symptom>> symptomsBy = new HashMap<>();
         symptoms = symptomManager.getAllSymptomsByRange(from, until);
         float totalSymptoms = getSymptomsCount();
         switch (by) {
             case BY_ACTIVITIES:
+                for (int i = 0; i < Constants.SAVED_ACTIVITIES.length; i++) {
+                    RealmResults<Symptom> symptomsPerActivity = symptomManager.getAllSymptomsByActivityByRange(Constants.SAVED_ACTIVITIES[i], from, until);
+                    String id=String.valueOf(i);
+
+                    if (symptomsPerActivity.size() > 0) {
+                        symptomsBy.put(id+";"+Constants.getSavedActivityString(context, Constants.SAVED_ACTIVITIES[i]), symptomsPerActivity);
+                    }
+                }
                 break;
             case BY_BODY_PART:
                 break;
@@ -314,37 +322,76 @@ public class ChartManager implements IChartManager {
                 break;
             case BY_WEATHER_CONDITION:
                 for (int i = 0; i < conditions.length; i++) {
+                    String id=String.valueOf(i);
                     RealmResults<Symptom> symptomsPerCondition = symptomManager.getAllSymptomsByWeatherConditionByRange(conditions[i], from, until);
                     if (symptomsPerCondition.size() > 0) {
-                        symptomsBy.put(i, symptomsPerCondition);
+                        symptomsBy.put(id+";"+conditions[i], symptomsPerCondition);
                     }
                 }
                 break;
             default:
                 break;
         }
-
+        MyBubbleChartData data;
         switch (what) {
             case INTENSITY:
+                data = new MyBubbleChartData();
+                for (Map.Entry<String, RealmResults<Symptom>> entry : symptomsBy.entrySet()) {
+                    float count = (float) entry.getValue().size();
+                    float meanValue=(float)entry.getValue().average("intensity");
+                    String [] classInfo=entry.getKey().split(";");
+
+                    data.setBubbleSize(count / totalSymptoms);
+
+                    data.setClassId(Integer.parseInt(classInfo[0]));
+                    data.setClassName(classInfo[1]);
+                    data.setValue(meanValue);
+                    realm.copyToRealm(data);
+                }
+                realm.commitTransaction();
+                if (ExplorationFragment.getInstance() != null) {
+                    ExplorationFragment.getInstance().updateBubbleChart();
+                }
                 break;
             case DISTRESS:
+                data = new MyBubbleChartData();
+                for (Map.Entry<String, RealmResults<Symptom>> entry : symptomsBy.entrySet()) {
+                    float count = (float) entry.getValue().size();
+                    float t = 0f;
+                    for (Symptom s : entry.getValue()) {
+                        t += s.getDescription().getDistress();
+                    }
+                    float meanValue = t / count;
+                    String [] classInfo=entry.getKey().split(";");
+
+                    data.setBubbleSize(count / totalSymptoms);
+
+                    data.setClassId(Integer.parseInt(classInfo[0]));
+                    data.setClassName(classInfo[1]);
+                    data.setValue(meanValue);
+                    realm.copyToRealm(data);
+                }
+                realm.commitTransaction();
+                if (ExplorationFragment.getInstance() != null) {
+                    ExplorationFragment.getInstance().updateBubbleChart();
+                }
                 break;
             case TEMPERATURE:
-                MyBubbleChartData data = new MyBubbleChartData();
-
-                float t = 0f;
-                for (Map.Entry<Integer, RealmResults<Symptom>> entry : symptomsBy.entrySet()) {
+                data = new MyBubbleChartData();
+                for (Map.Entry<String, RealmResults<Symptom>> entry : symptomsBy.entrySet()) {
                     float count = (float) entry.getValue().size();
+                    float t = 0f;
                     for (Symptom s : entry.getValue()) {
                         t += s.getContext().getTemperature();
                     }
-                    float meantemperature = t / count;
-
+                    float meanValue = t / count;
+                    String [] classInfo=entry.getKey().split(";");
 
                     data.setBubbleSize(count / totalSymptoms);
-                    data.setClassId(entry.getKey());
-                    data.setClassName(conditions[entry.getKey()]);
-                    data.setValue(meantemperature);
+
+                    data.setClassId(Integer.parseInt(classInfo[0]));
+                    data.setClassName(classInfo[1]);
+                    data.setValue(meanValue);
                     realm.copyToRealm(data);
                 }
                 realm.commitTransaction();
@@ -353,6 +400,7 @@ public class ChartManager implements IChartManager {
                 }
                 break;
             case HUMIDITY:
+
                 break;
             default:
                 break;

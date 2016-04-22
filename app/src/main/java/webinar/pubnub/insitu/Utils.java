@@ -61,6 +61,11 @@ public class Utils {
         return inDate.plusDays(1).withTimeAtStartOfDay().getMillis();
     }
 
+    public static DateTime getDate(int year,int month,int day){
+        DateTime dt = new DateTime((DateTimeZone.forTimeZone(TimeZone.getDefault())));
+        return dt.withDate(year,month,day);
+    }
+
 
 
 }

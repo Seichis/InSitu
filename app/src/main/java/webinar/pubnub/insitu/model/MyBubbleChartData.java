@@ -1,12 +1,14 @@
 package webinar.pubnub.insitu.model;
 
 import io.realm.RealmObject;
+import io.realm.annotations.Index;
+import io.realm.annotations.PrimaryKey;
 
 /**
  * Created by Konstantinos Michail on 4/21/2016.
  */
 public class MyBubbleChartData extends RealmObject {
-    int classId;
+    @PrimaryKey int classId;
     float bubbleSize;
     String className;
     float value;

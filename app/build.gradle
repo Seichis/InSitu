@@ -57,4 +57,5 @@ dependencies {
     compile 'com.daimajia.swipelayout:library:1.2.0@aar'
     compile 'com.daimajia.androidanimations:library:1.1.2@aar'
     compile 'net.danlew:android.joda:2.9.3'
+    compile 'com.wdullaer:materialdatetimepicker:2.3.0'
 }

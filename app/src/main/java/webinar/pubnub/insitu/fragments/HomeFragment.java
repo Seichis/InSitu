@@ -19,8 +19,11 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.realm.implementation.RealmPieData;
 import com.github.mikephil.charting.data.realm.implementation.RealmPieDataSet;
+import com.github.mikephil.charting.highlight.Highlight;
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
 import org.joda.time.DateTime;
@@ -28,6 +31,7 @@ import org.joda.time.DateTime;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import io.realm.RealmResults;
+import webinar.pubnub.insitu.Constants;
 import webinar.pubnub.insitu.MainActivity;
 import webinar.pubnub.insitu.R;
 import webinar.pubnub.insitu.adapters.HomeSymptomsAdapter;
@@ -49,6 +53,7 @@ public class HomeFragment extends Fragment {
     public HomeFragment() {
         // Required empty public constructor
     }
+    private static final String TAG = "HomeFragment";
 
 
     public static HomeFragment getInstance() {
@@ -93,9 +98,9 @@ public class HomeFragment extends Fragment {
 
 
         RealmPieDataSet<MyChartData> set = new RealmPieDataSet<>(result, "count", "id"); // stacked entries
-        set.setColors(ColorTemplate.JOYFUL_COLORS);
+//        set.setColors(ColorTemplate.JOYFUL_COLORS);
 
-//        set.setColors(new int[]{R.color.high, R.color.colorAccent, R.color.very_low, R.color.common_google_signin_btn_text_light, R.color.colorPrimary}, getContext());
+        set.setColors(Constants.colors, getContext());
         Log.i("pie chart", "entries" + set.getEntryCount());
 
         set.setLabel("");
@@ -114,6 +119,19 @@ public class HomeFragment extends Fragment {
         symptomsAdapter = null;
         symptomsAdapter = new HomeSymptomsAdapter(getContext(), SymptomManager.getInstance().getAllSymptomsByDay(DateTime.now().getMillis()));
         listView.setAdapter(symptomsAdapter);
+        pieChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
+            @Override
+            public void onValueSelected(Entry e, int dataSetIndex, Highlight h) {
+                Log.i(TAG,"select" + e.getVal());
+
+
+            }
+
+            @Override
+            public void onNothingSelected() {
+
+            }
+        });
 
 
     }
