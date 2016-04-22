@@ -33,8 +33,11 @@ import com.google.android.gms.maps.model.TileOverlayOptions;
 import com.google.maps.android.heatmaps.Gradient;
 import com.google.maps.android.heatmaps.HeatmapTileProvider;
 
+import org.joda.time.DateTime;
+
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.TreeMap;
 
 import webinar.pubnub.insitu.R;
@@ -84,7 +87,7 @@ public class HeatmapsDemoActivity extends BaseDemoActivity {
      * Also maps to the URL of the data set for attribution
      */
     private HashMap<String, DataSet> mLists = new HashMap<String, DataSet>();
-
+    ArrayList<String> options = new ArrayList<>();
     @Override
     protected int getLayoutId() {
         return R.layout.heatmaps_demo;
@@ -92,18 +95,13 @@ public class HeatmapsDemoActivity extends BaseDemoActivity {
 
     @Override
     protected void startDemo() {
+        options.clear();
+        options.add("Pain occurrences");
+        ArrayList<LatLng> pos = SymptomManager.getInstance().getSymptomsLatLon(DateTime.now().minusDays(10).getMillis(),DateTime.now().getMillis());
+        for (String op:options){
+            mLists.put(op,new DataSet(pos,op));
+        }
 
-//        for (Integer key : symptomTypes.keySet()) {
-//
-//            ArrayList<LatLng> pos = SymptomManager.getInstance().getSymptomslatLonByType(symptomTypes.get(key));
-////            Log.i(TAG, "pos "+ String.valueOf(pos));
-//            if (!pos.isEmpty()) {
-//                Log.i(TAG, symptomTypes.get(key) + String.valueOf(pos));
-//
-//                mLists.put(symptomTypes.get(key), new DataSet(pos,
-//                        symptomTypes.get(key)));
-//            }
-//        }
 
         getMap().moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(55.6761, 12.5683), 10));
 
@@ -113,7 +111,7 @@ public class HeatmapsDemoActivity extends BaseDemoActivity {
 
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
-//        spinner.setOnItemSelectedListener(new SpinnerActivity());
+        spinner.setOnItemSelectedListener(new SpinnerActivity());
 
 
         // Make the handler deal with the map
@@ -152,33 +150,33 @@ public class HeatmapsDemoActivity extends BaseDemoActivity {
         mDefaultOpacity = !mDefaultOpacity;
     }
 
-//    // Dealing with spinner choices
-//    public class SpinnerActivity implements AdapterView.OnItemSelectedListener {
-//        public void onItemSelected(AdapterView<?> parent, View view,
-//                                   int pos, long id) {
-//            TextView attribution = ((TextView) findViewById(R.id.attribution));
-//
-//            // Check if need to instantiate (avoid setData etc twice)
-//            if (mProvider == null) {
-//                mProvider = new HeatmapTileProvider.Builder().data(
-//                        mLists.get(symptomTypes.get(pos + 1)).getData()).build();
-//                mOverlay = getMap().addTileOverlay(new TileOverlayOptions().tileProvider(mProvider));
-//                // Render links
-//                attribution.setMovementMethod(LinkMovementMethod.getInstance());
-//            } else {
-//                mProvider.setData(mLists.get(symptomTypes.get(pos + 1)).getData());
-//                mOverlay.clearTileCache();
-//            }
-//            // Update attribution
-//            attribution.setText(Html.fromHtml(String.format(getString(R.string.attrib_format),
-//                    mLists.get(symptomTypes.get(pos + 1)).getUrl())));
-//
-//        }
-//
-//        public void onNothingSelected(AdapterView<?> parent) {
-//            // Another interface callback
-//        }
-//    }
+    // Dealing with spinner choices
+    public class SpinnerActivity implements AdapterView.OnItemSelectedListener {
+        public void onItemSelected(AdapterView<?> parent, View view,
+                                   int pos, long id) {
+            TextView attribution = ((TextView) findViewById(R.id.attribution));
+
+            // Check if need to instantiate (avoid setData etc twice)
+            if (mProvider == null) {
+                mProvider = new HeatmapTileProvider.Builder().data(
+                        mLists.get(options.get(pos)).getData()).build();
+                mOverlay = getMap().addTileOverlay(new TileOverlayOptions().tileProvider(mProvider));
+                // Render links
+                attribution.setMovementMethod(LinkMovementMethod.getInstance());
+            } else {
+                mProvider.setData(mLists.get(options.get(pos)).getData());
+                mOverlay.clearTileCache();
+            }
+            // Update attribution
+            attribution.setText(Html.fromHtml(String.format(getString(R.string.attrib_format),
+                    mLists.get(options.get(pos)).getUrl())));
+
+        }
+
+        public void onNothingSelected(AdapterView<?> parent) {
+            // Another interface callback
+        }
+    }
 
     /**
      * Helper class - stores data sets and sources.

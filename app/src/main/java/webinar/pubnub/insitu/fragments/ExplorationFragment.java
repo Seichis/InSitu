@@ -15,6 +15,7 @@ import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.BubbleChart;
 import com.github.mikephil.charting.data.realm.implementation.RealmBubbleData;
 import com.github.mikephil.charting.data.realm.implementation.RealmBubbleDataSet;
+import com.github.mikephil.charting.formatter.LargeValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.IBubbleDataSet;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 import com.wdullaer.materialdatetimepicker.time.RadialPickerLayout;
@@ -52,7 +53,7 @@ public class ExplorationFragment extends Fragment implements
     // OPTIONS[0]= dates ==> single or range,
     // OPTIONS[1]= intensity or distress
     // OPTIONS[2]= by activities,weather or body parts
-    private static int[] OPTIONS = new int[]{SHOW_SINGLE_DAY, SHOW_INTENSITY, SHOW_ACTIVITIES};
+    private static int[] OPTIONS = new int[]{SHOW_SINGLE_DAY, SHOW_INTENSITY, SHOW_BODY_PARTS};
     //By default show intensity
     private static ExplorationFragment explorationFragment;
     private static DateTime dt;
@@ -142,6 +143,8 @@ public class ExplorationFragment extends Fragment implements
         dpd.dismissOnPause(true);
         dpd.showYearPickerFirst(false);
         dpd.setAccentColor(ContextCompat.getColor(getContext(), Constants.colors[12]));
+        dpd.setMaxDate(now);
+
         String title="";
         switch (OPTIONS[0]){
             case SHOW_SINGLE_DAY:
@@ -173,11 +176,6 @@ public class ExplorationFragment extends Fragment implements
 
         ChartManager.getInstance().setup(bubbleChart);
 
-        bubbleChart.getXAxis().setDrawGridLines(true);
-        bubbleChart.getAxisLeft().setDrawGridLines(false);
-        bubbleChart.setPinchZoom(true);
-        bubbleChart.setAutoScaleMinMaxEnabled(false);
-        bubbleChart.getLegend().setEnabled(false);
         updateChartByOptions();
         setData();
 
@@ -191,12 +189,13 @@ public class ExplorationFragment extends Fragment implements
             case SHOW_SINGLE_DAY:
                 pickDayButtonFloat.setBackgroundColor(ContextCompat.getColor(getContext(), android.R.color.holo_blue_bright));
                 pickRangeButtonFloat.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.high));
-
+                ChartManager.getInstance().updateBubbleChartByDay(OPTIONS[2],OPTIONS[1],dt.getMillis());
                 break;
             case SHOW_RANGE:
                 pickRangeButtonFloat.setBackgroundColor(ContextCompat.getColor(getContext(), android.R.color.holo_blue_bright));
                 pickDayButtonFloat.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.high));
 
+                ChartManager.getInstance().updateBubbleChartByRange(OPTIONS[2],OPTIONS[1],dateRange.get(0).getMillis(),dateRange.get(1).getMillis());
                 break;
         }
 
@@ -219,7 +218,6 @@ public class ExplorationFragment extends Fragment implements
                 activitiesButtonFloat.setBackgroundColor(ContextCompat.getColor(getContext(),android.R.color.holo_blue_bright));
                 bodyPartButtonFloat.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorPrimaryDark));
                 weatherButtonFloat.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorPrimaryDark));
-
                 break;
             case SHOW_BODY_PARTS:
                 bodyPartButtonFloat.setBackgroundColor(ContextCompat.getColor(getContext(),android.R.color.holo_blue_bright));
@@ -241,7 +239,6 @@ public class ExplorationFragment extends Fragment implements
         RealmResults<MyBubbleChartData> result = ChartManager.getInstance().getBubbleChartData();
 
         RealmBubbleDataSet<MyBubbleChartData> set = new RealmBubbleDataSet<MyBubbleChartData>(result, "value", "classId", "bubbleSize");
-        set.setLabel("Realm BubbleDataSet");
         set.setColors(Constants.colors, getContext());
 
 //        set.setColors(ColorTemplate.JOYFUL_COLORS);
@@ -254,11 +251,16 @@ public class ExplorationFragment extends Fragment implements
 
         // set data
         bubbleChart.setData(data);
+        bubbleChart.getXAxis().setDrawGridLines(true);
+        bubbleChart.getAxisLeft().setDrawGridLines(false);
+        bubbleChart.setPinchZoom(true);
+        bubbleChart.setAutoScaleMinMaxEnabled(false);
+        bubbleChart.getLegend().setEnabled(false);
         bubbleChart.getXAxis().setLabelRotationAngle(30);
         bubbleChart.getXAxis().setLabelsToSkip(0);
         bubbleChart.getAxisLeft().setAxisMinValue(0);
-        bubbleChart.getAxisLeft().setAxisMaxValue(10);
-
+        bubbleChart.getAxisLeft().setAxisMaxValue(11);
+        bubbleChart.getAxisLeft().setValueFormatter(new LargeValueFormatter());
         bubbleChart.animateY(1400, Easing.EasingOption.EaseInOutQuart);
     }
 

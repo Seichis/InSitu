@@ -1,7 +1,5 @@
 package webinar.pubnub.insitu.model;
 
-import java.util.Date;
-
 import io.realm.RealmObject;
 
 /**
@@ -9,15 +7,17 @@ import io.realm.RealmObject;
  */
 public class Symptom extends RealmObject {
 
-    String symptomType;
     SymptomContext context;
     float intensity;
     int activityId;
-    boolean isError;
+    boolean isError = false;
     long id;
-    private Diary diary;
     long timestamp;
     Description description;
+    private Diary diary;
+
+    public Symptom() {
+    }
 
     public Description getDescription() {
         return description;
@@ -33,9 +33,6 @@ public class Symptom extends RealmObject {
 
     public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
-    }
-
-    public Symptom() {
     }
 
     public SymptomContext getContext() {
@@ -85,14 +82,6 @@ public class Symptom extends RealmObject {
 
     public void setIntensity(float intensity) {
         this.intensity = intensity;
-    }
-
-    public String getSymptomType() {
-        return symptomType;
-    }
-
-    public void setSymptomType(String symptomType) {
-        this.symptomType = symptomType;
     }
 
 

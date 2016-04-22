@@ -1,24 +1,21 @@
 package webinar.pubnub.insitu.model;
 
-import java.util.Date;
-
 import io.realm.RealmObject;
 
 /**
  * Created by Konstantinos Michail on 4/20/2016.
  */
 public class Description extends RealmObject {
-
-    float distress;
+    float distress=0f;
     String comments;
     String painType;
-    float duration;
-    String bodyPart;
+    float duration=0f;
+    String bodyPart="";
     String bodyPartDetails;
     String specificActivity;
     String medicineName;
-    float medicineAmount;
-    long dateMedicationConsumption;
+    float medicineAmount=0f;
+    long dateMedicationConsumption=0;
     String nonDrugTechniques;
 
     public Description() {

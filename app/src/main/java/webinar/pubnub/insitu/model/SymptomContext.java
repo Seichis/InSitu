@@ -25,7 +25,7 @@ public class SymptomContext extends RealmObject {
     private String placeType;
     private String city;
     // Weather variables
-    private float temperature;
+    private float temperature=0;
     private String weatherCondition;
     private String windChill;
     private String windDirection;
