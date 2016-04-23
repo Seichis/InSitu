@@ -38,7 +38,11 @@ public class MoreInfoDialog extends DialogFragment {
 
         Symptom symptom= SymptomManager.getInstance().getSymptomById(id);
 
+
+
+
         return new AlertDialog.Builder(getActivity())
+                .setView(view)
                 .setTitle(getString(R.string.more_info_title))
                 .setMessage(getString(R.string.more_info_message))
                 .setPositiveButton(R.string.done, new DialogInterface.OnClickListener() {

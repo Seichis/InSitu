@@ -10,6 +10,7 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -17,6 +18,7 @@ import java.util.TimeZone;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
+import webinar.pubnub.insitu.BackgroundService;
 import webinar.pubnub.insitu.Constants;
 import webinar.pubnub.insitu.R;
 import webinar.pubnub.insitu.Utils;
@@ -150,10 +152,12 @@ public class SymptomManager implements ISymptomManager {
         // Update the data for the charts
 //        ChartManager.getInstance().updatePieChartDataByDay(DateTime.now().minus(84000000).getMillis());
         ChartManager.getInstance().updatePieChartDataByActivityByDay(DateTime.now().getMillis());
+        BackgroundService.getInstance().createOrUpdateBubble();
 //        ChartManager.getInstance().updateBubbleChartDataByActivityByDay(DateTime.now().getMillis());
 //        ChartManager.getInstance().updateBubbleChartByRange(ChartManager.BY_ACTIVITIES,ChartManager.INTENSITY,DateTime.now().minusDays(5).getMillis(), DateTime.now().getMillis());
 
     }
+
 
     @Override
     public RealmResults<Symptom> getAllSymptomsByDay(long date) {
@@ -281,14 +285,14 @@ public class SymptomManager implements ISymptomManager {
             float finalY = rand.nextFloat() * (maxX - minX) + minX;
 
             if ((Utils.randInt(2, 1000) % 2) == 0) {
-                sc.setLongitude(baseLon - finalX/2);
+                sc.setLongitude(baseLon - finalX / 2);
             } else {
                 sc.setLongitude(baseLon + finalX / 2);
             }
             if ((Utils.randInt(2, 1000) % 2) == 0) {
                 sc.setLatitude(baseLat - finalY / 2);
             } else {
-                sc.setLatitude(baseLat + finalY/2);
+                sc.setLatitude(baseLat + finalY / 2);
 
             }
 
@@ -318,5 +322,11 @@ public class SymptomManager implements ISymptomManager {
 
         return Math.max(0, Math.min(time * 2.5f / 1000, 10));
 
+    }
+
+    public Calendar getMinDate() {
+        Calendar tmp = Calendar.getInstance();
+        tmp.setTimeInMillis(realm.allObjects(Symptom.class).where().min("timestamp").longValue());
+        return tmp;
     }
 }

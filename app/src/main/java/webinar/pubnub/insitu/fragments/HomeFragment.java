@@ -17,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.Entry;
@@ -25,6 +26,9 @@ import com.github.mikephil.charting.data.realm.implementation.RealmPieDataSet;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.txusballesteros.bubbles.BubbleLayout;
+import com.txusballesteros.bubbles.BubblesManager;
+import com.txusballesteros.bubbles.OnInitializedCallback;
 
 import org.joda.time.DateTime;
 
@@ -93,7 +97,6 @@ public class HomeFragment extends Fragment {
 
 
     private void setData() {
-
         RealmResults<MyChartData> result = ChartManager.getInstance().getPieChartData();
 
 
@@ -135,6 +138,8 @@ public class HomeFragment extends Fragment {
 
 
     }
+
+
 
     private SpannableString generateCenterSpannableText() {
         int symptomCountToday = (int) ChartManager.getInstance().getSymptomsCount();

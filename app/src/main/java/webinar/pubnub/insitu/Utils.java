@@ -6,6 +6,8 @@ import android.util.Log;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import java.util.Random;
 import java.util.TimeZone;
@@ -66,6 +68,9 @@ public class Utils {
         return dt.withDate(year,month,day);
     }
 
-
+    public static String getFormatedDate(DateTime date){
+        DateTimeFormatter dtfOut = DateTimeFormat.forPattern("MM/dd/yyyy");
+        return dtfOut.print(date);
+    }
 
 }

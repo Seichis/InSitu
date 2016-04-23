@@ -8,11 +8,25 @@ import io.realm.annotations.PrimaryKey;
  * Created by Konstantinos Michail on 4/21/2016.
  */
 public class MyBubbleChartData extends RealmObject {
-    @PrimaryKey int classId;
+    int classId;
     float bubbleSize;
     String className;
     float value;
-    public MyBubbleChartData(){}
+    @Index
+    int setId=1;
+
+    public int getSetId() {
+        return setId;
+    }
+
+    public void setSetId(int setId) {
+        this.setId = setId;
+    }
+
+    public MyBubbleChartData() {
+    }
+
+
 
     public int getClassId() {
         return classId;

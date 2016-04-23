@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +26,7 @@ import org.joda.time.DateTime;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
+import java.util.TreeMap;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -35,6 +36,7 @@ import webinar.pubnub.insitu.Constants;
 import webinar.pubnub.insitu.R;
 import webinar.pubnub.insitu.Utils;
 import webinar.pubnub.insitu.managers.ChartManager;
+import webinar.pubnub.insitu.managers.SymptomManager;
 import webinar.pubnub.insitu.model.MyBubbleChartData;
 
 public class ExplorationFragment extends Fragment implements
@@ -43,6 +45,7 @@ public class ExplorationFragment extends Fragment implements
 
     public static final int SHOW_DISTRESS = 0;
     public static final int SHOW_INTENSITY = 1;
+    public static final int SHOW_INTENSITY_AND_DISTRESS = 2;
     public static final int SHOW_SINGLE_DAY = 0;
     public static final int SHOW_RANGE = 1;
     public static final int SHOW_ACTIVITIES = 0;
@@ -53,7 +56,7 @@ public class ExplorationFragment extends Fragment implements
     // OPTIONS[0]= dates ==> single or range,
     // OPTIONS[1]= intensity or distress
     // OPTIONS[2]= by activities,weather or body parts
-    private static int[] OPTIONS = new int[]{SHOW_SINGLE_DAY, SHOW_INTENSITY, SHOW_BODY_PARTS};
+    private static int[] OPTIONS = new int[]{SHOW_SINGLE_DAY, SHOW_INTENSITY_AND_DISTRESS, SHOW_ACTIVITIES};
     //By default show intensity
     private static ExplorationFragment explorationFragment;
     private static DateTime dt;
@@ -75,6 +78,7 @@ public class ExplorationFragment extends Fragment implements
     @Bind(R.id.pick_day_button)
     ButtonFloat pickDayButtonFloat;
     private OnExplorationInteractionListener mListener;
+    private int bubbleColor;
 
     public ExplorationFragment() {
         // Required empty public constructor
@@ -100,19 +104,36 @@ public class ExplorationFragment extends Fragment implements
     @OnClick(R.id.by_weather_button)
     void chartByWeather() {
         OPTIONS[2] = SHOW_WEATHER;
-
         updateChartByOptions();
     }
 
     @OnClick(R.id.intensity_button)
     void chartByIntensity() {
-        OPTIONS[1] = SHOW_INTENSITY;
+        switch (OPTIONS[1]) {
+            case SHOW_INTENSITY:
+                OPTIONS[1] = SHOW_INTENSITY;
+                break;
+            case SHOW_DISTRESS:
+                OPTIONS[1] = SHOW_INTENSITY_AND_DISTRESS;
+                break;
+            case SHOW_INTENSITY_AND_DISTRESS:
+                OPTIONS[1] = SHOW_DISTRESS;
+        }
         updateChartByOptions();
     }
 
     @OnClick(R.id.distress_button)
     void chartByDistress() {
-        OPTIONS[1] = SHOW_DISTRESS;
+        switch (OPTIONS[1]) {
+            case SHOW_DISTRESS:
+                OPTIONS[1] = SHOW_DISTRESS;
+                break;
+            case SHOW_INTENSITY:
+                OPTIONS[1] = SHOW_INTENSITY_AND_DISTRESS;
+                break;
+            case SHOW_INTENSITY_AND_DISTRESS:
+                OPTIONS[1] = SHOW_INTENSITY;
+        }
         updateChartByOptions();
     }
 
@@ -139,25 +160,26 @@ public class ExplorationFragment extends Fragment implements
                 now.get(Calendar.DAY_OF_MONTH)
         );
 
-//        dpd.vibrate(vibrateDate.isChecked());
         dpd.dismissOnPause(true);
         dpd.showYearPickerFirst(false);
         dpd.setAccentColor(ContextCompat.getColor(getContext(), Constants.colors[12]));
-        dpd.setMaxDate(now);
 
-        String title="";
-        switch (OPTIONS[0]){
+        dpd.setMaxDate(now);
+        dpd.setMinDate(SymptomManager.getInstance().getMinDate());
+        String title = "";
+        switch (OPTIONS[0]) {
             case SHOW_SINGLE_DAY:
-                title="Choose a date to explore";
+                title = "Choose a date to explore";
                 break;
             case SHOW_RANGE:
-                if (dateRange.isEmpty()){
-                    title="From";
-                }else{
-                    Calendar tmp=Calendar.getInstance();
+                if (dateRange.isEmpty()) {
+                    title = "From";
+                    dpd.autoDismiss(true);
+                } else {
+                    Calendar tmp = Calendar.getInstance();
                     tmp.setTimeInMillis(dateRange.get(0).getMillis());
                     dpd.setMinDate(tmp);
-                    title="Until";
+                    title = "From "+Utils.getFormatedDate(dateRange.get(0)) +"\nUntil";
                 }
 
         }
@@ -177,25 +199,26 @@ public class ExplorationFragment extends Fragment implements
         ChartManager.getInstance().setup(bubbleChart);
 
         updateChartByOptions();
-        setData();
+//        setData();
 
     }
 
     void updateChartByOptions() {
         if (dt == null) {
+            Log.i(TAG,"null dt");
             dt = DateTime.now();
         }
         switch (OPTIONS[0]) {
             case SHOW_SINGLE_DAY:
                 pickDayButtonFloat.setBackgroundColor(ContextCompat.getColor(getContext(), android.R.color.holo_blue_bright));
                 pickRangeButtonFloat.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.high));
-                ChartManager.getInstance().updateBubbleChartByDay(OPTIONS[2],OPTIONS[1],dt.getMillis());
+                ChartManager.getInstance().updateBubbleChartByDay(OPTIONS[2], OPTIONS[1], dt.getMillis());
                 break;
             case SHOW_RANGE:
                 pickRangeButtonFloat.setBackgroundColor(ContextCompat.getColor(getContext(), android.R.color.holo_blue_bright));
                 pickDayButtonFloat.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.high));
 
-                ChartManager.getInstance().updateBubbleChartByRange(OPTIONS[2],OPTIONS[1],dateRange.get(0).getMillis(),dateRange.get(1).getMillis());
+                ChartManager.getInstance().updateBubbleChartByRange(OPTIONS[2], OPTIONS[1], dateRange.get(0).getMillis(), dateRange.get(1).getMillis());
                 break;
         }
 
@@ -208,25 +231,27 @@ public class ExplorationFragment extends Fragment implements
             case SHOW_DISTRESS:
                 distressButtonFloat.setBackgroundColor(ContextCompat.getColor(getContext(), android.R.color.holo_blue_bright));
                 intensityButtonFloat.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.graph_color8));
-
-
+                break;
+            case SHOW_INTENSITY_AND_DISTRESS:
+                distressButtonFloat.setBackgroundColor(ContextCompat.getColor(getContext(), android.R.color.holo_blue_bright));
+                intensityButtonFloat.setBackgroundColor(ContextCompat.getColor(getContext(), android.R.color.holo_blue_bright));
                 break;
         }
 
         switch (OPTIONS[2]) {
             case SHOW_ACTIVITIES:
-                activitiesButtonFloat.setBackgroundColor(ContextCompat.getColor(getContext(),android.R.color.holo_blue_bright));
+                activitiesButtonFloat.setBackgroundColor(ContextCompat.getColor(getContext(), android.R.color.holo_blue_bright));
                 bodyPartButtonFloat.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorPrimaryDark));
                 weatherButtonFloat.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorPrimaryDark));
                 break;
             case SHOW_BODY_PARTS:
-                bodyPartButtonFloat.setBackgroundColor(ContextCompat.getColor(getContext(),android.R.color.holo_blue_bright));
+                bodyPartButtonFloat.setBackgroundColor(ContextCompat.getColor(getContext(), android.R.color.holo_blue_bright));
                 weatherButtonFloat.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorPrimaryDark));
                 activitiesButtonFloat.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorPrimaryDark));
 
                 break;
             case SHOW_WEATHER:
-                weatherButtonFloat.setBackgroundColor(ContextCompat.getColor(getContext(),android.R.color.holo_blue_bright));
+                weatherButtonFloat.setBackgroundColor(ContextCompat.getColor(getContext(), android.R.color.holo_blue_bright));
                 bodyPartButtonFloat.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorPrimaryDark));
                 activitiesButtonFloat.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorPrimaryDark));
 
@@ -236,17 +261,31 @@ public class ExplorationFragment extends Fragment implements
 
     private void setData() {
 
-        RealmResults<MyBubbleChartData> result = ChartManager.getInstance().getBubbleChartData();
-
-        RealmBubbleDataSet<MyBubbleChartData> set = new RealmBubbleDataSet<MyBubbleChartData>(result, "value", "classId", "bubbleSize");
-        set.setColors(Constants.colors, getContext());
-
-//        set.setColors(ColorTemplate.JOYFUL_COLORS);
+        TreeMap<Integer, RealmResults<MyBubbleChartData>>
+                realmResults = new TreeMap<>();
         ArrayList<IBubbleDataSet> dataSets = new ArrayList<IBubbleDataSet>();
-        dataSets.add(set); // add the dataset
+
+
+        RealmResults<MyBubbleChartData> result = ChartManager.getInstance().getBubbleChartData();
+        RealmResults<MyBubbleChartData> distinctObjects = result.where().distinct("setId");
+        for (MyBubbleChartData cd : distinctObjects) {
+            realmResults.put(cd.getSetId(), result.where().equalTo("setId", cd.getSetId()).findAll());
+        }
+
+        RealmResults<MyBubbleChartData> finalResult = null;
+        for (TreeMap.Entry<Integer, RealmResults<MyBubbleChartData>> chartDatas : realmResults.entrySet()) {
+            finalResult = chartDatas.getValue();
+            RealmBubbleDataSet<MyBubbleChartData> set = new RealmBubbleDataSet<MyBubbleChartData>(finalResult, "value", "classId", "bubbleSize");
+
+            set.setColor(ContextCompat.getColor(getContext(), getBubbleColor(chartDatas.getKey())));
+
+            dataSets.add(set);
+
+
+        }
 
         // create a data object with the dataset list
-        RealmBubbleData data = new RealmBubbleData(result, "className", dataSets);
+        RealmBubbleData data = new RealmBubbleData(finalResult, "className", dataSets);
         ChartManager.getInstance().styleData(data);
 
         // set data
@@ -311,7 +350,7 @@ public class ExplorationFragment extends Fragment implements
     public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
         switch (OPTIONS[0]) {
             case SHOW_SINGLE_DAY:
-                DateTime dt = Utils.getDate(year, monthOfYear + 1, dayOfMonth);
+                dt = Utils.getDate(year, monthOfYear + 1, dayOfMonth);
                 updateChartByOptions();
                 break;
             case SHOW_RANGE:
@@ -331,6 +370,21 @@ public class ExplorationFragment extends Fragment implements
 
     @Override
     public void onTimeSet(RadialPickerLayout view, int hourOfDay, int minute, int second) {
+
+    }
+
+    public int getBubbleColor(int setId) {
+        if (OPTIONS[1] == SHOW_INTENSITY) {
+            return Constants.colors[1];
+        } else if (OPTIONS[1] == SHOW_DISTRESS) {
+            return Constants.colors[6];
+        } else if (setId == 1) {
+            return Constants.colors[1];
+        } else if (setId == 2) {
+            return Constants.colors[6];
+        } else {
+            return Constants.colors[setId+1];
+        }
 
     }
 

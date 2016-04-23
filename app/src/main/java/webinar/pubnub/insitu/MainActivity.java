@@ -2,6 +2,7 @@ package webinar.pubnub.insitu;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -76,6 +77,8 @@ public class MainActivity extends BaseActivity
 
         viewPagerTab.setViewPager(viewPager);
     }
+
+
 
     private void setupLayout() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -160,22 +163,31 @@ public class MainActivity extends BaseActivity
 
     @Override
     public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-        FlicManager.getInstance(this, new FlicManagerInitializedCallback() {
-            @Override
-            public void onInitialized(FlicManager manager) {
-                button = manager.completeGrabButton(requestCode, resultCode, data);
-                if (button != null) {
-                    button.registerListenForBroadcast(FlicBroadcastReceiverFlags.UP_OR_DOWN | FlicBroadcastReceiverFlags.REMOVED);
-//                    button.setActiveMode(false);
-                    Toast.makeText(MainActivity.this, "Grabbed a button", Toast.LENGTH_SHORT).show();
-                    Log.i(TAG, "button id" + button.getButtonId());
-                    Log.i(TAG, "button connection status" + button.getConnectionStatus());
 
-                } else {
-                    Toast.makeText(MainActivity.this, "Did not grab any button", Toast.LENGTH_SHORT).show();
+        if (requestCode == 1337) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (android.provider.Settings.canDrawOverlays(this)) {
+                    // continue here - permission was granted
                 }
             }
-        });
+        }else{
+            FlicManager.getInstance(this, new FlicManagerInitializedCallback() {
+                @Override
+                public void onInitialized(FlicManager manager) {
+                    button = manager.completeGrabButton(requestCode, resultCode, data);
+                    if (button != null) {
+                        button.registerListenForBroadcast(FlicBroadcastReceiverFlags.UP_OR_DOWN | FlicBroadcastReceiverFlags.REMOVED);
+//                    button.setActiveMode(false);
+                        Toast.makeText(MainActivity.this, "Grabbed a button", Toast.LENGTH_SHORT).show();
+                        Log.i(TAG, "button id" + button.getButtonId());
+                        Log.i(TAG, "button connection status" + button.getConnectionStatus());
+
+                    } else {
+                        Toast.makeText(MainActivity.this, "Did not grab any button", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        }
     }
 
     @Override

@@ -142,5 +142,7 @@
 </string>
     <string name="pick_single_date">Single day</string>
     <string name="pick_range_date">Range</string>
+    <string name="permission_system_alert_rationale">We need to remind you of providind additional details for better care delivery from your coach. </string>
+    <string name="permision_available_system_alert">Permission to notify you is granted</string>
 
 </resources>

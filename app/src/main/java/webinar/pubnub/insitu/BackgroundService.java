@@ -1,6 +1,7 @@
 package webinar.pubnub.insitu;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.Dialog;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -15,6 +16,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -27,6 +29,8 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -41,6 +45,9 @@ import com.google.android.gms.location.LocationServices;
 import com.google.common.base.Functions;
 import com.google.common.collect.EvictingQueue;
 import com.google.common.collect.Ordering;
+import com.txusballesteros.bubbles.BubbleLayout;
+import com.txusballesteros.bubbles.BubblesManager;
+import com.txusballesteros.bubbles.OnInitializedCallback;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -72,7 +79,7 @@ public class BackgroundService extends Service implements IBackgroundSettingsSer
     protected ActivityDetectionBroadcastReceiver mBroadcastReceiver;
     EvictingQueue<String> activityQueue;
     MainActivity mainActivity = null;
-//    AlarmBReceiver alarmBReceiver = null;
+    //    AlarmBReceiver alarmBReceiver = null;
     AlertDialog alert;
     DataManager dataManager;
     PatientManager patientManager;
@@ -85,6 +92,8 @@ public class BackgroundService extends Service implements IBackgroundSettingsSer
     private GoogleApiClient locationClient;
     private Realm realm;
     private RealmConfiguration realmConfig;
+    private BubblesManager bubblesManager;
+
     public BackgroundService() {
     }
 
@@ -112,6 +121,8 @@ public class BackgroundService extends Service implements IBackgroundSettingsSer
         buildLocationClient();
         setupActivityRecognition();
         checkSettings();
+        checkPermissions();
+        checkDrawOverlayPermission();
         return START_NOT_STICKY;
     }
 
@@ -139,10 +150,53 @@ public class BackgroundService extends Service implements IBackgroundSettingsSer
         settingsManager = SettingsManager.getInstance();
         settingsManager.init(backgroundService);
 
-        chartManager=ChartManager.getInstance();
+        chartManager = ChartManager.getInstance();
         chartManager.init(backgroundService);
 
         symptomManager.fillData();
+    }
+
+    public void createOrUpdateBubble() {
+        initializeBubblesManager();
+    }
+
+    private void addNewBubble() {
+        BubbleLayout bubbleView = (BubbleLayout) LayoutInflater.from(getApplicationContext()).inflate(R.layout.bubble_layout, null);
+        TextView numberTv=(TextView) bubbleView.getChildAt(1);
+
+        numberTv.setText(String.valueOf(299));
+        bubbleView.setOnBubbleRemoveListener(new BubbleLayout.OnBubbleRemoveListener() {
+            @Override
+            public void onBubbleRemoved(BubbleLayout bubble) {
+            }
+        });
+        bubbleView.setOnBubbleClickListener(new BubbleLayout.OnBubbleClickListener() {
+
+            @Override
+            public void onBubbleClick(BubbleLayout bubble) {
+                Toast.makeText(backgroundService, "Clicked !",
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+        bubbleView.setShouldStickToWall(true);
+        bubblesManager.addBubble(bubbleView, 60, 20);
+    }
+
+    private void initializeBubblesManager() {
+        if (bubblesManager == null) {
+            bubblesManager = new BubblesManager.Builder(backgroundService)
+                    .setTrashLayout(R.layout.bubble_trash_layout)
+                    .setInitializationCallback(new OnInitializedCallback() {
+                        @Override
+                        public void onInitialized() {
+                            addNewBubble();
+                        }
+                    })
+                    .build();
+        } else {
+            addNewBubble();
+        }
+        bubblesManager.initialize();
     }
 
     private void setupActivityRecognition() {
@@ -178,14 +232,15 @@ public class BackgroundService extends Service implements IBackgroundSettingsSer
 
     }
 
-    void checkSettings(){
+    void checkSettings() {
         settings = SettingsManager.getInstance().getSettings();
-        if (settings==null) {
+        if (settings == null) {
             startActivity(new Intent(backgroundService, CreatePatientActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
         } else {
             Log.i("settings", settings.getPatient().getPatientName());
         }
     }
+
     private void flicSetup() {
         FlicManager.setAppCredentials("59eab426-39a4-4457-8e7d-2f67f9733d54", "d0ef92f6-a494-4f3d-96c0-841c6b434909", "ScaleMeasurement");
         if (mainActivity != null) {
@@ -213,6 +268,7 @@ public class BackgroundService extends Service implements IBackgroundSettingsSer
             locationClient.disconnect();
 
         }
+        bubblesManager.recycle();
         removeActivityUpdates();
         mGoogleApiClient.disconnect();
         super.onDestroy();
@@ -389,7 +445,6 @@ public class BackgroundService extends Service implements IBackgroundSettingsSer
         if (servicesConnected()) {
             // Get the current location
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                checkPermissions();
                 Log.i(TAG, "no permissions");
                 return null;
             }
@@ -404,17 +459,24 @@ public class BackgroundService extends Service implements IBackgroundSettingsSer
     protected void checkPermissions() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) { // Permission was added in API Level 16
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) !=
+                    PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) !=
+                    PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, Manifest.permission.SYSTEM_ALERT_WINDOW) !=
                     PackageManager.PERMISSION_GRANTED) {
                 if (mainActivity != null) {
                     mainActivity.requestFineLocationPermission();
                 }
             }
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) !=
-                    PackageManager.PERMISSION_GRANTED) {
-                if (mainActivity != null) {
-                    mainActivity.requestCoarseLocationPermission();
-                }
-            }
+//            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) !=
+//                    PackageManager.PERMISSION_GRANTED) {
+//                if (mainActivity != null) {
+//                    mainActivity.requestCoarseLocationPermission();
+//                }
+//            }if (ContextCompat.checkSelfPermission(this, Manifest.permission.SYSTEM_ALERT_WINDOW) !=
+//                    PackageManager.PERMISSION_GRANTED) {
+//                if (mainActivity != null) {
+//                    mainActivity.requestSystemWindowPermission();
+//                }
+//            }
         }
     }
 
@@ -531,6 +593,15 @@ public class BackgroundService extends Service implements IBackgroundSettingsSer
 
     public Queue<String> getActivityQueue() {
         return activityQueue;
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    public void checkDrawOverlayPermission() {
+        if (!android.provider.Settings.canDrawOverlays(this)) {
+            Intent intent = new Intent(android.provider.Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                    Uri.parse("package:" + getPackageName()));
+            mainActivity.startActivityForResult(intent, 1337);
+        }
     }
 
     /*
