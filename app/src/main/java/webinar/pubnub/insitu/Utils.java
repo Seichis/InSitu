@@ -4,7 +4,13 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.util.Log;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
 import java.util.Random;
+import java.util.TimeZone;
 
 /**
  * Created by Konstantinos Michail on 1/16/2016.
@@ -46,4 +52,48 @@ public class Utils {
         return false;
     }
 
+    public static long getDayStart(long date,int pastDays){
+        DateTime inDate = new DateTime(date, DateTimeZone.forTimeZone(TimeZone.getDefault()));
+        return (pastDays<=1)?inDate.withTimeAtStartOfDay().getMillis():inDate.minus(pastDays-1).withTimeAtStartOfDay().getMillis();
+
+    }
+
+    public static long getDaysEnd(long date){
+        DateTime inDate = new DateTime(date, DateTimeZone.forTimeZone(TimeZone.getDefault()));
+        return inDate.plusDays(1).withTimeAtStartOfDay().getMillis();
+    }
+
+    public static DateTime getDate(int year,int month,int day){
+        DateTime dt = new DateTime((DateTimeZone.forTimeZone(TimeZone.getDefault())));
+        return dt.withDate(year,month,day);
+    }
+
+    public static String getFormatedDate(DateTime date){
+        DateTimeFormatter dtfOut = DateTimeFormat.forPattern("MM/dd/yyyy");
+        return dtfOut.print(date);
+    }
+
+    public static String getDateFormatForListview(long date){
+        DateTime dt = DateTime.now(DateTimeZone.forTimeZone(TimeZone.getDefault()));
+        String hour="";
+        float difMinutes=(float)(dt.getMillis()-date)/(1000*60);
+        if (difMinutes<30){
+            return "Less than half an hour ago";
+        }else{
+            int hours = Math.round(difMinutes/60);
+            return "About " + hours + "ago";
+        }
+    }
+
+    public static int[] getHourAndMin(long date){
+        int[] hourMinute=new int[2];
+        DateTime dt =new DateTime(date,DateTimeZone.forTimeZone(TimeZone.getDefault()));
+        hourMinute[0]=dt.getHourOfDay();
+        hourMinute[1]=dt.getMinuteOfHour();
+        return hourMinute;
+    }
+
+    public static long getDateFromHourAndMin(int hour,int minute) {
+        return DateTime.now().withHourOfDay(hour).withMinuteOfHour(minute).getMillis();
+    }
 }

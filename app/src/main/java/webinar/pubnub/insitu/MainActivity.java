@@ -1,6 +1,8 @@
 package webinar.pubnub.insitu;
 
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -17,6 +19,7 @@ import android.widget.Toast;
 
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
 import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItemAdapter;
+import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItems;
 
 import java.util.HashMap;
 
@@ -26,12 +29,14 @@ import io.flic.lib.FlicBroadcastReceiverFlags;
 import io.flic.lib.FlicButton;
 import io.flic.lib.FlicManager;
 import io.flic.lib.FlicManagerInitializedCallback;
+import webinar.pubnub.insitu.fragments.ExplorationFragment;
+import webinar.pubnub.insitu.fragments.HomeFragment;
 import webinar.pubnub.insitu.managers.SettingsManager;
 import webinar.pubnub.insitu.maps.HeatmapsDemoActivity;
 import webinar.pubnub.insitu.model.Settings;
 
 public class MainActivity extends BaseActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener,HomeFragment.OnHomeInteractionListener,ExplorationFragment.OnExplorationInteractionListener {
 
     private static final String TAG = "MainActivity";
     static MainActivity mainActivity;
@@ -40,7 +45,6 @@ public class MainActivity extends BaseActivity
     ViewPager viewPager;
     @Bind(R.id.viewpagertab)
     SmartTabLayout viewPagerTab;
-    FragmentPagerItemAdapter adapter;
     Intent serviceIntent;
     FlicButton button;
     HashMap<String, Class<? extends Fragment>> fragmentTitleMap;
@@ -59,8 +63,39 @@ public class MainActivity extends BaseActivity
 
         setupLayout();
         startBackgroundService();
-
+        setupTabs();
+        if (getIntent().getExtras() != null) {
+            Bundle extras = getIntent().getExtras();
+            checkRule(extras.getInt("rule", -1));
+        }
     }
+
+
+
+    private void checkRule(int rule) {
+        switch (rule) {
+            case Constants.START_FILL_MORE_DATA_ACTIVITY:
+
+                break;
+            default:
+                Log.i(TAG, "Rules : Invalid rule");
+                break;
+        }
+    }
+    FragmentPagerItemAdapter adapter;
+    private void setupTabs() {
+        adapter = new FragmentPagerItemAdapter(
+                getSupportFragmentManager(), FragmentPagerItems.with(this)
+                .add("Home", HomeFragment.class)
+                .add("Explore", ExplorationFragment.class)
+                .create());
+
+        viewPager.setAdapter(adapter);
+
+        viewPagerTab.setViewPager(viewPager);
+    }
+
+
 
     private void setupLayout() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -145,22 +180,31 @@ public class MainActivity extends BaseActivity
 
     @Override
     public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-        FlicManager.getInstance(this, new FlicManagerInitializedCallback() {
-            @Override
-            public void onInitialized(FlicManager manager) {
-                button = manager.completeGrabButton(requestCode, resultCode, data);
-                if (button != null) {
-                    button.registerListenForBroadcast(FlicBroadcastReceiverFlags.UP_OR_DOWN | FlicBroadcastReceiverFlags.REMOVED);
-//                    button.setActiveMode(false);
-                    Toast.makeText(MainActivity.this, "Grabbed a button", Toast.LENGTH_SHORT).show();
-                    Log.i(TAG, "button id" + button.getButtonId());
-                    Log.i(TAG, "button connection status" + button.getConnectionStatus());
 
-                } else {
-                    Toast.makeText(MainActivity.this, "Did not grab any button", Toast.LENGTH_SHORT).show();
+        if (requestCode == 1337) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (android.provider.Settings.canDrawOverlays(this)) {
+                    // continue here - permission was granted
                 }
             }
-        });
+        }else{
+            FlicManager.getInstance(this, new FlicManagerInitializedCallback() {
+                @Override
+                public void onInitialized(FlicManager manager) {
+                    button = manager.completeGrabButton(requestCode, resultCode, data);
+                    if (button != null) {
+                        button.registerListenForBroadcast(FlicBroadcastReceiverFlags.UP_OR_DOWN | FlicBroadcastReceiverFlags.REMOVED);
+//                    button.setActiveMode(false);
+                        Toast.makeText(MainActivity.this, "Grabbed a button", Toast.LENGTH_SHORT).show();
+                        Log.i(TAG, "button id" + button.getButtonId());
+                        Log.i(TAG, "button connection status" + button.getConnectionStatus());
+
+                    } else {
+                        Toast.makeText(MainActivity.this, "Did not grab any button", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        }
     }
 
     @Override
@@ -176,5 +220,16 @@ public class MainActivity extends BaseActivity
 
     public FlicButton getButton() {
         return button;
+    }
+
+
+    @Override
+    public void OnHomeInteraction(Uri uri) {
+
+    }
+
+    @Override
+    public void OnExplorationInteraction(Uri uri) {
+
     }
 }

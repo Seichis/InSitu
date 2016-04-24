@@ -23,12 +23,19 @@ android {
     }
     repositories {
         maven { url "https://jitpack.io" }
+        jcenter()
+        mavenCentral()
     }
 }
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
+    compile project(path: ':movesAndroidAPI')
+    compile project(path: ':fliclib')
+    //Swipe layout
+
+
     compile 'com.android.support:appcompat-v7:23.3.0'
     compile 'com.android.support:design:23.3.0'
     compile 'com.github.PhilJay:MPAndroidChart:v2.2.4'
@@ -43,9 +50,20 @@ dependencies {
     compile 'com.ogaclejapan.smarttablayout:library:1.6.0@aar'
     compile 'com.ogaclejapan.smarttablayout:utils-v4:1.6.0@aar'
     compile 'com.android.support:support-v4:23.3.0'
-    compile project(path: ':movesAndroidAPI')
     compile 'com.google.guava:guava:19.0'
     compile 'com.google.maps.android:android-maps-utils:0.4.3'
+    compile 'com.github.vajro:MaterialDesignLibrary:1.6'
+    compile 'com.github.clans:fab:1.6.3'
+    compile 'com.android.support:recyclerview-v7:23.3.0'
 
-    compile project(path: ':fliclib')
+    compile 'net.danlew:android.joda:2.9.3'
+    compile 'com.wdullaer:materialdatetimepicker:2.3.0'
+    compile 'com.txusballesteros:bubbles:1.2.1'
+
+    compile 'com.nhaarman.listviewanimations:lib-core:3.1.0@aar'
+    compile 'com.nhaarman.listviewanimations:lib-manipulation:3.1.0@aar'
+    compile 'com.nhaarman.listviewanimations:lib-core-slh:3.1.0@aar'
+
+    compile 'com.wrapp.floatlabelededittext:library:0.0.6'
+    compile 'com.andreabaccega:android-form-edittext:1.2.1@aar'
 }

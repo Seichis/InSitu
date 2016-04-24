@@ -91,11 +91,12 @@
     <string name="speech_not_supported">Sorry! Your device doesn\'t support speech input</string>
     <string name="permission_location_rationale">We need to save your location so that we can combine information about the context in which these symptoms occured and provide you with better treatment</string>
     <string name="ok">Permit</string>
+    <string name="done">Done</string>
     <string name="permision_available_location">Permission to get your location is granted</string>
     <string name="permissions_not_granted">Permission to access this device location was denied.</string>
     <string name="manage_profile">Edit your profile</string>
     <string name="profile_name">Hi %1$s</string>
-
+    <string name="google_app_id">symptoms-1218</string>
     <string name="input_text">Looking for...</string>
     <string name="button_send">Go!</string>
     <string name="police_stations">Police Stations in Victoria</string>
@@ -125,4 +126,37 @@
         <item>@string/medicare</item>
     </string-array>
     <string name="title_activity_main2">Main2Activity</string>
+    <string name="create_diary">Create a diary</string>
+    <string name="add_symptoms_to_diary">Add symptoms</string>
+    <string name="mark_error">Mark as error</string>
+    <string name="add_more_info">Tell us some more</string>
+    <string name="more_info_title">Add some more details</string>
+    <string name="more_info_message">It only takes 2 minutes</string>
+    <string name="symptom_data_overview">Intensity : %1$.0f\nTime :%2$s</string>
+    <string name="fixed_diary_name">%1$s\\\' diary</string>
+    <string name="pie_center"><![CDATA[
+    <p style="color:#F44336;font-size:large;text-alignment:center">At a glance<br>
+    %1$d<br>
+   %2$.0f</p>
+    ]]>
+</string>
+    <string name="pick_single_date">Single day</string>
+    <string name="pick_range_date">Range</string>
+    <string name="permission_system_alert_rationale">We need to remind you of providind additional details for better care delivery from your coach. </string>
+    <string name="permision_available_system_alert">Permission to notify you is granted</string>
+    <string name="symptom_details_title">Intensity: %1$.2f /n%2$s ago</string>
+    <string name="more_info_intensity_tv">Intensity</string>
+    <string name="more_info_distress_tv">Distress caused</string>
+    <string name="body_part_details">Tell us a bit more about where you felt pain</string>
+    <string name="medication_details">What?How much?</string>
+    <string name="body_part_title">Where did it hurt?</string>
+    <string name="medication_title">Medication to relief</string>
+    <string name="no_medication_treatment_title">Non drug techniques</string>
+    <string name="details_no_pain">No pain</string>
+    <string name="details_no_distress">No stress</string>
+    <string name="details_too_much">Worst pain</string>
+    <string name="more_info_head">Pain occurence at %1$s at %2$s.</string>
+    <string name="medication_details_dialog_title">What medication did you take? How much and when?</string>
+    <string name="when_hint">When?</string>
+
 </resources>

@@ -1,10 +1,5 @@
 package webinar.pubnub.insitu.model;
 
-import android.util.Log;
-
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-
 import io.realm.RealmObject;
 
 /**
@@ -12,7 +7,33 @@ import io.realm.RealmObject;
  */
 public class Symptom extends RealmObject {
 
-    String symptomType;
+    SymptomContext context;
+    float intensity;
+    int activityId;
+    boolean isError = false;
+    long id;
+    long timestamp;
+    Description description=null;
+    private Diary diary;
+
+    public Symptom() {
+    }
+
+    public Description getDescription() {
+        return description;
+    }
+
+    public void setDescription(Description description) {
+        this.description = description;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
+    }
 
     public SymptomContext getContext() {
         return context;
@@ -22,10 +43,13 @@ public class Symptom extends RealmObject {
         this.context = context;
     }
 
-    SymptomContext context;
-    double intensity;
-    private Diary diary;
-    boolean isError;
+    public int getActivityId() {
+        return activityId;
+    }
+
+    public void setActivityId(int activityId) {
+        this.activityId = activityId;
+    }
 
     public boolean isError() {
         return isError;
@@ -43,11 +67,6 @@ public class Symptom extends RealmObject {
         this.id = id;
     }
 
-    long id;
-
-    public Symptom() {
-    }
-
     public Diary getDiary() {
 
         return diary;
@@ -57,22 +76,13 @@ public class Symptom extends RealmObject {
         this.diary = diary;
     }
 
-    public double getIntensity() {
+    public float getIntensity() {
         return intensity;
     }
 
-    public void setIntensity(double intensity) {
+    public void setIntensity(float intensity) {
         this.intensity = intensity;
     }
-
-    public String getSymptomType() {
-        return symptomType;
-    }
-
-    public void setSymptomType(String symptomType) {
-        this.symptomType = symptomType;
-    }
-
 
 
 }

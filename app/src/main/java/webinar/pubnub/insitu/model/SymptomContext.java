@@ -8,40 +8,34 @@ import io.realm.annotations.Ignore;
 public class SymptomContext extends RealmObject {
     // Location variables
 
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
     double latitude;
     double longitude;
     private String address;
     private String postCode;
-    @Ignore
-    private LatLng latLng;
+
     private String country;
     private String placeType;
     private String city;
     // Weather variables
-    private String temperature;
+    private float temperature=0;
     private String weatherCondition;
     private String windChill;
     private String windDirection;
     private String windSpeed;
-    private String humidity;
+    private float humidity;
     private String pressure;
     private String baroPressureRising;
     private String visibility;
     private String duringActivity;
     private String afterActivity;
-    private String altitude;
-
-    public SymptomContext() {
-
-    }
-
-    public double getLatitude() {
-        return latitude;
-    }
-
-    public double getLongitude() {
-        return longitude;
-    }
 
     public String getDuringActivity() {
         return duringActivity;
@@ -59,6 +53,21 @@ public class SymptomContext extends RealmObject {
         this.afterActivity = afterActivity;
     }
 
+    private String altitude;
+
+    public SymptomContext() {
+
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+
     public String getAltitude() {
         return altitude;
     }
@@ -70,14 +79,14 @@ public class SymptomContext extends RealmObject {
     /**
      * @return Temperature in Celsius
      */
-    public String getTemperature() {
+    public float getTemperature() {
         return temperature;
     }
 
     /**
      * @param temperature Temperature in Celsius ("20")
      */
-    public void setTemperature(String temperature) {
+    public void setTemperature(float temperature) {
         this.temperature = temperature;
     }
 
@@ -137,11 +146,11 @@ public class SymptomContext extends RealmObject {
         this.windSpeed = windSpeed;
     }
 
-    public String getHumidity() {
+    public float getHumidity() {
         return humidity;
     }
 
-    public void setHumidity(String humidity) {
+    public void setHumidity(float humidity) {
         this.humidity = humidity;
     }
 
@@ -230,21 +239,7 @@ public class SymptomContext extends RealmObject {
         this.postCode = postCode;
     }
 
-    /**
-     * @return Latitude and longitude as a {@link LatLng} object
-     */
-    public LatLng getLatLng() {
-        return latLng;
-    }
 
-    /**
-     * @param latLng Latitude and longitude as a {@link LatLng} object
-     */
-    public void setLatLng(LatLng latLng) {
-        this.latLng = latLng;
-        this.latitude=latLng.latitude;
-        this.longitude=latLng.longitude;
-    }
 
     /**
      * @return Country name ("Denmark")

@@ -1,0 +1,39 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
+    tools:context="webinar.pubnub.insitu.fragments.ManageDiariesFragment">
+
+    <com.github.clans.fab.FloatingActionMenu
+        android:id="@+id/menu_manage_diaries"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:paddingRight="10dp"
+        android:paddingBottom="10dp"
+        android:paddingLeft="10dp"
+        fab:menu_labels_ellipsize="end"
+        fab:menu_labels_singleLine="true"
+        fab:menu_backgroundColor="#ccffffff"
+        fab:menu_fab_label="Manage diaries">
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/create_diary_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/bubble_shadow"
+            fab:fab_size="mini"
+            fab:fab_label="@string/create_diary" />
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/add_symptoms_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/avatar_jack2"
+            fab:fab_size="mini"
+            fab:fab_label="@string/add_symptoms_to_diary" />
+
+    </com.github.clans.fab.FloatingActionMenu>
+</RelativeLayout>

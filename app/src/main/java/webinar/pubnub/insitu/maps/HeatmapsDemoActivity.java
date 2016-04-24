@@ -33,8 +33,11 @@ import com.google.android.gms.maps.model.TileOverlayOptions;
 import com.google.maps.android.heatmaps.Gradient;
 import com.google.maps.android.heatmaps.HeatmapTileProvider;
 
+import org.joda.time.DateTime;
+
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.TreeMap;
 
 import webinar.pubnub.insitu.R;
@@ -74,7 +77,6 @@ public class HeatmapsDemoActivity extends BaseDemoActivity {
     };
     public static final Gradient ALT_HEATMAP_GRADIENT = new Gradient(ALT_HEATMAP_GRADIENT_COLORS,
             ALT_HEATMAP_GRADIENT_START_POINTS);
-    TreeMap<Integer, String> symptomTypes;
     private HeatmapTileProvider mProvider;
     private TileOverlay mOverlay;
     private boolean mDefaultGradient = true;
@@ -85,7 +87,7 @@ public class HeatmapsDemoActivity extends BaseDemoActivity {
      * Also maps to the URL of the data set for attribution
      */
     private HashMap<String, DataSet> mLists = new HashMap<String, DataSet>();
-
+    ArrayList<String> options = new ArrayList<>();
     @Override
     protected int getLayoutId() {
         return R.layout.heatmaps_demo;
@@ -93,19 +95,13 @@ public class HeatmapsDemoActivity extends BaseDemoActivity {
 
     @Override
     protected void startDemo() {
-
-        symptomTypes = DiaryManager.getInstance().getActiveDiary().getSymptomTypes();
-        for (Integer key : symptomTypes.keySet()) {
-
-            ArrayList<LatLng> pos = SymptomManager.getInstance().getSymptomslatLonByType(symptomTypes.get(key));
-//            Log.i(TAG, "pos "+ String.valueOf(pos));
-            if (!pos.isEmpty()) {
-                Log.i(TAG, symptomTypes.get(key) + String.valueOf(pos));
-
-                mLists.put(symptomTypes.get(key), new DataSet(pos,
-                        symptomTypes.get(key)));
-            }
+        options.clear();
+        options.add("Pain occurrences");
+        ArrayList<LatLng> pos = SymptomManager.getInstance().getSymptomsLatLon(DateTime.now().minusDays(10).getMillis(),DateTime.now().getMillis());
+        for (String op:options){
+            mLists.put(op,new DataSet(pos,op));
         }
+
 
         getMap().moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(55.6761, 12.5683), 10));
 
@@ -163,17 +159,17 @@ public class HeatmapsDemoActivity extends BaseDemoActivity {
             // Check if need to instantiate (avoid setData etc twice)
             if (mProvider == null) {
                 mProvider = new HeatmapTileProvider.Builder().data(
-                        mLists.get(symptomTypes.get(pos + 1)).getData()).build();
+                        mLists.get(options.get(pos)).getData()).build();
                 mOverlay = getMap().addTileOverlay(new TileOverlayOptions().tileProvider(mProvider));
                 // Render links
                 attribution.setMovementMethod(LinkMovementMethod.getInstance());
             } else {
-                mProvider.setData(mLists.get(symptomTypes.get(pos + 1)).getData());
+                mProvider.setData(mLists.get(options.get(pos)).getData());
                 mOverlay.clearTileCache();
             }
             // Update attribution
             attribution.setText(Html.fromHtml(String.format(getString(R.string.attrib_format),
-                    mLists.get(symptomTypes.get(pos + 1)).getUrl())));
+                    mLists.get(options.get(pos)).getUrl())));
 
         }
 

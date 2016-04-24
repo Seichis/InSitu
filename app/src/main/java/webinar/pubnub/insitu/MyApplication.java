@@ -4,6 +4,8 @@ import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import net.danlew.android.joda.JodaTimeAndroid;
+
 import butterknife.ButterKnife;
 
 public class MyApplication extends Application {
@@ -19,8 +21,8 @@ public class MyApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-        ButterKnife.setDebug(BuildConfig.DEBUG);
-
+//        ButterKnife.setDebug(BuildConfig.DEBUG);
+        JodaTimeAndroid.init(this);
     }
 
 }

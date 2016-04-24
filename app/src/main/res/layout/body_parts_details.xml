@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:whatever="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <com.wrapp.floatlabelededittext.FloatLabeledEditText
+        android:id="@+id/body_part_details_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:fletPaddingBottom="10dp">
+
+        <com.andreabaccega.widget.FormEditText
+            android:id="@+id/body_part_details"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/body_part_details"
+            android:inputType="textPersonName"
+            whatever:testType="personName" />
+    </com.wrapp.floatlabelededittext.FloatLabeledEditText>
+
+</LinearLayout>

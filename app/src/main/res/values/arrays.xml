@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="BodyParts">
+        <item>Head</item>
+        <item>Neck</item>
+        <item>Breast</item>
+        <item>Back</item>
+        <item>Arm</item>
+        <item>Forearm</item>
+        <item>Hand</item>
+        <item>Abdomen</item>
+        <item>Pelvis</item>
+        <item>Leg</item>
+        <item>Knee</item>
+    </string-array>
+    <string-array name="NonDrugTechniques">
+        <item>Massage</item>
+        <item>Relaxation</item>
+        <item>Acupuncture</item>
+        <item>Physical therapy</item>
+        <item>Pet therapy</item>
+        <item>Gel packs</item>
+
+    </string-array>
+
+    <string-array name="WeatherConditions">
+        <item>sky is clear</item>
+        <item>few clouds</item>
+        <item>scattered clouds</item>
+        <item>broken clouds</item>
+        <item>shower rain</item>
+        <item>Rain</item>
+        <item>Thunderstorm</item>
+        <item>snow</item>
+        <item>mist</item>
+    </string-array>
+</resources>
