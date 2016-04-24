@@ -348,13 +348,13 @@ private int[] OPTIONS = new int[]{SHOW_SINGLE_DAY, SHOW_INTENSITY, SHOW_ACTIVITI
 
         switch (OPTIONS[1]) {
             case SHOW_INTENSITY:
-                intensityButtonFloat.setBackgroundColor(ContextCompat.getColor(getContext(), android.R.color.holo_blue_bright));
-                distressButtonFloat.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.graph_color2));
+                distressButtonFloat.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.dark_gray_press));
+                intensityButtonFloat.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.graph_color7));
 
                 break;
             case SHOW_DISTRESS:
-                distressButtonFloat.setBackgroundColor(ContextCompat.getColor(getContext(), android.R.color.holo_blue_bright));
-                intensityButtonFloat.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.graph_color7));
+                intensityButtonFloat.setBackgroundColor(ContextCompat.getColor(getContext(),R.color.dark_gray_press));
+                distressButtonFloat.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.graph_color2));
                 break;
         }
 

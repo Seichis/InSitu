@@ -22,7 +22,6 @@ import webinar.pubnub.insitu.BackgroundService;
 import webinar.pubnub.insitu.Constants;
 import webinar.pubnub.insitu.R;
 import webinar.pubnub.insitu.Utils;
-import webinar.pubnub.insitu.fragments.ExplorationFragment;
 import webinar.pubnub.insitu.maps.HeatmapsDemoActivity;
 import webinar.pubnub.insitu.model.Description;
 import webinar.pubnub.insitu.model.Diary;
@@ -50,12 +49,12 @@ public class SymptomManager implements ISymptomManager {
 
     }
 
-    public boolean noSymptoms(){
-        return realm.where(Symptom.class).findFirst()==null;
-    }
-
     public static SymptomManager getInstance() {
         return symptomManager;
+    }
+
+    public boolean noSymptoms() {
+        return realm.where(Symptom.class).findFirst() == null;
     }
 
     public void init(Context context) {
@@ -159,8 +158,8 @@ public class SymptomManager implements ISymptomManager {
 //        ChartManager.getInstance().updatePieChartDataByDay(DateTime.now().minus(84000000).getMillis());
         ChartManager.getInstance().updatePieChartDataByActivityByDay(DateTime.now().getMillis());
         BackgroundService.getInstance().createOrUpdateBubble();
-        ChartManager.getInstance().updateBubbleChartByDay(ChartManager.BY_ACTIVITIES,ChartManager.INTENSITY,DateTime.now().getMillis());
-        if(HeatmapsDemoActivity.getInstance()!=null){
+        ChartManager.getInstance().updateBubbleChartByDay(ChartManager.BY_ACTIVITIES, ChartManager.INTENSITY, DateTime.now().getMillis());
+        if (HeatmapsDemoActivity.getInstance() != null) {
             HeatmapsDemoActivity.getInstance().updateMapByOptions();
         }
 //        ChartManager.getInstance().updateBubbleChartByRange(ChartManager.BY_ACTIVITIES,ChartManager.INTENSITY,DateTime.now().minusDays(5).getMillis(), DateTime.now().getMillis());
@@ -247,7 +246,9 @@ public class SymptomManager implements ISymptomManager {
     public ArrayList<LatLng> getSymptomsLatLon(long from, long until) {
         ArrayList<LatLng> latLngHashMap = new ArrayList<>();
         for (Symptom s : getAllSymptomsByRange(from, until)) {
-            latLngHashMap.add(new LatLng(s.getContext().getLatitude(), s.getContext().getLongitude()));
+            if (s.getContext() != null) {
+                latLngHashMap.add(new LatLng(s.getContext().getLatitude(), s.getContext().getLongitude()));
+            }
         }
         return latLngHashMap;
     }
@@ -255,8 +256,8 @@ public class SymptomManager implements ISymptomManager {
     public ArrayList<LatLng> getSymptomsLatLonByDistress(long from, long until) {
         ArrayList<LatLng> latLngHashMap = new ArrayList<>();
         for (Symptom s : getAllSymptomsByRange(from, until)) {
-            if (s.getDescription()!=null){
-                if(s.getDescription().getDistress()>0){
+            if (s.getDescription() != null) {
+                if (s.getDescription().getDistress() > 0) {
                     latLngHashMap.add(new LatLng(s.getContext().getLatitude(), s.getContext().getLongitude()));
                 }
             }
@@ -442,7 +443,7 @@ public class SymptomManager implements ISymptomManager {
 
     public void addNewIntensity(Symptom s, float i) {
         realm.beginTransaction();
-        s.setDeltaIntensity(s.getIntensity()-i);
+        s.setDeltaIntensity(s.getIntensity() - i);
         s.setIntensity(i);
         realm.commitTransaction();
     }

@@ -11,12 +11,12 @@ import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.ChartData;
 import com.github.mikephil.charting.formatter.PercentFormatter;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
-import io.realm.internal.Util;
 import webinar.pubnub.insitu.Constants;
 import webinar.pubnub.insitu.R;
 import webinar.pubnub.insitu.Utils;
@@ -25,6 +25,7 @@ import webinar.pubnub.insitu.fragments.HomeFragment;
 import webinar.pubnub.insitu.model.MyBubbleChartData;
 import webinar.pubnub.insitu.model.MyChartData;
 import webinar.pubnub.insitu.model.Symptom;
+import webinar.pubnub.insitu.model.SymptomContext;
 
 /**
  * Created by Konstantinos Michail on 4/20/2016.
@@ -157,11 +158,12 @@ public class ChartManager implements IChartManager {
     }
 
 
-    public void updatePieChartByDay(int by,long date){
-        updatePieChartByRange(by, Utils.getDayStart(date,1),Utils.getDaysEnd(date));
+    public void updatePieChartByDay(int by, long date) {
+        updatePieChartByRange(by, Utils.getDayStart(date, 1), Utils.getDaysEnd(date));
     }
+
     public void updatePieChartByRange(int by, long from, long until) {
-        String[] conditions = context.getResources().getStringArray(R.array.WeatherConditions);
+//        String[] conditions = context.getResources().getStringArray(R.array.WeatherConditions);
         String[] bodyParts = context.getResources().getStringArray(R.array.BodyParts);
         realm.beginTransaction();
         realm.clear(MyChartData.class);
@@ -205,15 +207,19 @@ public class ChartManager implements IChartManager {
                 }
                 break;
             case BY_WEATHER_CONDITION:
-                for (int i = 0; i < conditions.length; i++) {
-                    RealmResults<Symptom> symptomsPerCondition = symptomManager.getAllSymptomsByWeatherConditionByRange(conditions[i], from, until);
+                ArrayList<String> conditions = new ArrayList<>();
+                for (SymptomContext s : realm.where(SymptomContext.class).distinct("weatherCondition")) {
+                    conditions.add(s.getWeatherCondition());
+                }
+                for (int i = 0; i < conditions.size(); i++) {
+                    RealmResults<Symptom> symptomsPerCondition = symptomManager.getAllSymptomsByWeatherConditionByRange(conditions.get(i), from, until);
 
                     if (symptomsPerCondition.size() == 0) {
                         continue;
                     }
                     String id = String.valueOf(j);
                     j++;
-                    symptomsBy.put(id + ";" + conditions[i], symptomsPerCondition);
+                    symptomsBy.put(id + ";" + conditions.get(i), symptomsPerCondition);
 
                     Log.i(TAG, "weather" + id + " hashmap " + symptomsBy.size());
 
@@ -237,7 +243,7 @@ public class ChartManager implements IChartManager {
 
 
     public void updateBubbleChartByRange(int by, int what, long from, long until) {
-        String[] conditions = context.getResources().getStringArray(R.array.WeatherConditions);
+//        String[] conditions = context.getResources().getStringArray(R.array.WeatherConditions);
         String[] bodyParts = context.getResources().getStringArray(R.array.BodyParts);
         realm.beginTransaction();
         realm.clear(MyBubbleChartData.class);
@@ -281,15 +287,20 @@ public class ChartManager implements IChartManager {
                 }
                 break;
             case BY_WEATHER_CONDITION:
-                for (int i = 0; i < conditions.length; i++) {
-                    RealmResults<Symptom> symptomsPerCondition = symptomManager.getAllSymptomsByWeatherConditionByRange(conditions[i], from, until);
+                ArrayList<String> conditions = new ArrayList<>();
+                for (SymptomContext s : realm.where(SymptomContext.class).distinct("weatherCondition")) {
+                    conditions.add(s.getWeatherCondition());
+                }
+                for (int i = 0; i < conditions.size(); i++) {
+
+                    RealmResults<Symptom> symptomsPerCondition = symptomManager.getAllSymptomsByWeatherConditionByRange(conditions.get(i), from, until);
 
                     if (symptomsPerCondition.size() == 0) {
                         continue;
                     }
                     String id = String.valueOf(j);
                     j++;
-                    symptomsBy.put(id + ";" + conditions[i], symptomsPerCondition);
+                    symptomsBy.put(id + ";" + conditions.get(i), symptomsPerCondition);
 
                     Log.i(TAG, "weather" + id + " hashmap " + symptomsBy.size());
 

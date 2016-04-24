@@ -153,7 +153,7 @@
     <string name="details_no_pain">No pain</string>
     <string name="details_no_distress">No stress</string>
     <string name="details_too_much">Worst pain</string>
-    <string name="more_info_head">Pain occurence at %1$s at %2$s.</string>
+    <string name="more_info_head">Pain occurence %1$s %2$s.</string>
     <string name="medication_details_dialog_title">What medication did you take? How much and when?</string>
     <string name="when_hint">When?</string>
     <string name="body_part_details_dialog_title">Where exactly was the %1$s pain and how did it feel?</string>

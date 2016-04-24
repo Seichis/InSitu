@@ -26,14 +26,14 @@
     </string-array>
 
     <string-array name="WeatherConditions">
-        <item>sky is clear</item>
-        <item>few clouds</item>
-        <item>scattered clouds</item>
-        <item>broken clouds</item>
-        <item>shower rain</item>
+        <item>Sky is clear</item>
+        <item>Few clouds</item>
+        <item>Scattered clouds</item>
+        <item>Broken clouds</item>
+        <item>Shower rain</item>
         <item>Rain</item>
         <item>Thunderstorm</item>
-        <item>snow</item>
-        <item>mist</item>
+        <item>Snow</item>
+        <item>Mist</item>
     </string-array>
 </resources>

@@ -78,19 +78,19 @@ public class Utils {
         String hour="";
         float difMinutes=(float)(dt.getMillis()-date)/(1000*60);
         if (difMinutes<5){
-            return "Moments ago";
+            return "moments ago";
         }else if(difMinutes<10){
-            return "A few minutes ago";
+            return "a few minutes ago";
         }
         else if (difMinutes<30){
-            return "Less than half an hour ago";
+            return "less than half an hour ago";
         }else if (difMinutes<(12*60)){
             int hours = Math.round(difMinutes/60);
-            return "About " + hours + " hours ago";
+            return "about " + hours + " hours ago";
         }else if (difMinutes<(18*60)){
-            return "Half a day ago";
+            return "half a day ago";
         }else if(difMinutes<(24*60)){
-            return "A day ago";
+            return "a day ago";
         }else {
             int days = Math.round(difMinutes/(60*24));
             return days+" days ago";

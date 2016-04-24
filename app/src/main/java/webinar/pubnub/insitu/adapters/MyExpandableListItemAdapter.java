@@ -76,8 +76,11 @@ public class MyExpandableListItemAdapter extends ExpandableListItemAdapter<Sympt
         }
         ButterKnife.bind(this, convertView);
         final Symptom s = getItem(position);
-
-        titleTextView.setText(mContext.getString(R.string.more_info_head,s.getContext().getAddress(),Utils.getDateFormatForListview(s.getTimestamp())));
+        if (s.getContext()!=null){
+            titleTextView.setText(mContext.getString(R.string.more_info_head,"at "+s.getContext().getAddress(),Utils.getDateFormatForListview(s.getTimestamp())));
+        }else{
+            titleTextView.setText(mContext.getString(R.string.more_info_head,"",Utils.getDateFormatForListview(s.getTimestamp())));
+        }
         medicationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
