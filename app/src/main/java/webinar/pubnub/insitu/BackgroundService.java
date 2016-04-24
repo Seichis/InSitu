@@ -161,10 +161,10 @@ public class BackgroundService extends Service implements IBackgroundSettingsSer
     }
 
     private void addNewBubble() {
-        BubbleLayout bubbleView = (BubbleLayout) LayoutInflater.from(getApplicationContext()).inflate(R.layout.bubble_layout, null);
+        final BubbleLayout bubbleView = (BubbleLayout) LayoutInflater.from(getApplicationContext()).inflate(R.layout.bubble_layout, null);
         TextView numberTv=(TextView) bubbleView.getChildAt(1);
 
-        numberTv.setText(String.valueOf(299));
+        numberTv.setText(String.valueOf(symptomManager.getTodaySymptomsWithoutDescription().size()));
         bubbleView.setOnBubbleRemoveListener(new BubbleLayout.OnBubbleRemoveListener() {
             @Override
             public void onBubbleRemoved(BubbleLayout bubble) {
@@ -174,6 +174,8 @@ public class BackgroundService extends Service implements IBackgroundSettingsSer
 
             @Override
             public void onBubbleClick(BubbleLayout bubble) {
+                startActivity(new Intent(backgroundService,AddMoreInfoActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK).putExtra("rule",Constants.START_FILL_MORE_DATA_ACTIVITY));
+                bubblesManager.removeBubble(bubbleView);
                 Toast.makeText(backgroundService, "Clicked !",
                         Toast.LENGTH_SHORT).show();
             }
@@ -194,7 +196,16 @@ public class BackgroundService extends Service implements IBackgroundSettingsSer
                     })
                     .build();
         } else {
-            addNewBubble();
+            bubblesManager.recycle();
+            bubblesManager = new BubblesManager.Builder(backgroundService)
+                    .setTrashLayout(R.layout.bubble_trash_layout)
+                    .setInitializationCallback(new OnInitializedCallback() {
+                        @Override
+                        public void onInitialized() {
+                            addNewBubble();
+                        }
+                    })
+                    .build();
         }
         bubblesManager.initialize();
     }

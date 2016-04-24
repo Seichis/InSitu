@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:materialdesign="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="@dimen/activity_vertical_margin">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="5dp"
+        android:text="@string/medication_details_dialog_title"
+        android:textSize="25sp" />
+
+    <com.wrapp.floatlabelededittext.FloatLabeledEditText
+        android:id="@+id/medication_details_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.andreabaccega.widget.FormEditText
+            android:id="@+id/medication_details"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/medication_details"
+            android:inputType="text"
+            />
+    </com.wrapp.floatlabelededittext.FloatLabeledEditText>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="10">
+
+        <EditText
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="8.5"
+            android:id="@+id/input_time_dummy"
+            android:inputType="none"
+            android:hint="@string/when_hint"/>
+
+        <com.gc.materialdesign.views.ButtonFloat
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1.5"
+            android:id="@+id/pick_time_medication"
+            android:background="@color/colorAccent"
+            materialdesign:iconDrawable="@drawable/pick_time" />
+    </LinearLayout>
+</LinearLayout>

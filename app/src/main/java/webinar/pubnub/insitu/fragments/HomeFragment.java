@@ -16,8 +16,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
-import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.Entry;
@@ -26,11 +24,6 @@ import com.github.mikephil.charting.data.realm.implementation.RealmPieDataSet;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
-import com.txusballesteros.bubbles.BubbleLayout;
-import com.txusballesteros.bubbles.BubblesManager;
-import com.txusballesteros.bubbles.OnInitializedCallback;
-
-import org.joda.time.DateTime;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -38,27 +31,21 @@ import io.realm.RealmResults;
 import webinar.pubnub.insitu.Constants;
 import webinar.pubnub.insitu.MainActivity;
 import webinar.pubnub.insitu.R;
-import webinar.pubnub.insitu.adapters.HomeSymptomsAdapter;
 import webinar.pubnub.insitu.managers.ChartManager;
-import webinar.pubnub.insitu.managers.SymptomManager;
 import webinar.pubnub.insitu.model.MyChartData;
 
 public class HomeFragment extends Fragment {
+    private static final String TAG = "HomeFragment";
     static HomeFragment homeFragment;
     ChartManager chartManager;
     @Bind(R.id.pie_chart_main)
     PieChart pieChart;
-    @Bind(R.id.home_listview)
-    ListView listView;
-    HomeSymptomsAdapter symptomsAdapter;
     MainActivity mainActivity;
     private OnHomeInteractionListener mListener;
 
     public HomeFragment() {
         // Required empty public constructor
     }
-    private static final String TAG = "HomeFragment";
-
 
     public static HomeFragment getInstance() {
         return homeFragment;
@@ -119,13 +106,10 @@ public class HomeFragment extends Fragment {
         pieChart.setData(data);
         pieChart.animateY(1400);
         pieChart.setCenterText(generateCenterSpannableText());
-        symptomsAdapter = null;
-        symptomsAdapter = new HomeSymptomsAdapter(getContext(), SymptomManager.getInstance().getAllSymptomsByDay(DateTime.now().getMillis()));
-        listView.setAdapter(symptomsAdapter);
         pieChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
             @Override
             public void onValueSelected(Entry e, int dataSetIndex, Highlight h) {
-                Log.i(TAG,"select" + e.getVal());
+                Log.i(TAG, "select" + e.getVal());
 
 
             }
@@ -138,7 +122,6 @@ public class HomeFragment extends Fragment {
 
 
     }
-
 
 
     private SpannableString generateCenterSpannableText() {

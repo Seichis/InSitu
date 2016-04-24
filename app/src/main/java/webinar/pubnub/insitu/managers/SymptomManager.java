@@ -329,4 +329,65 @@ public class SymptomManager implements ISymptomManager {
         tmp.setTimeInMillis(realm.allObjects(Symptom.class).where().min("timestamp").longValue());
         return tmp;
     }
+
+    public RealmResults<Symptom> getTodaySymptomsWithoutDescription() {
+        return getAllSymptomsByDay(DateTime.now().getMillis()).where().isNull("description").findAll();
+    }
+
+    public void addMedicationDate(Symptom symptom, long date) {
+        realm.beginTransaction();
+        Description description;
+
+        if (symptom.getDescription() == null) {
+            description = realm.createObject(Description.class);
+            description.setDateMedicationConsumption(date);
+            symptom.setDescription(description);
+        } else {
+            symptom.getDescription().setDateMedicationConsumption(date);
+
+        }
+        realm.commitTransaction();
+    }
+
+    public void addMedicationDescription(Symptom symptom, String s) {
+        realm.beginTransaction();
+        Description description;
+
+        if (symptom.getDescription() == null) {
+            description = realm.createObject(Description.class);
+            description.setMedicineName(s);
+            symptom.setDescription(description);
+        } else {
+            symptom.getDescription().setMedicineName(s);
+        }
+        realm.commitTransaction();
+    }
+
+    public void addBodyPartDescription(Symptom symptom, String s) {
+        realm.beginTransaction();
+        Description description;
+
+        if (symptom.getDescription() == null) {
+            description = realm.createObject(Description.class);
+            description.setBodyPartDetails(s);
+            symptom.setDescription(description);
+        } else {
+            symptom.getDescription().setBodyPartDetails(s);
+        }
+        realm.commitTransaction();
+    }
+
+    public void addBodyPart(Symptom symptom, String s) {
+        realm.beginTransaction();
+        Description description;
+
+        if (symptom.getDescription() == null) {
+            description = realm.createObject(Description.class);
+            description.setBodyPart(s);
+            symptom.setDescription(description);
+        } else {
+            symptom.getDescription().setBodyPart(s);
+        }
+        realm.commitTransaction();
+    }
 }

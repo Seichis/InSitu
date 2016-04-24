@@ -64,6 +64,23 @@ public class MainActivity extends BaseActivity
         setupLayout();
         startBackgroundService();
         setupTabs();
+        if (getIntent().getExtras() != null) {
+            Bundle extras = getIntent().getExtras();
+            checkRule(extras.getInt("rule", -1));
+        }
+    }
+
+
+
+    private void checkRule(int rule) {
+        switch (rule) {
+            case Constants.START_FILL_MORE_DATA_ACTIVITY:
+
+                break;
+            default:
+                Log.i(TAG, "Rules : Invalid rule");
+                break;
+        }
     }
     FragmentPagerItemAdapter adapter;
     private void setupTabs() {

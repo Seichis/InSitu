@@ -24,6 +24,7 @@ android {
     repositories {
         maven { url "https://jitpack.io" }
         jcenter()
+        mavenCentral()
     }
 }
 
@@ -54,9 +55,15 @@ dependencies {
     compile 'com.github.vajro:MaterialDesignLibrary:1.6'
     compile 'com.github.clans:fab:1.6.3'
     compile 'com.android.support:recyclerview-v7:23.3.0'
-    compile 'com.daimajia.swipelayout:library:1.2.0@aar'
-    compile 'com.daimajia.androidanimations:library:1.1.2@aar'
+
     compile 'net.danlew:android.joda:2.9.3'
     compile 'com.wdullaer:materialdatetimepicker:2.3.0'
     compile 'com.txusballesteros:bubbles:1.2.1'
+
+    compile 'com.nhaarman.listviewanimations:lib-core:3.1.0@aar'
+    compile 'com.nhaarman.listviewanimations:lib-manipulation:3.1.0@aar'
+    compile 'com.nhaarman.listviewanimations:lib-core-slh:3.1.0@aar'
+
+    compile 'com.wrapp.floatlabelededittext:library:0.0.6'
+    compile 'com.andreabaccega:android-form-edittext:1.2.1@aar'
 }

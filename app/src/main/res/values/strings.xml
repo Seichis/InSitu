@@ -144,5 +144,19 @@
     <string name="pick_range_date">Range</string>
     <string name="permission_system_alert_rationale">We need to remind you of providind additional details for better care delivery from your coach. </string>
     <string name="permision_available_system_alert">Permission to notify you is granted</string>
+    <string name="symptom_details_title">Intensity: %1$.2f /n%2$s ago</string>
+    <string name="more_info_intensity_tv">Intensity</string>
+    <string name="more_info_distress_tv">Distress caused</string>
+    <string name="body_part_details">Tell us a bit more about where you felt pain</string>
+    <string name="medication_details">What?How much?</string>
+    <string name="body_part_title">Where did it hurt?</string>
+    <string name="medication_title">Medication to relief</string>
+    <string name="no_medication_treatment_title">Non drug techniques</string>
+    <string name="details_no_pain">No pain</string>
+    <string name="details_no_distress">No stress</string>
+    <string name="details_too_much">Worst pain</string>
+    <string name="more_info_head">Pain occurence at %1$s at %2$s.</string>
+    <string name="medication_details_dialog_title">What medication did you take? How much and when?</string>
+    <string name="when_hint">When?</string>
 
 </resources>

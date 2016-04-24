@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="BodyParts">
-        <item>Select one</item>
         <item>Head</item>
         <item>Neck</item>
         <item>Breast</item>

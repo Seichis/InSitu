@@ -73,4 +73,27 @@ public class Utils {
         return dtfOut.print(date);
     }
 
+    public static String getDateFormatForListview(long date){
+        DateTime dt = DateTime.now(DateTimeZone.forTimeZone(TimeZone.getDefault()));
+        String hour="";
+        float difMinutes=(float)(dt.getMillis()-date)/(1000*60);
+        if (difMinutes<30){
+            return "Less than half an hour ago";
+        }else{
+            int hours = Math.round(difMinutes/60);
+            return "About " + hours + "ago";
+        }
+    }
+
+    public static int[] getHourAndMin(long date){
+        int[] hourMinute=new int[2];
+        DateTime dt =new DateTime(date,DateTimeZone.forTimeZone(TimeZone.getDefault()));
+        hourMinute[0]=dt.getHourOfDay();
+        hourMinute[1]=dt.getMinuteOfHour();
+        return hourMinute;
+    }
+
+    public static long getDateFromHourAndMin(int hour,int minute) {
+        return DateTime.now().withHourOfDay(hour).withMinuteOfHour(minute).getMillis();
+    }
 }

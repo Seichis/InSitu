@@ -13,7 +13,7 @@ public class Symptom extends RealmObject {
     boolean isError = false;
     long id;
     long timestamp;
-    Description description;
+    Description description=null;
     private Diary diary;
 
     public Symptom() {
