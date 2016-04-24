@@ -13,7 +13,7 @@ public class MyBubbleChartData extends RealmObject {
     String className;
     float value;
     @Index
-    int setId=1;
+    int setId;
 
     public int getSetId() {
         return setId;

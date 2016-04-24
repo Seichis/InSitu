@@ -1,41 +1,29 @@
 package webinar.pubnub.insitu.model;
 
-import com.google.android.gms.maps.model.LatLng;
-
 import io.realm.RealmObject;
-import io.realm.annotations.Ignore;
 
 public class SymptomContext extends RealmObject {
     // Location variables
-
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
-    }
-
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
-    }
 
     double latitude;
     double longitude;
     private String address;
     private String postCode;
-
     private String country;
     private String placeType;
     private String city;
     // Weather variables
-    private float temperature=0;
+    private float temperature;
     private String weatherCondition;
-    private String windChill;
-    private String windDirection;
-    private String windSpeed;
     private float humidity;
-    private String pressure;
-    private String baroPressureRising;
+    private float pressure;
     private String visibility;
     private String duringActivity;
     private String afterActivity;
+    private String altitude;
+    public SymptomContext() {
+
+    }
 
     public String getDuringActivity() {
         return duringActivity;
@@ -53,20 +41,21 @@ public class SymptomContext extends RealmObject {
         this.afterActivity = afterActivity;
     }
 
-    private String altitude;
-
-    public SymptomContext() {
-
-    }
-
     public double getLatitude() {
         return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
     }
 
     public double getLongitude() {
         return longitude;
     }
 
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
 
     public String getAltitude() {
         return altitude;
@@ -104,47 +93,6 @@ public class SymptomContext extends RealmObject {
         this.weatherCondition = weatherCondition;
     }
 
-    /**
-     * @return
-     */
-    public String getWindChill() {
-        return windChill;
-    }
-
-    /**
-     * @param windChill
-     */
-    public void setWindChill(String windChill) {
-        this.windChill = windChill;
-    }
-
-    /**
-     * @return
-     */
-    public String getWindDirection() {
-        return windDirection;
-    }
-
-    /**
-     * @param windDirection
-     */
-    public void setWindDirection(String windDirection) {
-        this.windDirection = windDirection;
-    }
-
-    /**
-     * @return
-     */
-    public String getWindSpeed() {
-        return windSpeed;
-    }
-
-    /**
-     * @param windSpeed
-     */
-    public void setWindSpeed(String windSpeed) {
-        this.windSpeed = windSpeed;
-    }
 
     public float getHumidity() {
         return humidity;
@@ -158,30 +106,17 @@ public class SymptomContext extends RealmObject {
     /**
      * @return
      */
-    public String getPressure() {
+    public float getPressure() {
         return pressure;
     }
 
     /**
      * @param pressure
      */
-    public void setPressure(String pressure) {
+    public void setPressure(float pressure) {
         this.pressure = pressure;
     }
 
-    /**
-     * @return
-     */
-    public String getBaroPressureRising() {
-        return baroPressureRising;
-    }
-
-    /**
-     * @param baroPressureRising
-     */
-    public void setBaroPressureRising(String baroPressureRising) {
-        this.baroPressureRising = baroPressureRising;
-    }
 
     /**
      * @return
@@ -238,7 +173,6 @@ public class SymptomContext extends RealmObject {
     public void setPostCode(String postCode) {
         this.postCode = postCode;
     }
-
 
 
     /**

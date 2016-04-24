@@ -154,23 +154,21 @@ public class HeatmapsDemoActivity extends BaseDemoActivity {
     public class SpinnerActivity implements AdapterView.OnItemSelectedListener {
         public void onItemSelected(AdapterView<?> parent, View view,
                                    int pos, long id) {
-            TextView attribution = ((TextView) findViewById(R.id.attribution));
-
             // Check if need to instantiate (avoid setData etc twice)
-            if (mProvider == null) {
-                mProvider = new HeatmapTileProvider.Builder().data(
-                        mLists.get(options.get(pos)).getData()).build();
-                mOverlay = getMap().addTileOverlay(new TileOverlayOptions().tileProvider(mProvider));
-                // Render links
-                attribution.setMovementMethod(LinkMovementMethod.getInstance());
-            } else {
-                mProvider.setData(mLists.get(options.get(pos)).getData());
-                mOverlay.clearTileCache();
+            try {
+                if (mProvider == null) {
+                    mProvider = new HeatmapTileProvider.Builder().data(
+                            mLists.get(options.get(pos)).getData()).build();
+                    mOverlay = getMap().addTileOverlay(new TileOverlayOptions().tileProvider(mProvider));
+                    // Render links
+                } else {
+                    mProvider.setData(mLists.get(options.get(pos)).getData());
+                    mOverlay.clearTileCache();
+                }
+                // Update attribution
+            }catch (IllegalArgumentException e) {
+                Log.i(TAG,e.getMessage());
             }
-            // Update attribution
-            attribution.setText(Html.fromHtml(String.format(getString(R.string.attrib_format),
-                    mLists.get(options.get(pos)).getUrl())));
-
         }
 
         public void onNothingSelected(AdapterView<?> parent) {

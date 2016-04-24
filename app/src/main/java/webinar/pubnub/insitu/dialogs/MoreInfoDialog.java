@@ -11,9 +11,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.andreabaccega.widget.FormEditText;
-import com.squareup.okhttp.internal.Util;
 import com.wdullaer.materialdatetimepicker.time.RadialPickerLayout;
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
 
@@ -35,13 +35,23 @@ public class MoreInfoDialog extends DialogFragment implements
     @Bind(R.id.medication_details)
     FormEditText medicationEditText;
     @Nullable
-    @Bind(R.id.body_part_details)
-    FormEditText bodyPartEditText;
-    @Nullable
     @Bind(R.id.input_time_dummy)
     EditText inputTime;
     Symptom symptom;
     SymptomManager symptomManager;
+    @Nullable
+    @Bind(R.id.body_part_details_where)
+    FormEditText bodyPartWhereFormEditText;
+    @Nullable
+    @Bind(R.id.body_part_details)
+    FormEditText bodyPartDetailsFormEditText;
+    @Nullable
+    @Bind(R.id.body_part_details_where_tv)
+    TextView bodyPartWhereTextView;
+    @Nullable
+    @Bind(R.id.body_dialog_details_title)
+    TextView bodyDetailsTitle;
+
     public static MoreInfoDialog newInstance(int symptomId, int layout) {
         MoreInfoDialog fragment = new MoreInfoDialog();
         Bundle args = new Bundle();
@@ -57,6 +67,7 @@ public class MoreInfoDialog extends DialogFragment implements
     void pickTime() {
         openPickTimeDialog();
     }
+
     @Nullable
     @OnFocusChange(R.id.input_time_dummy)
     void inputTimeFocus() {
@@ -80,7 +91,7 @@ public class MoreInfoDialog extends DialogFragment implements
         tpd.setTitle("What time did you take your medication?");
 
         int[] hourMin = Utils.getHourAndMin(symptom.getTimestamp());
-        tpd.setMinTime(hourMin[0], hourMin[1],0);
+        tpd.setMinTime(hourMin[0], hourMin[1], 0);
 
         tpd.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
@@ -95,33 +106,49 @@ public class MoreInfoDialog extends DialogFragment implements
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         int id = getArguments().getInt("id");
         int layout = getArguments().getInt("layout");
-        symptomManager=SymptomManager.getInstance();
+        symptomManager = SymptomManager.getInstance();
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(layout, null);
         ButterKnife.bind(this, view);
 
         symptom = SymptomManager.getInstance().getSymptomById(id);
 
-
+        setupTVBodyParts();
         return new AlertDialog.Builder(getActivity())
                 .setView(view)
-                .setTitle(getString(R.string.more_info_title))
-                .setMessage(getString(R.string.more_info_message))
+//                .setTitle(getString(R.string.more_info_title))
+//                .setMessage(getString(R.string.more_info_message))
                 .setPositiveButton(R.string.done, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        if (medicationEditText!=null && medicationEditText.getText().length()>0){
-                            symptomManager.addMedicationDescription(symptom,medicationEditText.getText().toString());
+                        if (medicationEditText != null && medicationEditText.getText().length() > 0) {
+                            symptomManager.addMedicationDescription(symptom, medicationEditText.getText().toString());
 
                         }
-                        if (bodyPartEditText!=null && bodyPartEditText.getText().length()>0) {
-                            symptomManager.addBodyPartDescription(symptom,bodyPartEditText.getText().toString());
-
+                        String bodyPartDetails = "";
+                        if (bodyPartDetailsFormEditText != null && bodyPartDetailsFormEditText.getText().length() > 0) {
+                            bodyPartDetails += bodyPartDetailsFormEditText.getText().toString();
                         }
-                            dialogInterface.dismiss();
+                        if (bodyPartWhereFormEditText != null && bodyPartWhereFormEditText.getText().length() > 0) {
+                            bodyPartDetails += bodyPartWhereFormEditText.getText().toString();
+                        }
+                        if (!bodyPartDetails.isEmpty()) {
+                            symptomManager.addBodyPartDescription(symptom, bodyPartDetails);
+                        }
+                        dialogInterface.dismiss();
                     }
                 })
                 .create();
+    }
+
+    private void setupTVBodyParts() {
+        if (bodyPartWhereTextView != null) {
+
+            bodyPartWhereTextView.setText(getString(R.string.body_part_details_where_tv, symptom.getDescription().getBodyPart()));
+        }
+        if(bodyDetailsTitle!=null){
+            bodyDetailsTitle.setText(getString(R.string.body_part_details_dialog_title, symptom.getDescription().getBodyPart()));
+        }
     }
 
     @Override
@@ -131,8 +158,8 @@ public class MoreInfoDialog extends DialogFragment implements
 
     @Override
     public void onTimeSet(RadialPickerLayout view, int hourOfDay, int minute, int second) {
-        long date= Utils.getDateFromHourAndMin(hourOfDay,minute);
+        long date = Utils.getDateFromHourAndMin(hourOfDay, minute);
 
-        SymptomManager.getInstance().addMedicationDate(symptom,date);
+        SymptomManager.getInstance().addMedicationDate(symptom, date);
     }
 }

@@ -2,23 +2,22 @@ package webinar.pubnub.insitu.adapters;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.andreabaccega.widget.FormEditText;
 import com.gc.materialdesign.views.ButtonFloat;
+import com.gc.materialdesign.views.Slider;
 import com.nhaarman.listviewanimations.itemmanipulation.expandablelistitem.ExpandableListItemAdapter;
+
+import org.joda.time.DateTime;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
-import butterknife.OnFocusChange;
+import io.realm.Sort;
 import webinar.pubnub.insitu.AddMoreInfoActivity;
 import webinar.pubnub.insitu.R;
 import webinar.pubnub.insitu.Utils;
@@ -30,18 +29,28 @@ public class MyExpandableListItemAdapter extends ExpandableListItemAdapter<Sympt
 
     private static final String TAG = "Expandable";
     private final Context mContext;
-
-    @Bind(R.id.body_part_spinner)Spinner bodyPartsSpinner;
-    @Bind(R.id.non_drug_tech_spinner)Spinner nonDrugSpinner;
+    SymptomManager symptomManager;
+    @Bind(R.id.body_part_spinner)
+    Spinner bodyPartsSpinner;
+    @Bind(R.id.non_drug_tech_spinner)
+    Spinner nonDrugSpinner;
     @Bind(R.id.button_medication_details)
     ButtonFloat medicationButton;
+    @Bind(R.id.intensity_slider)
+    Slider intensitySlider;
+    @Bind(R.id.distress_slider)
+    Slider distressSlider;
+@Bind(R.id.expand_title_more_info)TextView titleTextView;
+
     /**
      * Creates a new ExpandableListItemAdapter with the specified list, or an empty list if
      * items == null.
      */
     public MyExpandableListItemAdapter(final Context context) {
-        super(context, SymptomManager.getInstance().getTodaySymptomsWithoutDescription());
+//        super(context, SymptomManager.getInstance().getTodaySymptomsWithoutDescription());
+        super(context, SymptomManager.getInstance().getAllSymptomsByDay(DateTime.now().getMillis()).where().findAllSorted("timestamp", Sort.DESCENDING));
         mContext = context;
+        symptomManager = SymptomManager.getInstance();
 
     }
 
@@ -67,12 +76,66 @@ public class MyExpandableListItemAdapter extends ExpandableListItemAdapter<Sympt
         }
         ButterKnife.bind(this, convertView);
         final Symptom s = getItem(position);
+
+        titleTextView.setText(mContext.getString(R.string.more_info_head,s.getContext().getAddress(),Utils.getDateFormatForListview(s.getTimestamp())));
         medicationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MoreInfoDialog.newInstance((int)s.getId(),R.layout.medication_details).show(AddMoreInfoActivity.getInstance().getSupportFragmentManager(),"Medication");
+                MoreInfoDialog.newInstance((int) s.getId(), R.layout.medication_details).show(AddMoreInfoActivity.getInstance().getSupportFragmentManager(), "Medication");
             }
         });
+
+
+        bodyPartsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (position > 0) {
+                    String stmp = parent.getItemAtPosition(position).toString();
+                    symptomManager.addBodyPart(s, stmp);
+                    MoreInfoDialog.newInstance((int) s.getId(), R.layout.body_parts_details).show(AddMoreInfoActivity.getInstance().getSupportFragmentManager(), "Bodyparts");
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        nonDrugSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                if (position > 0) {
+                    String stmp = parent.getItemAtPosition(position).toString();
+                    symptomManager.addNonDrugTechnique(s, stmp);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        intensitySlider.setValue((int) (s.getIntensity() * 100));
+        intensitySlider.setOnValueChangedListener(new Slider.OnValueChangedListener() {
+            @Override
+            public void onValueChanged(int i) {
+                symptomManager.addNewIntensity(s, (float) i / 100f);
+            }
+        });
+
+        if (s.getDescription() != null) {
+            if (s.getDescription().getDistress() > 0) {
+                distressSlider.setValue(((int) (s.getDescription().getDistress() * 100)));
+            }
+        }
+        distressSlider.setOnValueChangedListener(new Slider.OnValueChangedListener() {
+            @Override
+            public void onValueChanged(int i) {
+                symptomManager.addDistress(s, (float) i / 100f);
+            }
+        });
+
 
         return convertView;
     }

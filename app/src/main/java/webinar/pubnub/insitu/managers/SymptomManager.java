@@ -22,6 +22,7 @@ import webinar.pubnub.insitu.BackgroundService;
 import webinar.pubnub.insitu.Constants;
 import webinar.pubnub.insitu.R;
 import webinar.pubnub.insitu.Utils;
+import webinar.pubnub.insitu.fragments.ExplorationFragment;
 import webinar.pubnub.insitu.model.Description;
 import webinar.pubnub.insitu.model.Diary;
 import webinar.pubnub.insitu.model.MyChartData;
@@ -46,6 +47,10 @@ public class SymptomManager implements ISymptomManager {
 
     private SymptomManager() {
 
+    }
+
+    public boolean noSymptoms(){
+        return realm.where(Symptom.class).findFirst()==null;
     }
 
     public static SymptomManager getInstance() {
@@ -153,7 +158,7 @@ public class SymptomManager implements ISymptomManager {
 //        ChartManager.getInstance().updatePieChartDataByDay(DateTime.now().minus(84000000).getMillis());
         ChartManager.getInstance().updatePieChartDataByActivityByDay(DateTime.now().getMillis());
         BackgroundService.getInstance().createOrUpdateBubble();
-//        ChartManager.getInstance().updateBubbleChartDataByActivityByDay(DateTime.now().getMillis());
+        ChartManager.getInstance().updateBubbleChartByDay(ChartManager.BY_ACTIVITIES,ChartManager.INTENSITY,DateTime.now().getMillis());
 //        ChartManager.getInstance().updateBubbleChartByRange(ChartManager.BY_ACTIVITIES,ChartManager.INTENSITY,DateTime.now().minusDays(5).getMillis(), DateTime.now().getMillis());
 
     }
@@ -244,72 +249,72 @@ public class SymptomManager implements ISymptomManager {
     }
 
 
-    public void fillData() {
-        realm.beginTransaction();
-        realm.clear(Symptom.class);
-        realm.clear(MyChartData.class);
-        realm.commitTransaction();
-        realm.beginTransaction();
-        DateTime now = DateTime.now(DateTimeZone.forTimeZone(TimeZone.getDefault()));
-
-        for (int i = 0; i < 500; i++) {
-            int activity = Utils.randInt(0, 4);
-            Symptom s = new Symptom();
-            s.setActivityId(activity);
-            long timestamp = now.minusDays(Utils.randInt(0, 50)).getMillis();
-            s.setTimestamp(timestamp);
-            s.setId(i);
-            float intensity = (float) Utils.randInt(0, 10);
-            s.setIntensity(intensity);
-
-            // Adding description
-            Description description = new Description();
-            String[] bp = context.getResources().getStringArray(R.array.BodyParts);
-            description.setBodyPart(bp[Utils.randInt(0, bp.length - 1)]);
-            if ((Utils.randInt(2, 1000) % 2) == 0) {
-                description.setDateMedicationConsumption(timestamp + DateTime.now().plus(Utils.randInt(500000, 7200000)).getMillis());
-            }
-            description.setDistress(intensity + (float) Utils.randInt(0, (int) (10f - intensity)));
-            s.setDescription(description);
-
-            // Adding Context
-            float baseLat = 55.6761f;
-            float baseLon = 12.5683f;
-            SymptomContext sc = new SymptomContext();
-            float minX = 0.001f;
-            float maxX = 0.1f;
-
-            Random rand = new Random();
-
-            float finalX = rand.nextFloat() * (maxX - minX) + minX;
-            float finalY = rand.nextFloat() * (maxX - minX) + minX;
-
-            if ((Utils.randInt(2, 1000) % 2) == 0) {
-                sc.setLongitude(baseLon - finalX / 2);
-            } else {
-                sc.setLongitude(baseLon + finalX / 2);
-            }
-            if ((Utils.randInt(2, 1000) % 2) == 0) {
-                sc.setLatitude(baseLat - finalY / 2);
-            } else {
-                sc.setLatitude(baseLat + finalY / 2);
-
-            }
-
-            sc.setTemperature((float) Utils.randInt(-15, 30) + rand.nextFloat());
-            String[] weatherCondition = context.getResources().getStringArray(R.array.WeatherConditions);
-            sc.setWeatherCondition(weatherCondition[Utils.randInt(0, weatherCondition.length - 1)]);
-            s.setContext(sc);
-            realm.copyToRealm(s);
-        }
-        realm.commitTransaction();
-//        ChartManager.getInstance().updatePieChartDataByActivityByRange(DateTime.now().minusDays(1).getMillis(), DateTime.now().getMillis());
-        ChartManager.getInstance().updatePieChartDataByActivityByDay(DateTime.now().getMillis());
-//        ChartManager.getInstance().updateBubbleChartDataByDay(DateTime.now().getMillis());
-//        ChartManager.getInstance().updateBubbleChartByRange(ChartManager.BY_ACTIVITIES,ChartManager.INTENSITY,DateTime.now().minusDays(5).getMillis(), DateTime.now().getMillis());
-
-
-    }
+//    public void fillData() {
+//        realm.beginTransaction();
+//        realm.clear(Symptom.class);
+//        realm.clear(MyChartData.class);
+//        realm.commitTransaction();
+//        realm.beginTransaction();
+//        DateTime now = DateTime.now(DateTimeZone.forTimeZone(TimeZone.getDefault()));
+//
+//        for (int i = 0; i < 500; i++) {
+//            int activity = Utils.randInt(0, 4);
+//            Symptom s = new Symptom();
+//            s.setActivityId(activity);
+//            long timestamp = now.minusDays(Utils.randInt(0, 50)).getMillis();
+//            s.setTimestamp(timestamp);
+//            s.setId(i);
+//            float intensity = (float) Utils.randInt(0, 10);
+//            s.setIntensity(intensity);
+//
+//            // Adding description
+//            Description description = new Description();
+//            String[] bp = context.getResources().getStringArray(R.array.BodyParts);
+//            description.setBodyPart(bp[Utils.randInt(0, bp.length - 1)]);
+//            if ((Utils.randInt(2, 1000) % 2) == 0) {
+//                description.setDateMedicationConsumption(timestamp + DateTime.now().plus(Utils.randInt(500000, 7200000)).getMillis());
+//            }
+//            description.setDistress(intensity + (float) Utils.randInt(0, (int) (10f - intensity)));
+//            s.setDescription(description);
+//
+//            // Adding Context
+//            float baseLat = 55.6761f;
+//            float baseLon = 12.5683f;
+//            SymptomContext sc = new SymptomContext();
+//            float minX = 0.001f;
+//            float maxX = 0.1f;
+//
+//            Random rand = new Random();
+//
+//            float finalX = rand.nextFloat() * (maxX - minX) + minX;
+//            float finalY = rand.nextFloat() * (maxX - minX) + minX;
+//
+//            if ((Utils.randInt(2, 1000) % 2) == 0) {
+//                sc.setLongitude(baseLon - finalX / 2);
+//            } else {
+//                sc.setLongitude(baseLon + finalX / 2);
+//            }
+//            if ((Utils.randInt(2, 1000) % 2) == 0) {
+//                sc.setLatitude(baseLat - finalY / 2);
+//            } else {
+//                sc.setLatitude(baseLat + finalY / 2);
+//
+//            }
+//
+//            sc.setTemperature((float) Utils.randInt(-15, 30) + rand.nextFloat());
+//            String[] weatherCondition = context.getResources().getStringArray(R.array.WeatherConditions);
+//            sc.setWeatherCondition(weatherCondition[Utils.randInt(0, weatherCondition.length - 1)]);
+//            s.setContext(sc);
+//            realm.copyToRealm(s);
+//        }
+//        realm.commitTransaction();
+////        ChartManager.getInstance().updatePieChartDataByActivityByRange(DateTime.now().minusDays(1).getMillis(), DateTime.now().getMillis());
+//        ChartManager.getInstance().updatePieChartDataByActivityByDay(DateTime.now().getMillis());
+////        ChartManager.getInstance().updateBubbleChartDataByDay(DateTime.now().getMillis());
+////        ChartManager.getInstance().updateBubbleChartByRange(ChartManager.BY_ACTIVITIES,ChartManager.INTENSITY,DateTime.now().minusDays(5).getMillis(), DateTime.now().getMillis());
+//
+//
+//    }
 
 
     @Override
@@ -334,60 +339,95 @@ public class SymptomManager implements ISymptomManager {
         return getAllSymptomsByDay(DateTime.now().getMillis()).where().isNull("description").findAll();
     }
 
-    public void addMedicationDate(Symptom symptom, long date) {
+    public void addMedicationDate(Symptom s, long date) {
         realm.beginTransaction();
         Description description;
 
-        if (symptom.getDescription() == null) {
+        if (s.getDescription() == null) {
             description = realm.createObject(Description.class);
             description.setDateMedicationConsumption(date);
-            symptom.setDescription(description);
+            s.setDescription(description);
         } else {
-            symptom.getDescription().setDateMedicationConsumption(date);
+            s.getDescription().setDateMedicationConsumption(date);
 
         }
         realm.commitTransaction();
     }
 
-    public void addMedicationDescription(Symptom symptom, String s) {
+    public void addMedicationDescription(Symptom s, String s1) {
         realm.beginTransaction();
         Description description;
 
-        if (symptom.getDescription() == null) {
+        if (s.getDescription() == null) {
             description = realm.createObject(Description.class);
-            description.setMedicineName(s);
-            symptom.setDescription(description);
+            description.setMedicineName(s1);
+            s.setDescription(description);
         } else {
-            symptom.getDescription().setMedicineName(s);
+            s.getDescription().setMedicineName(s1);
         }
         realm.commitTransaction();
     }
 
-    public void addBodyPartDescription(Symptom symptom, String s) {
+    public void addBodyPartDescription(Symptom s, String s1) {
         realm.beginTransaction();
         Description description;
 
-        if (symptom.getDescription() == null) {
+        if (s.getDescription() == null) {
             description = realm.createObject(Description.class);
-            description.setBodyPartDetails(s);
-            symptom.setDescription(description);
+            description.setBodyPartDetails(s1);
+            s.setDescription(description);
         } else {
-            symptom.getDescription().setBodyPartDetails(s);
+            s.getDescription().setBodyPartDetails(s1);
         }
         realm.commitTransaction();
     }
 
-    public void addBodyPart(Symptom symptom, String s) {
+    public void addBodyPart(Symptom s, String s1) {
         realm.beginTransaction();
         Description description;
 
-        if (symptom.getDescription() == null) {
+        if (s.getDescription() == null) {
             description = realm.createObject(Description.class);
-            description.setBodyPart(s);
-            symptom.setDescription(description);
+            description.setBodyPart(s1);
+            s.setDescription(description);
         } else {
-            symptom.getDescription().setBodyPart(s);
+            s.getDescription().setBodyPart(s1);
         }
+        realm.commitTransaction();
+    }
+
+    public void addNonDrugTechnique(Symptom s, String s1) {
+        realm.beginTransaction();
+        Description description;
+
+        if (s.getDescription() == null) {
+            description = realm.createObject(Description.class);
+            description.setNonDrugTechniques(s1);
+            s.setDescription(description);
+        } else {
+            s.getDescription().setNonDrugTechniques(s1);
+        }
+        realm.commitTransaction();
+    }
+
+    public void addDistress(Symptom s, float i) {
+        realm.beginTransaction();
+        Description description;
+
+        if (s.getDescription() == null) {
+            description = realm.createObject(Description.class);
+            description.setDistress(i);
+            s.setDescription(description);
+        } else {
+            s.getDescription().setDistress(i);
+        }
+        realm.commitTransaction();
+    }
+
+    public void addNewIntensity(Symptom s, float i) {
+        realm.beginTransaction();
+        s.setDeltaIntensity(s.getIntensity()-i);
+        s.setIntensity(i);
         realm.commitTransaction();
     }
 }

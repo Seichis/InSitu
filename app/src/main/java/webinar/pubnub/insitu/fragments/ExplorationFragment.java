@@ -43,8 +43,8 @@ public class ExplorationFragment extends Fragment implements
         TimePickerDialog.OnTimeSetListener,
         DatePickerDialog.OnDateSetListener {
 
-    public static final int SHOW_DISTRESS = 0;
-    public static final int SHOW_INTENSITY = 1;
+    public static final int SHOW_DISTRESS = 1;
+    public static final int SHOW_INTENSITY = 0;
     public static final int SHOW_INTENSITY_AND_DISTRESS = 2;
     public static final int SHOW_SINGLE_DAY = 0;
     public static final int SHOW_RANGE = 1;
@@ -56,7 +56,7 @@ public class ExplorationFragment extends Fragment implements
     // OPTIONS[0]= dates ==> single or range,
     // OPTIONS[1]= intensity or distress
     // OPTIONS[2]= by activities,weather or body parts
-    private static int[] OPTIONS = new int[]{SHOW_SINGLE_DAY, SHOW_INTENSITY_AND_DISTRESS, SHOW_ACTIVITIES};
+    private int[] OPTIONS = new int[]{SHOW_SINGLE_DAY, SHOW_INTENSITY_AND_DISTRESS, SHOW_ACTIVITIES};
     //By default show intensity
     private static ExplorationFragment explorationFragment;
     private static DateTime dt;
@@ -78,7 +78,6 @@ public class ExplorationFragment extends Fragment implements
     @Bind(R.id.pick_day_button)
     ButtonFloat pickDayButtonFloat;
     private OnExplorationInteractionListener mListener;
-    private int bubbleColor;
 
     public ExplorationFragment() {
         // Required empty public constructor
@@ -118,6 +117,7 @@ public class ExplorationFragment extends Fragment implements
                 break;
             case SHOW_INTENSITY_AND_DISTRESS:
                 OPTIONS[1] = SHOW_DISTRESS;
+                break;
         }
         updateChartByOptions();
     }
@@ -133,22 +133,27 @@ public class ExplorationFragment extends Fragment implements
                 break;
             case SHOW_INTENSITY_AND_DISTRESS:
                 OPTIONS[1] = SHOW_INTENSITY;
+                break;
         }
         updateChartByOptions();
     }
 
     @OnClick(R.id.pick_range_button)
     void pickRange() {
-        OPTIONS[0] = SHOW_RANGE;
-        dateRange.clear();
-        openCalendar();
-    }
+        if(!symptomManager.noSymptoms()){
 
+            OPTIONS[0] = SHOW_RANGE;
+            dateRange.clear();
+            openCalendar();
+        }
+    }
+    SymptomManager symptomManager;
     @OnClick(R.id.pick_day_button)
     void pickSingleDay() {
+        if(!symptomManager.noSymptoms()){
         OPTIONS[0] = SHOW_SINGLE_DAY;
         dateRange.clear();
-        openCalendar();
+        openCalendar();}
     }
 
     private void openCalendar() {
@@ -194,6 +199,7 @@ public class ExplorationFragment extends Fragment implements
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         explorationFragment = this;
+        symptomManager=SymptomManager.getInstance();
         ButterKnife.bind(this, view);
 
         ChartManager.getInstance().setup(bubbleChart);
@@ -217,7 +223,6 @@ public class ExplorationFragment extends Fragment implements
             case SHOW_RANGE:
                 pickRangeButtonFloat.setBackgroundColor(ContextCompat.getColor(getContext(), android.R.color.holo_blue_bright));
                 pickDayButtonFloat.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.high));
-
                 ChartManager.getInstance().updateBubbleChartByRange(OPTIONS[2], OPTIONS[1], dateRange.get(0).getMillis(), dateRange.get(1).getMillis());
                 break;
         }
@@ -275,6 +280,7 @@ public class ExplorationFragment extends Fragment implements
         RealmResults<MyBubbleChartData> finalResult = null;
         for (TreeMap.Entry<Integer, RealmResults<MyBubbleChartData>> chartDatas : realmResults.entrySet()) {
             finalResult = chartDatas.getValue();
+
             RealmBubbleDataSet<MyBubbleChartData> set = new RealmBubbleDataSet<MyBubbleChartData>(finalResult, "value", "classId", "bubbleSize");
 
             set.setColor(ContextCompat.getColor(getContext(), getBubbleColor(chartDatas.getKey())));
@@ -285,22 +291,25 @@ public class ExplorationFragment extends Fragment implements
         }
 
         // create a data object with the dataset list
-        RealmBubbleData data = new RealmBubbleData(finalResult, "className", dataSets);
-        ChartManager.getInstance().styleData(data);
+        if (finalResult != null) {
+            RealmBubbleData data = new RealmBubbleData(finalResult, "className", dataSets);
+            ChartManager.getInstance().styleData(data);
+            bubbleChart.setData(data);
+            bubbleChart.getXAxis().setDrawGridLines(true);
+            bubbleChart.getAxisLeft().setDrawGridLines(false);
+            bubbleChart.setPinchZoom(true);
+            bubbleChart.setAutoScaleMinMaxEnabled(false);
+            bubbleChart.getLegend().setEnabled(false);
+            bubbleChart.getXAxis().setLabelRotationAngle(30);
+            bubbleChart.getXAxis().setLabelsToSkip(0);
+            bubbleChart.getAxisLeft().setAxisMinValue(0);
+            bubbleChart.getAxisLeft().setAxisMaxValue(11);
+            bubbleChart.getAxisLeft().setValueFormatter(new LargeValueFormatter());
+            bubbleChart.animateY(1400, Easing.EasingOption.EaseInOutQuart);
+        }
 
         // set data
-        bubbleChart.setData(data);
-        bubbleChart.getXAxis().setDrawGridLines(true);
-        bubbleChart.getAxisLeft().setDrawGridLines(false);
-        bubbleChart.setPinchZoom(true);
-        bubbleChart.setAutoScaleMinMaxEnabled(false);
-        bubbleChart.getLegend().setEnabled(false);
-        bubbleChart.getXAxis().setLabelRotationAngle(30);
-        bubbleChart.getXAxis().setLabelsToSkip(0);
-        bubbleChart.getAxisLeft().setAxisMinValue(0);
-        bubbleChart.getAxisLeft().setAxisMaxValue(11);
-        bubbleChart.getAxisLeft().setValueFormatter(new LargeValueFormatter());
-        bubbleChart.animateY(1400, Easing.EasingOption.EaseInOutQuart);
+
     }
 
     @Override
@@ -374,11 +383,12 @@ public class ExplorationFragment extends Fragment implements
     }
 
     public int getBubbleColor(int setId) {
-        if (OPTIONS[1] == SHOW_INTENSITY) {
-            return Constants.colors[1];
-        } else if (OPTIONS[1] == SHOW_DISTRESS) {
-            return Constants.colors[6];
-        } else if (setId == 1) {
+//        if (OPTIONS[1] == SHOW_INTENSITY) {
+//            return Constants.colors[1];
+//        } else if (OPTIONS[1] == SHOW_DISTRESS) {
+//            return Constants.colors[6];
+//        } else
+            if (setId == 1) {
             return Constants.colors[1];
         } else if (setId == 2) {
             return Constants.colors[6];

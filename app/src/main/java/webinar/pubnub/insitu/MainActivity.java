@@ -164,7 +164,7 @@ public class MainActivity extends BaseActivity
         } else if (id == R.id.symptoms_on_map) {
             startActivity(new Intent(this, HeatmapsDemoActivity.class));
         } else if (id == R.id.raw_history) {
-
+            startActivity(new Intent(this,AddMoreInfoActivity.class));
         } else if (id == R.id.app_settings) {
             startActivity(new Intent(mainActivity, SettingsActivity.class));
         } else if (id == R.id.nav_share) {

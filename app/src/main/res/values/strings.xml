@@ -130,8 +130,6 @@
     <string name="add_symptoms_to_diary">Add symptoms</string>
     <string name="mark_error">Mark as error</string>
     <string name="add_more_info">Tell us some more</string>
-    <string name="more_info_title">Add some more details</string>
-    <string name="more_info_message">It only takes 2 minutes</string>
     <string name="symptom_data_overview">Intensity : %1$.0f\nTime :%2$s</string>
     <string name="fixed_diary_name">%1$s\\\' diary</string>
     <string name="pie_center"><![CDATA[
@@ -144,10 +142,10 @@
     <string name="pick_range_date">Range</string>
     <string name="permission_system_alert_rationale">We need to remind you of providind additional details for better care delivery from your coach. </string>
     <string name="permision_available_system_alert">Permission to notify you is granted</string>
-    <string name="symptom_details_title">Intensity: %1$.2f /n%2$s ago</string>
+    <string name="symptom_details_title">Intensity: %1$.2f \n%2$s</string>
     <string name="more_info_intensity_tv">Intensity</string>
     <string name="more_info_distress_tv">Distress caused</string>
-    <string name="body_part_details">Tell us a bit more about where you felt pain</string>
+    <string name="body_part_details">Ache, sharp, throbbing, shooting, etc.</string>
     <string name="medication_details">What?How much?</string>
     <string name="body_part_title">Where did it hurt?</string>
     <string name="medication_title">Medication to relief</string>
@@ -158,5 +156,10 @@
     <string name="more_info_head">Pain occurence at %1$s at %2$s.</string>
     <string name="medication_details_dialog_title">What medication did you take? How much and when?</string>
     <string name="when_hint">When?</string>
+    <string name="body_part_details_dialog_title">Where exactly was the %1$s pain and how did it feel?</string>
+    <string name="body_part_details_where">the right side of your</string>
+    <string name="body_part_details_at">at</string>
+    <string name="body_part_details_where_tv">%1$s</string>
+    <string name="SelectSize">Select one</string>
 
 </resources>

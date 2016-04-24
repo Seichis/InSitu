@@ -13,10 +13,20 @@ public class Symptom extends RealmObject {
     boolean isError = false;
     long id;
     long timestamp;
-    Description description=null;
+    Description description = null;
+    float deltaIntensity;
     private Diary diary;
 
+
     public Symptom() {
+    }
+
+    public float getDeltaIntensity() {
+        return deltaIntensity;
+    }
+
+    public void setDeltaIntensity(float deltaIntensity) {
+        this.deltaIntensity = deltaIntensity;
     }
 
     public Description getDescription() {

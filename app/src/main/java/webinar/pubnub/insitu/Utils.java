@@ -77,11 +77,23 @@ public class Utils {
         DateTime dt = DateTime.now(DateTimeZone.forTimeZone(TimeZone.getDefault()));
         String hour="";
         float difMinutes=(float)(dt.getMillis()-date)/(1000*60);
-        if (difMinutes<30){
+        if (difMinutes<5){
+            return "Moments ago";
+        }else if(difMinutes<10){
+            return "A few minutes ago";
+        }
+        else if (difMinutes<30){
             return "Less than half an hour ago";
-        }else{
+        }else if (difMinutes<(12*60)){
             int hours = Math.round(difMinutes/60);
-            return "About " + hours + "ago";
+            return "About " + hours + " hours ago";
+        }else if (difMinutes<(18*60)){
+            return "Half a day ago";
+        }else if(difMinutes<(24*60)){
+            return "A day ago";
+        }else {
+            int days = Math.round(difMinutes/(60*24));
+            return days+" days ago";
         }
     }
 
