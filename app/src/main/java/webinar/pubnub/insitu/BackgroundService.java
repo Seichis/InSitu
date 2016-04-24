@@ -153,7 +153,7 @@ public class BackgroundService extends Service implements IBackgroundSettingsSer
         chartManager = ChartManager.getInstance();
         chartManager.init(backgroundService);
 
-//        symptomManager.fillData();
+        symptomManager.fillData();
     }
 
     public void createOrUpdateBubble() {

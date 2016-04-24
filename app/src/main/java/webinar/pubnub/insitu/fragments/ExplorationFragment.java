@@ -40,23 +40,22 @@ import webinar.pubnub.insitu.managers.SymptomManager;
 import webinar.pubnub.insitu.model.MyBubbleChartData;
 
 public class ExplorationFragment extends Fragment implements
-        TimePickerDialog.OnTimeSetListener,
         DatePickerDialog.OnDateSetListener {
 
-    public static final int SHOW_DISTRESS = 1;
-    public static final int SHOW_INTENSITY = 0;
-    public static final int SHOW_INTENSITY_AND_DISTRESS = 2;
-    public static final int SHOW_SINGLE_DAY = 0;
-    public static final int SHOW_RANGE = 1;
-    public static final int SHOW_ACTIVITIES = 0;
-    public static final int SHOW_WEATHER = 1;
-    public static final int SHOW_BODY_PARTS = 2;
+    private static final int SHOW_DISTRESS = 1;
+    private static final int SHOW_INTENSITY = 0;
+    private static final int SHOW_INTENSITY_AND_DISTRESS = 2;
+    private static final int SHOW_SINGLE_DAY = 0;
+    private static final int SHOW_RANGE = 1;
+    private static final int SHOW_ACTIVITIES = 0;
+    private static final int SHOW_WEATHER = 1;
+    private static final int SHOW_BODY_PARTS = 2;
     private static final String TAG = "Exploration";
     // int[] to represent the options.
     // OPTIONS[0]= dates ==> single or range,
     // OPTIONS[1]= intensity or distress
     // OPTIONS[2]= by activities,weather or body parts
-    private int[] OPTIONS = new int[]{SHOW_SINGLE_DAY, SHOW_INTENSITY_AND_DISTRESS, SHOW_ACTIVITIES};
+    private int[] OPTIONS = new int[]{SHOW_SINGLE_DAY, SHOW_INTENSITY, SHOW_ACTIVITIES};
     //By default show intensity
     private static ExplorationFragment explorationFragment;
     private static DateTime dt;
@@ -230,12 +229,12 @@ public class ExplorationFragment extends Fragment implements
         switch (OPTIONS[1]) {
             case SHOW_INTENSITY:
                 intensityButtonFloat.setBackgroundColor(ContextCompat.getColor(getContext(), android.R.color.holo_blue_bright));
-                distressButtonFloat.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.graph_color8));
+                distressButtonFloat.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.graph_color2));
 
                 break;
             case SHOW_DISTRESS:
                 distressButtonFloat.setBackgroundColor(ContextCompat.getColor(getContext(), android.R.color.holo_blue_bright));
-                intensityButtonFloat.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.graph_color8));
+                intensityButtonFloat.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.graph_color7));
                 break;
             case SHOW_INTENSITY_AND_DISTRESS:
                 distressButtonFloat.setBackgroundColor(ContextCompat.getColor(getContext(), android.R.color.holo_blue_bright));
@@ -375,11 +374,6 @@ public class ExplorationFragment extends Fragment implements
                 }
 
         }
-    }
-
-    @Override
-    public void onTimeSet(RadialPickerLayout view, int hourOfDay, int minute, int second) {
-
     }
 
     public int getBubbleColor(int setId) {

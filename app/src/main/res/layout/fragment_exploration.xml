@@ -9,17 +9,17 @@
     <include layout="@layout/buttons_activities_etc"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"/>
+        android:layout_weight="1.1"/>
     <com.github.mikephil.charting.charts.BubbleChart
         android:id="@+id/bubble_chart"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="4" />
+        android:layout_weight="3.8" />
 
     <include
         layout="@layout/header_buttons_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_weight="1.1" />
 </LinearLayout>
 

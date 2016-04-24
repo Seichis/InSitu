@@ -23,6 +23,7 @@ import webinar.pubnub.insitu.Constants;
 import webinar.pubnub.insitu.R;
 import webinar.pubnub.insitu.Utils;
 import webinar.pubnub.insitu.fragments.ExplorationFragment;
+import webinar.pubnub.insitu.maps.HeatmapsDemoActivity;
 import webinar.pubnub.insitu.model.Description;
 import webinar.pubnub.insitu.model.Diary;
 import webinar.pubnub.insitu.model.MyChartData;
@@ -159,6 +160,9 @@ public class SymptomManager implements ISymptomManager {
         ChartManager.getInstance().updatePieChartDataByActivityByDay(DateTime.now().getMillis());
         BackgroundService.getInstance().createOrUpdateBubble();
         ChartManager.getInstance().updateBubbleChartByDay(ChartManager.BY_ACTIVITIES,ChartManager.INTENSITY,DateTime.now().getMillis());
+        if(HeatmapsDemoActivity.getInstance()!=null){
+            HeatmapsDemoActivity.getInstance().updateMapByOptions();
+        }
 //        ChartManager.getInstance().updateBubbleChartByRange(ChartManager.BY_ACTIVITIES,ChartManager.INTENSITY,DateTime.now().minusDays(5).getMillis(), DateTime.now().getMillis());
 
     }
@@ -248,73 +252,85 @@ public class SymptomManager implements ISymptomManager {
         return latLngHashMap;
     }
 
+    public ArrayList<LatLng> getSymptomsLatLonByDistress(long from, long until) {
+        ArrayList<LatLng> latLngHashMap = new ArrayList<>();
+        for (Symptom s : getAllSymptomsByRange(from, until)) {
+            if (s.getDescription()!=null){
+                if(s.getDescription().getDistress()>0){
+                    latLngHashMap.add(new LatLng(s.getContext().getLatitude(), s.getContext().getLongitude()));
+                }
+            }
+        }
+        return latLngHashMap;
+    }
 
-//    public void fillData() {
-//        realm.beginTransaction();
-//        realm.clear(Symptom.class);
-//        realm.clear(MyChartData.class);
-//        realm.commitTransaction();
-//        realm.beginTransaction();
-//        DateTime now = DateTime.now(DateTimeZone.forTimeZone(TimeZone.getDefault()));
-//
-//        for (int i = 0; i < 500; i++) {
-//            int activity = Utils.randInt(0, 4);
-//            Symptom s = new Symptom();
-//            s.setActivityId(activity);
-//            long timestamp = now.minusDays(Utils.randInt(0, 50)).getMillis();
-//            s.setTimestamp(timestamp);
-//            s.setId(i);
-//            float intensity = (float) Utils.randInt(0, 10);
-//            s.setIntensity(intensity);
-//
-//            // Adding description
-//            Description description = new Description();
-//            String[] bp = context.getResources().getStringArray(R.array.BodyParts);
-//            description.setBodyPart(bp[Utils.randInt(0, bp.length - 1)]);
-//            if ((Utils.randInt(2, 1000) % 2) == 0) {
-//                description.setDateMedicationConsumption(timestamp + DateTime.now().plus(Utils.randInt(500000, 7200000)).getMillis());
-//            }
-//            description.setDistress(intensity + (float) Utils.randInt(0, (int) (10f - intensity)));
-//            s.setDescription(description);
-//
-//            // Adding Context
-//            float baseLat = 55.6761f;
-//            float baseLon = 12.5683f;
-//            SymptomContext sc = new SymptomContext();
-//            float minX = 0.001f;
-//            float maxX = 0.1f;
-//
-//            Random rand = new Random();
-//
-//            float finalX = rand.nextFloat() * (maxX - minX) + minX;
-//            float finalY = rand.nextFloat() * (maxX - minX) + minX;
-//
-//            if ((Utils.randInt(2, 1000) % 2) == 0) {
-//                sc.setLongitude(baseLon - finalX / 2);
-//            } else {
-//                sc.setLongitude(baseLon + finalX / 2);
-//            }
-//            if ((Utils.randInt(2, 1000) % 2) == 0) {
-//                sc.setLatitude(baseLat - finalY / 2);
-//            } else {
-//                sc.setLatitude(baseLat + finalY / 2);
-//
-//            }
-//
-//            sc.setTemperature((float) Utils.randInt(-15, 30) + rand.nextFloat());
-//            String[] weatherCondition = context.getResources().getStringArray(R.array.WeatherConditions);
-//            sc.setWeatherCondition(weatherCondition[Utils.randInt(0, weatherCondition.length - 1)]);
-//            s.setContext(sc);
-//            realm.copyToRealm(s);
-//        }
-//        realm.commitTransaction();
-////        ChartManager.getInstance().updatePieChartDataByActivityByRange(DateTime.now().minusDays(1).getMillis(), DateTime.now().getMillis());
-//        ChartManager.getInstance().updatePieChartDataByActivityByDay(DateTime.now().getMillis());
-////        ChartManager.getInstance().updateBubbleChartDataByDay(DateTime.now().getMillis());
-////        ChartManager.getInstance().updateBubbleChartByRange(ChartManager.BY_ACTIVITIES,ChartManager.INTENSITY,DateTime.now().minusDays(5).getMillis(), DateTime.now().getMillis());
-//
-//
-//    }
+
+    public void fillData() {
+        realm.beginTransaction();
+        realm.clear(Symptom.class);
+        realm.clear(MyChartData.class);
+        realm.commitTransaction();
+        realm.beginTransaction();
+        DateTime now = DateTime.now(DateTimeZone.forTimeZone(TimeZone.getDefault()));
+
+        for (int i = 0; i < 500; i++) {
+            int activity = Utils.randInt(0, 4);
+            Symptom s = new Symptom();
+            s.setActivityId(activity);
+            long timestamp = now.minusDays(Utils.randInt(0, 50)).getMillis();
+            s.setTimestamp(timestamp);
+            s.setId(i);
+            float intensity = (float) Utils.randInt(0, 10);
+            s.setIntensity(intensity);
+
+            // Adding description
+            Description description = new Description();
+            String[] bp = context.getResources().getStringArray(R.array.BodyParts);
+            description.setBodyPart(bp[Utils.randInt(0, bp.length - 1)]);
+            if ((Utils.randInt(2, 1000) % 2) == 0) {
+                description.setDateMedicationConsumption(timestamp + DateTime.now().plus(Utils.randInt(500000, 7200000)).getMillis());
+            }
+            description.setDistress(intensity + (float) Utils.randInt(0, (int) (10f - intensity)));
+            s.setDescription(description);
+
+            // Adding Context
+            float baseLat = 55.6761f;
+            float baseLon = 12.5683f;
+            SymptomContext sc = new SymptomContext();
+            float minX = 0.001f;
+            float maxX = 0.1f;
+
+            Random rand = new Random();
+
+            float finalX = rand.nextFloat() * (maxX - minX) + minX;
+            float finalY = rand.nextFloat() * (maxX - minX) + minX;
+
+            if ((Utils.randInt(2, 1000) % 2) == 0) {
+                sc.setLongitude(baseLon - finalX / 2);
+            } else {
+                sc.setLongitude(baseLon + finalX / 2);
+            }
+            if ((Utils.randInt(2, 1000) % 2) == 0) {
+                sc.setLatitude(baseLat - finalY / 2);
+            } else {
+                sc.setLatitude(baseLat + finalY / 2);
+
+            }
+
+            sc.setTemperature((float) Utils.randInt(-15, 30) + rand.nextFloat());
+            String[] weatherCondition = context.getResources().getStringArray(R.array.WeatherConditions);
+            sc.setWeatherCondition(weatherCondition[Utils.randInt(0, weatherCondition.length - 1)]);
+            s.setContext(sc);
+            realm.copyToRealm(s);
+        }
+        realm.commitTransaction();
+//        ChartManager.getInstance().updatePieChartDataByActivityByRange(DateTime.now().minusDays(1).getMillis(), DateTime.now().getMillis());
+        ChartManager.getInstance().updatePieChartDataByActivityByDay(DateTime.now().getMillis());
+//        ChartManager.getInstance().updateBubbleChartDataByDay(DateTime.now().getMillis());
+//        ChartManager.getInstance().updateBubbleChartByRange(ChartManager.BY_ACTIVITIES,ChartManager.INTENSITY,DateTime.now().minusDays(5).getMillis(), DateTime.now().getMillis());
+
+
+    }
 
 
     @Override
