@@ -132,7 +132,9 @@ public class ChartManager implements IChartManager {
     public float getSymptomsCount() {
         return (symptoms == null) ? 0f : (float) this.symptoms.size();
     }
-
+    public float getMeanIntensity(){
+        return (float)symptoms.where().average("intensity");
+    }
     public void updatePieChartDataByActivityByRange(long from, long until) {
         realm.beginTransaction();
         realm.clear(MyChartData.class);
@@ -158,11 +160,11 @@ public class ChartManager implements IChartManager {
     }
 
 
-    public void updatePieChartByDay(int by, long date) {
-        updatePieChartByRange(by, Utils.getDayStart(date, 1), Utils.getDaysEnd(date));
+    public void updatePieChartByDay(int by,int what, long date) {
+        updatePieChartByRange(by,what, Utils.getDayStart(date, 1), Utils.getDaysEnd(date));
     }
 
-    public void updatePieChartByRange(int by, long from, long until) {
+    public void updatePieChartByRange(int by,int what, long from, long until) {
 //        String[] conditions = context.getResources().getStringArray(R.array.WeatherConditions);
         String[] bodyParts = context.getResources().getStringArray(R.array.BodyParts);
         realm.beginTransaction();
@@ -228,14 +230,37 @@ public class ChartManager implements IChartManager {
             default:
                 break;
         }
-        for (Map.Entry<String, RealmResults<Symptom>> entry : symptomsBy.entrySet()) {
-            float count = (float) entry.getValue().size();
+        switch (what){
+            case INTENSITY:
+                for (Map.Entry<String, RealmResults<Symptom>> entry : symptomsBy.entrySet()) {
+                    float count = (float) entry.getValue().size();
 //                    float meanValue = (float) entry.getValue().average("intensity");
-            String[] classInfo = entry.getKey().split(";");
-            MyChartData dataIntensity = new MyChartData(classInfo[1], count / totalSymptoms, Integer.parseInt(classInfo[0]));
-            realm.copyToRealm(dataIntensity);
+                    String[] classInfo = entry.getKey().split(";");
+                    MyChartData dataIntensity = new MyChartData(classInfo[1], count / totalSymptoms, Integer.parseInt(classInfo[0]));
+                    realm.copyToRealm(dataIntensity);
+                }
+                realm.commitTransaction();
+                break;
+            case DISTRESS:
+                for (Map.Entry<String, RealmResults<Symptom>> entry : symptomsBy.entrySet()) {
+                    float count=0f;
+                    for (Symptom sm:entry.getValue()){
+                        if (sm.getDescription()!=null){
+                            if(sm.getDescription().getDistress()>0){
+                                count++;
+                            }
+                        }
+                    }
+//                    float count = (float) entry.getValue().size();
+//                    float meanValue = (float) entry.getValue().average("intensity");
+                    String[] classInfo = entry.getKey().split(";");
+                    MyChartData dataDistress = new MyChartData(classInfo[1], count / getCountOfSymptomsWithDistress(), Integer.parseInt(classInfo[0]));
+                    realm.copyToRealm(dataDistress);
+                }
+                realm.commitTransaction();
+                break;
         }
-        realm.commitTransaction();
+
         if (HomeFragment.getInstance() != null) {
             HomeFragment.getInstance().updatePiechart();
         }
@@ -349,7 +374,7 @@ public class ChartManager implements IChartManager {
                         MyBubbleChartData data = new MyBubbleChartData();
                         float meanValue = t / count;
                         String[] classInfo = entry.getKey().split(";");
-                        data.setBubbleSize(count / totalSymptoms);
+                        data.setBubbleSize(count / getCountOfSymptomsWithDistress());
                         data.setClassId(Integer.parseInt(classInfo[0]));
                         data.setClassName(classInfo[1]);
                         data.setValue(meanValue);
@@ -385,7 +410,7 @@ public class ChartManager implements IChartManager {
                     if (isDistressValid) {
                         MyBubbleChartData data = new MyBubbleChartData();
 
-                        data.setBubbleSize(count / totalSymptoms);
+                        data.setBubbleSize(count / getCountOfSymptomsWithDistress());
                         data.setClassId(Integer.parseInt(classInfo[0]));
                         data.setClassName(classInfo[1]);
                         data.setValue(meanValueDistress);
@@ -412,5 +437,31 @@ public class ChartManager implements IChartManager {
 
     public void updateBubbleChartByDay(int by, int what, long date) {
         updateBubbleChartByRange(by, what, Utils.getDayStart(date, 0), Utils.getDaysEnd(date));
+    }
+
+    public float getMeanDistress() {
+        float sum=0f;
+        float counter=0f;
+        for(Symptom s: symptoms){
+            if (s.getDescription()!=null){
+                counter++;
+                if(s.getDescription().getDistress()>0){
+                    sum+=s.getDescription().getDistress();
+                }
+            }
+        }
+        return (counter>0f)?sum/counter:0f;
+    }
+
+    public float getCountOfSymptomsWithDistress(){
+        float counter=0;
+        for(Symptom s: symptoms){
+            if (s.getDescription()!=null){
+                if(s.getDescription().getDistress()>0){
+                    counter++;
+                }
+            }
+        }
+        return counter;
     }
 }

@@ -1,11 +1,14 @@
 package webinar.pubnub.insitu.adapters;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -48,7 +51,7 @@ public class MyExpandableListItemAdapter extends ExpandableListItemAdapter<Sympt
      */
     public MyExpandableListItemAdapter(final Context context) {
 //        super(context, SymptomManager.getInstance().getTodaySymptomsWithoutDescription());
-        super(context, SymptomManager.getInstance().getAllSymptomsByDay(DateTime.now().getMillis()).where().findAllSorted("timestamp", Sort.DESCENDING));
+        super(context, SymptomManager.getInstance().getAllSymptomsByRange(DateTime.now().minusDays(2).getMillis(),DateTime.now().getMillis()).where().findAllSorted("timestamp", Sort.DESCENDING));
         mContext = context;
         symptomManager = SymptomManager.getInstance();
 
@@ -59,13 +62,19 @@ public class MyExpandableListItemAdapter extends ExpandableListItemAdapter<Sympt
     @Override
     public View getTitleView(final int position, final View convertView, @NonNull final ViewGroup parent) {
         TextView tv = (TextView) convertView;
-
         if (tv == null) {
             tv = new TextView(mContext);
         }
         Symptom s = getItem(position);
         tv.setText(mContext.getString(R.string.symptom_details_title, s.getIntensity(), Utils.getDateFormatForListview(s.getTimestamp())));
+        if (!Utils.isToday(s.getTimestamp())){
+            tv.setBackgroundColor(ContextCompat.getColor(mContext,R.color.dark_gray));
+            tv.setTextColor(Color.WHITE);
+            tv.setClickable(false);
+            tv.bringToFront();
+        }
         return tv;
+
     }
 
     @NonNull

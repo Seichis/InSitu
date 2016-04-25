@@ -108,4 +108,20 @@ public class Utils {
     public static long getDateFromHourAndMin(int hour,int minute) {
         return DateTime.now().withHourOfDay(hour).withMinuteOfHour(minute).getMillis();
     }
+
+    public static String getHourAndMinuteFormat(int hour,int minute){
+
+        DateTimeFormatter dtfOut = DateTimeFormat.forPattern("k:m");
+        return dtfOut.print(DateTime.now().withHourOfDay(hour).withMinuteOfHour(minute).getMillis())  ;
+    }
+
+    public static String convertFromMillisToHourMinute(long date){
+        DateTimeFormatter dtfOut = DateTimeFormat.forPattern("k:m");
+        return dtfOut.print(new DateTime(date,DateTimeZone.forTimeZone(TimeZone.getDefault())));
+
+    }
+
+    public static boolean isToday(long date){
+        return (new DateTime(date,DateTimeZone.forTimeZone(TimeZone.getDefault())).dayOfYear()==DateTime.now().dayOfYear());
+    }
 }

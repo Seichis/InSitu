@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.gc.materialdesign.views.ButtonFloat;
+import com.github.mikephil.charting.charts.Chart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.realm.implementation.RealmPieData;
@@ -151,13 +152,25 @@ private int[] OPTIONS = new int[]{SHOW_SINGLE_DAY, SHOW_INTENSITY, SHOW_ACTIVITI
 
 
     private SpannableString generateCenterSpannableText() {
-        int symptomCountToday = (int) ChartManager.getInstance().getSymptomsCount();
-        SpannableString s = new SpannableString(Html.fromHtml(getString(R.string.pie_center, symptomCountToday, 4.5f)));
+        int symptomCountToday = 0;
+        float value=0f;
+        switch (OPTIONS[1]){
+            case SHOW_INTENSITY:
+                value=ChartManager.getInstance().getMeanIntensity();
+                symptomCountToday = (int) ChartManager.getInstance().getSymptomsCount();
+
+                break;
+            case SHOW_DISTRESS:
+                symptomCountToday = (int) ChartManager.getInstance().getCountOfSymptomsWithDistress();
+
+                value= ChartManager.getInstance().getMeanDistress();
+        }
+        SpannableString s = new SpannableString(Html.fromHtml(getString(R.string.pie_center, symptomCountToday, value)));
 //        s.setSpan(new ForegroundColorSpan(Color.rgb(240, 115, 126)), 0, 10, 0);
 //        s.setSpan(new RelativeSizeSpan(2.2f), 0, 10, 0);
         s.setSpan(new StyleSpan(Typeface.ITALIC), 11, s.length(), 0);
         s.setSpan(new ForegroundColorSpan(ColorTemplate.getHoloBlue()), 11, s.length(), 0);
-        s.setSpan(new RelativeSizeSpan(2f), 9, s.length(), 0);
+        s.setSpan(new RelativeSizeSpan(2f), 11, s.length(), 0);
         return s;
     }
 
@@ -337,12 +350,12 @@ private int[] OPTIONS = new int[]{SHOW_SINGLE_DAY, SHOW_INTENSITY, SHOW_ACTIVITI
             case SHOW_SINGLE_DAY:
                 pickDayButtonFloat.setBackgroundColor(ContextCompat.getColor(getContext(), android.R.color.holo_blue_bright));
                 pickRangeButtonFloat.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.high));
-                chartManager.updatePieChartByDay(OPTIONS[2],dt.getMillis());
+                chartManager.updatePieChartByDay(OPTIONS[2],OPTIONS[1],dt.getMillis());
                 break;
             case SHOW_RANGE:
                 pickRangeButtonFloat.setBackgroundColor(ContextCompat.getColor(getContext(), android.R.color.holo_blue_bright));
                 pickDayButtonFloat.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.high));
-                chartManager.updatePieChartByRange(OPTIONS[2],dateRange.get(0).getMillis(), dateRange.get(1).getMillis());
+                chartManager.updatePieChartByRange(OPTIONS[2],OPTIONS[1],dateRange.get(0).getMillis(), dateRange.get(1).getMillis());
                 break;
         }
 

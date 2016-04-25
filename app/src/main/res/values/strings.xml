@@ -135,7 +135,7 @@
     <string name="pie_center"><![CDATA[
     <p style="color:#F44336;font-size:large;text-alignment:center">At a glance<br>
     %1$d<br>
-   %2$.0f</p>
+   %2$.1f</p>
     ]]>
 </string>
     <string name="pick_single_date">Single day</string>

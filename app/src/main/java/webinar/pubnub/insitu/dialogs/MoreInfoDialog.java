@@ -72,6 +72,7 @@ public class MoreInfoDialog extends DialogFragment implements
     @OnFocusChange(R.id.input_time_dummy)
     void inputTimeFocus() {
         if (inputTime.hasFocus()) {
+            inputTime.setText("");
             pickTime();
         }
     }
@@ -111,9 +112,10 @@ public class MoreInfoDialog extends DialogFragment implements
         View view = inflater.inflate(layout, null);
         ButterKnife.bind(this, view);
 
+
         symptom = SymptomManager.getInstance().getSymptomById(id);
 
-        setupTVBodyParts();
+        setupViews();
         return new AlertDialog.Builder(getActivity())
                 .setView(view)
 //                .setTitle(getString(R.string.more_info_title))
@@ -141,12 +143,23 @@ public class MoreInfoDialog extends DialogFragment implements
                 .create();
     }
 
-    private void setupTVBodyParts() {
-        if (bodyPartWhereTextView != null) {
+    private void setupViews() {
+        if (medicationEditText != null) {
+            if (symptom.getDescription().getMedicineName() != null) {
+                medicationEditText.setText(symptom.getDescription().getMedicineName());
+                inputTime.setText(Utils.convertFromMillisToHourMinute(symptom.getDescription().getDateMedicationConsumption()));
+            }
+        }
+        if (bodyPartDetailsFormEditText != null) {
+            if (symptom.getDescription().getBodyPartDetails() != null) {
+                bodyPartDetailsFormEditText.setText(symptom.getDescription().getBodyPartDetails());
+            }
+        }
 
+        if (bodyPartWhereTextView != null) {
             bodyPartWhereTextView.setText(getString(R.string.body_part_details_where_tv, symptom.getDescription().getBodyPart()));
         }
-        if(bodyDetailsTitle!=null){
+        if (bodyDetailsTitle != null) {
             bodyDetailsTitle.setText(getString(R.string.body_part_details_dialog_title, symptom.getDescription().getBodyPart()));
         }
     }
@@ -161,5 +174,7 @@ public class MoreInfoDialog extends DialogFragment implements
         long date = Utils.getDateFromHourAndMin(hourOfDay, minute);
 
         SymptomManager.getInstance().addMedicationDate(symptom, date);
+
+        inputTime.setText(Utils.getHourAndMinuteFormat(hourOfDay, minute));
     }
 }
