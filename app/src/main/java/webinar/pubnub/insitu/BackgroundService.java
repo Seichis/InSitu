@@ -17,6 +17,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.nfc.Tag;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -30,6 +31,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,6 +43,7 @@ import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.ActivityRecognition;
 import com.google.android.gms.location.DetectedActivity;
 import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.common.base.Functions;
 import com.google.common.collect.EvictingQueue;
@@ -63,6 +66,7 @@ import webinar.pubnub.insitu.activityrecognition.DetectedActivitiesIntentService
 import webinar.pubnub.insitu.managers.ChartManager;
 import webinar.pubnub.insitu.managers.DataManager;
 import webinar.pubnub.insitu.managers.DiaryManager;
+import webinar.pubnub.insitu.managers.MedicationManager;
 import webinar.pubnub.insitu.managers.PatientManager;
 import webinar.pubnub.insitu.managers.SettingsManager;
 import webinar.pubnub.insitu.managers.SymptomManager;
@@ -93,6 +97,8 @@ public class BackgroundService extends Service implements IBackgroundSettingsSer
     private Realm realm;
     private RealmConfiguration realmConfig;
     private BubblesManager bubblesManager;
+    // A request to connect to Location Services
+    private LocationRequest locationRequest;
 
     public BackgroundService() {
     }
@@ -153,9 +159,11 @@ public class BackgroundService extends Service implements IBackgroundSettingsSer
         chartManager = ChartManager.getInstance();
         chartManager.init(backgroundService);
 
+        medicationManager=MedicationManager.getInstance();
+        medicationManager.init(this,realm);
         symptomManager.fillData();
     }
-
+MedicationManager medicationManager;
     public void createOrUpdateBubble() {
         initializeBubblesManager();
     }
@@ -235,6 +243,18 @@ public class BackgroundService extends Service implements IBackgroundSettingsSer
 
     private void buildLocationClient() {
         // Create a new location client, using the enclosing class to handle callbacks.
+        // Create a new global location parameters object
+        locationRequest = LocationRequest.create();
+
+        // Set the update interval
+        locationRequest.setInterval(20000);
+
+        // Use high accuracy
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+        // Set the interval ceiling to one minute
+        locationRequest.setFastestInterval(60);
+
         locationClient = new GoogleApiClient.Builder(this)
                 .addApi(LocationServices.API)
                 .addConnectionCallbacks(this)
@@ -419,12 +439,17 @@ public class BackgroundService extends Service implements IBackgroundSettingsSer
     public void onConnectionSuspended(int i) {
         mGoogleApiClient.connect();
         locationClient.connect();
+        startPeriodicUpdates();
     }
 
     @Override
     public void onLocationChanged(Location location) {
         currentLocation = location;
+        Log.i(TAG,"location changed");
+        Toast.makeText(mainActivity,"location changed",Toast.LENGTH_LONG).show();
+
     }
+
 
     private void buildAlertMessageNoGps() {
         final LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -466,6 +491,24 @@ public class BackgroundService extends Service implements IBackgroundSettingsSer
             return null;
         }
     }
+
+    /*
+     * In response to a request to start updates, send a request to Location Services
+     */
+    private void startPeriodicUpdates() {
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        LocationServices.FusedLocationApi.requestLocationUpdates(locationClient, locationRequest, this);
+    }
+
 
     protected void checkPermissions() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) { // Permission was added in API Level 16

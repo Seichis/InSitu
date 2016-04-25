@@ -122,6 +122,6 @@ public class Utils {
     }
 
     public static boolean isToday(long date){
-        return (new DateTime(date,DateTimeZone.forTimeZone(TimeZone.getDefault())).dayOfYear()==DateTime.now().dayOfYear());
+        return (new DateTime(date,DateTimeZone.forTimeZone(TimeZone.getDefault())).dayOfYear().equals(DateTime.now().dayOfYear()));
     }
 }

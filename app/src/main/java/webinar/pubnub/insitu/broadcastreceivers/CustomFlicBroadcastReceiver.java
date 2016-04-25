@@ -10,6 +10,7 @@ import io.flic.lib.FlicManager;
 import webinar.pubnub.insitu.BackgroundService;
 import webinar.pubnub.insitu.MainActivity;
 import webinar.pubnub.insitu.Utils;
+import webinar.pubnub.insitu.managers.MedicationManager;
 import webinar.pubnub.insitu.managers.SymptomManager;
 
 /**
@@ -28,12 +29,19 @@ public class CustomFlicBroadcastReceiver extends FlicBroadcastReceiver {
 
     }
 
+    @Override
+    public void onButtonSingleOrDoubleClick(Context context, FlicButton button, boolean wasQueued, int timeDiff, boolean isSingleClick, boolean isDoubleClick) {
+        super.onButtonSingleOrDoubleClick(context, button, wasQueued, timeDiff, isSingleClick, isDoubleClick);
+        if (isDoubleClick){
+            MedicationManager.getInstance().manageMedicationInput();
+            Log.i(TAG,"double");
 
-//    @Override
-//    public void onButtonClickOrHold(Context context, FlicButton button, boolean wasQueued, int timeDiff, boolean isClick, boolean isHold) {
-//        super.onButtonClickOrHold(context, button, wasQueued, timeDiff, isClick, isHold);
-//
-//    }
+        }
+        if(isSingleClick){
+            Log.i(TAG,"single");
+        }
+    }
+
 //
 //    @Override
 //    public void onButtonSingleOrDoubleClick(Context context, FlicButton button, boolean wasQueued, int timeDiff, boolean isSingleClick, boolean isDoubleClick) {
@@ -69,14 +77,15 @@ public class CustomFlicBroadcastReceiver extends FlicBroadcastReceiver {
                 tEnd = System.currentTimeMillis();
                 tDelta = tEnd - tStart;
                 elapsedSeconds = tDelta;
+                if (tDelta>330){
                 SymptomManager symptomManager = SymptomManager.getInstance();
                 symptomManager.manageSymptomInput(elapsedSeconds);
-                Log.i(TAG, "  " + tStart);
-                Log.i(TAG, "  " + tEnd);
+                Log.i(TAG, "  " + tDelta);}else{
+
+                    Log.i(TAG, "  " + tDelta);
+                }
             }
         }
-
-
     }
 
     @Override

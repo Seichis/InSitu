@@ -22,6 +22,7 @@ import webinar.pubnub.insitu.R;
 import webinar.pubnub.insitu.Utils;
 import webinar.pubnub.insitu.fragments.ExplorationFragment;
 import webinar.pubnub.insitu.fragments.HomeFragment;
+import webinar.pubnub.insitu.fragments.LineChartFragment;
 import webinar.pubnub.insitu.model.MyBubbleChartData;
 import webinar.pubnub.insitu.model.MyChartData;
 import webinar.pubnub.insitu.model.Symptom;
@@ -354,7 +355,9 @@ public class ChartManager implements IChartManager {
                 realm.commitTransaction();
                 if (ExplorationFragment.getInstance() != null) {
                     ExplorationFragment.getInstance().updateBubbleChart();
-                }
+                }if (LineChartFragment.getInstance()!=null){
+                LineChartFragment.getInstance().updateLineChart();
+            }
                 break;
             case DISTRESS:
                 for (Map.Entry<String, RealmResults<Symptom>> entry : symptomsBy.entrySet()) {
@@ -384,7 +387,9 @@ public class ChartManager implements IChartManager {
                 realm.commitTransaction();
                 if (ExplorationFragment.getInstance() != null) {
                     ExplorationFragment.getInstance().updateBubbleChart();
-                }
+                }if (LineChartFragment.getInstance()!=null){
+                LineChartFragment.getInstance().updateLineChart();
+            }
                 break;
             case INTENSITY_AND_DISTRESS:
                 dataIntensity = new MyBubbleChartData();
@@ -428,6 +433,9 @@ public class ChartManager implements IChartManager {
                 realm.commitTransaction();
                 if (ExplorationFragment.getInstance() != null) {
                     ExplorationFragment.getInstance().updateBubbleChart();
+                }
+                if (LineChartFragment.getInstance()!=null){
+                    LineChartFragment.getInstance().updateLineChart();
                 }
                 break;
             default:

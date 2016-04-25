@@ -230,6 +230,8 @@ public class DataManager {
 //        Log.i(TAG, location.toString());
 //        }
         if (location != null) {
+            Log.i(TAG,location.toString());
+
             Geocoder geocoder;
             symptomContext = new SymptomContext();
             symptomContext.setAltitude(String.valueOf(location.getAltitude()));

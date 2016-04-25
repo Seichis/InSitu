@@ -31,12 +31,13 @@ import io.flic.lib.FlicManager;
 import io.flic.lib.FlicManagerInitializedCallback;
 import webinar.pubnub.insitu.fragments.ExplorationFragment;
 import webinar.pubnub.insitu.fragments.HomeFragment;
+import webinar.pubnub.insitu.fragments.LineChartFragment;
 import webinar.pubnub.insitu.managers.SettingsManager;
 import webinar.pubnub.insitu.maps.HeatmapsDemoActivity;
 import webinar.pubnub.insitu.model.Settings;
 
 public class MainActivity extends BaseActivity
-        implements NavigationView.OnNavigationItemSelectedListener,HomeFragment.OnHomeInteractionListener,ExplorationFragment.OnExplorationInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener,HomeFragment.OnHomeInteractionListener,ExplorationFragment.OnExplorationInteractionListener,LineChartFragment.OnLineChartInteractionListener {
 
     private static final String TAG = "MainActivity";
     static MainActivity mainActivity;
@@ -88,6 +89,7 @@ public class MainActivity extends BaseActivity
                 getSupportFragmentManager(), FragmentPagerItems.with(this)
                 .add("Home", HomeFragment.class)
                 .add("Explore", ExplorationFragment.class)
+                .add("Line", LineChartFragment.class)
                 .create());
 
         viewPager.setAdapter(adapter);
@@ -193,7 +195,7 @@ public class MainActivity extends BaseActivity
                 public void onInitialized(FlicManager manager) {
                     button = manager.completeGrabButton(requestCode, resultCode, data);
                     if (button != null) {
-                        button.registerListenForBroadcast(FlicBroadcastReceiverFlags.UP_OR_DOWN | FlicBroadcastReceiverFlags.REMOVED);
+                        button.registerListenForBroadcast(FlicBroadcastReceiverFlags.UP_OR_DOWN|FlicBroadcastReceiverFlags.CLICK_OR_DOUBLE_CLICK | FlicBroadcastReceiverFlags.REMOVED);
 //                    button.setActiveMode(false);
                         Toast.makeText(MainActivity.this, "Grabbed a button", Toast.LENGTH_SHORT).show();
                         Log.i(TAG, "button id" + button.getButtonId());
@@ -230,6 +232,11 @@ public class MainActivity extends BaseActivity
 
     @Override
     public void OnExplorationInteraction(Uri uri) {
+
+    }
+
+    @Override
+    public void OnLineChartInteraction(Uri uri) {
 
     }
 }

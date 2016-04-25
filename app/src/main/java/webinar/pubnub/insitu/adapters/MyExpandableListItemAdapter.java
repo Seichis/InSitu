@@ -1,14 +1,11 @@
 package webinar.pubnub.insitu.adapters;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -43,7 +40,8 @@ public class MyExpandableListItemAdapter extends ExpandableListItemAdapter<Sympt
     Slider intensitySlider;
     @Bind(R.id.distress_slider)
     Slider distressSlider;
-@Bind(R.id.expand_title_more_info)TextView titleTextView;
+    @Bind(R.id.expand_title_more_info)
+    TextView titleTextView;
 
     /**
      * Creates a new ExpandableListItemAdapter with the specified list, or an empty list if
@@ -51,7 +49,7 @@ public class MyExpandableListItemAdapter extends ExpandableListItemAdapter<Sympt
      */
     public MyExpandableListItemAdapter(final Context context) {
 //        super(context, SymptomManager.getInstance().getTodaySymptomsWithoutDescription());
-        super(context, SymptomManager.getInstance().getAllSymptomsByRange(DateTime.now().minusDays(2).getMillis(),DateTime.now().getMillis()).where().findAllSorted("timestamp", Sort.DESCENDING));
+        super(context, SymptomManager.getInstance().getAllSymptomsByRange(DateTime.now().minusDays(2).getMillis(), DateTime.now().getMillis()).where().findAllSorted("timestamp", Sort.DESCENDING));
         mContext = context;
         symptomManager = SymptomManager.getInstance();
 
@@ -67,12 +65,7 @@ public class MyExpandableListItemAdapter extends ExpandableListItemAdapter<Sympt
         }
         Symptom s = getItem(position);
         tv.setText(mContext.getString(R.string.symptom_details_title, s.getIntensity(), Utils.getDateFormatForListview(s.getTimestamp())));
-        if (!Utils.isToday(s.getTimestamp())){
-            tv.setBackgroundColor(ContextCompat.getColor(mContext,R.color.dark_gray));
-            tv.setTextColor(Color.WHITE);
-            tv.setClickable(false);
-            tv.bringToFront();
-        }
+
         return tv;
 
     }
@@ -85,10 +78,10 @@ public class MyExpandableListItemAdapter extends ExpandableListItemAdapter<Sympt
         }
         ButterKnife.bind(this, convertView);
         final Symptom s = getItem(position);
-        if (s.getContext()!=null){
-            titleTextView.setText(mContext.getString(R.string.more_info_head,"at "+s.getContext().getAddress(),Utils.getDateFormatForListview(s.getTimestamp())));
-        }else{
-            titleTextView.setText(mContext.getString(R.string.more_info_head,"",Utils.getDateFormatForListview(s.getTimestamp())));
+        if (s.getContext() != null) {
+            titleTextView.setText(mContext.getString(R.string.more_info_head, "at " + s.getContext().getAddress(), Utils.getDateFormatForListview(s.getTimestamp())));
+        } else {
+            titleTextView.setText(mContext.getString(R.string.more_info_head, "", Utils.getDateFormatForListview(s.getTimestamp())));
         }
         medicationButton.setOnClickListener(new View.OnClickListener() {
             @Override
