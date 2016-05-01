@@ -18,6 +18,7 @@ import java.util.TimeZone;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
+import io.realm.internal.Util;
 import webinar.pubnub.insitu.BackgroundService;
 import webinar.pubnub.insitu.Constants;
 import webinar.pubnub.insitu.R;
@@ -25,6 +26,7 @@ import webinar.pubnub.insitu.Utils;
 import webinar.pubnub.insitu.maps.HeatmapsDemoActivity;
 import webinar.pubnub.insitu.model.Description;
 import webinar.pubnub.insitu.model.Diary;
+import webinar.pubnub.insitu.model.Medication;
 import webinar.pubnub.insitu.model.MyChartData;
 import webinar.pubnub.insitu.model.Symptom;
 import webinar.pubnub.insitu.model.SymptomContext;
@@ -237,9 +239,24 @@ public class SymptomManager implements ISymptomManager {
     public RealmResults<Symptom> getAllSymptomsByBodyPartByRange(String bodyPart, long from, long until) {
         return getAllSymptomsByRange(from, until).where().equalTo("description.bodyPart", bodyPart).findAll();
     }
-
     public RealmResults<Symptom> getAllSymptomsByBodyPartByDay(String bodyPart, long date) {
         return getAllSymptomsByDay(date).where().equalTo("description.bodyPart", bodyPart).findAll();
+    }
+
+    public RealmResults<Symptom> getAllSymptomsPerDayByRange(String day, long from, long until) {
+        return getAllSymptomsByRange(from, until).where().equalTo("day", day).findAll();
+    }
+    public RealmResults<Symptom> getAllSymptomsPerHourByRange(String hour, long from, long until) {
+        return getAllSymptomsByRange(from, until).where().equalTo("hour", hour).findAll();
+    }
+    public RealmResults<Symptom> getAllSymptomsPerMonthByRange(String month, long from, long until) {
+        return getAllSymptomsByRange(from, until).where().equalTo("month", month).findAll();
+    }
+    public RealmResults<Symptom> getAllSymptomsPerYearByRange(String year, long from, long until) {
+        return getAllSymptomsByRange(from, until).where().equalTo("year", year).findAll();
+    }
+    public RealmResults<Symptom> getAllSymptomsPerWeekByRange(String week, long from, long until) {
+        return getAllSymptomsByRange(from, until).where().equalTo("week", week).findAll();
     }
 
 
@@ -267,6 +284,8 @@ public class SymptomManager implements ISymptomManager {
 
 
     public void fillData() {
+        String[] cancerDrugs= context.getResources().getStringArray(R.array.CancerDrugs);
+
         realm.beginTransaction();
         realm.clear(Symptom.class);
         realm.clear(MyChartData.class);
@@ -274,22 +293,45 @@ public class SymptomManager implements ISymptomManager {
         realm.beginTransaction();
         DateTime now = DateTime.now(DateTimeZone.forTimeZone(TimeZone.getDefault()));
 
-        for (int i = 0; i < 500; i++) {
+        for (int i = 0; i < 1500; i++) {
             int activity = Utils.randInt(0, 4);
             Symptom s = new Symptom();
             s.setActivityId(activity);
-            long timestamp = now.minusDays(Utils.randInt(0, 50)).getMillis();
+            long timestamp = now.minusHours(Utils.randInt(0, 15000)).getMillis();
             s.setTimestamp(timestamp);
             s.setId(i);
+            s.setHour(Utils.getHour(timestamp));
+            s.setDay(Utils.getDay(timestamp));
+            s.setWeek(Utils.getWeek(timestamp));
+            s.setMonth(Constants.months[Integer.parseInt(Utils.getMonth(timestamp))-1]);
+            s.setYear(Utils.getYear(timestamp));
             float intensity = (float) Utils.randInt(0, 10);
             s.setIntensity(intensity);
+            long medicationTimestamp = now.minusHours(Utils.randInt(0, 15000)).getMillis();
+
+            Medication medication= new Medication();
+            medication.setMedicationName(cancerDrugs[Utils.randInt(0,cancerDrugs.length-1)]);
+            medication.setTimestamp(medicationTimestamp);
+            medication.setHour(Utils.getHour(medicationTimestamp));
+            medication.setDay(Utils.getDay(medicationTimestamp));
+            medication.setWeek(Utils.getWeek(medicationTimestamp));
+            medication.setMonth(Constants.months[Integer.parseInt(Utils.getMonth(medicationTimestamp))-1]);
+            medication.setYear(Utils.getYear(medicationTimestamp));
+            medication.setAmount(Utils.randInt(1,3));
 
             // Adding description
             Description description = new Description();
             String[] bp = context.getResources().getStringArray(R.array.BodyParts);
             description.setBodyPart(bp[Utils.randInt(0, bp.length - 1)]);
             if ((Utils.randInt(2, 1000) % 2) == 0) {
-                description.setDateMedicationConsumption(timestamp + DateTime.now().plus(Utils.randInt(500000, 7200000)).getMillis());
+                long painkillerTimestamp=timestamp + DateTime.now().plus(Utils.randInt(500000, 7200000)).getMillis();
+                description.setHourPainkiller(Utils.getHour(painkillerTimestamp));
+                description.setDayPainkiller(Utils.getDay(painkillerTimestamp));
+                description.setWeekPainkiller(Utils.getWeek(painkillerTimestamp));
+
+                description.setMonthPainkiller(Constants.months[Integer.parseInt(Utils.getMonth(painkillerTimestamp))-1]);
+                description.setYearPainkiller(Utils.getYear(painkillerTimestamp));
+                description.setDatePainkillerConsumption(Utils.randInt(1,3));
             }
             description.setDistress(intensity + (float) Utils.randInt(0, (int) (10f - intensity)));
             s.setDescription(description);
@@ -362,10 +404,10 @@ public class SymptomManager implements ISymptomManager {
 
         if (s.getDescription() == null) {
             description = realm.createObject(Description.class);
-            description.setDateMedicationConsumption(date);
+            description.setDatePainkillerConsumption(date);
             s.setDescription(description);
         } else {
-            s.getDescription().setDateMedicationConsumption(date);
+            s.getDescription().setDatePainkillerConsumption(date);
 
         }
         realm.commitTransaction();
@@ -377,10 +419,10 @@ public class SymptomManager implements ISymptomManager {
 
         if (s.getDescription() == null) {
             description = realm.createObject(Description.class);
-            description.setMedicineName(s1);
+            description.setPainkiller(s1);
             s.setDescription(description);
         } else {
-            s.getDescription().setMedicineName(s1);
+            s.getDescription().setPainkiller(s1);
         }
         realm.commitTransaction();
     }

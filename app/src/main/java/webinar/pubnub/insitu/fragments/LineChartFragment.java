@@ -1,6 +1,7 @@
 package webinar.pubnub.insitu.fragments;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -12,13 +13,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.gc.materialdesign.views.ButtonFloat;
+import com.gc.materialdesign.views.ButtonRectangle;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.LimitLine;
 import com.github.mikephil.charting.data.realm.implementation.RealmLineData;
-import com.github.mikephil.charting.data.realm.implementation.RealmBubbleDataSet;
 import com.github.mikephil.charting.data.realm.implementation.RealmLineDataSet;
 import com.github.mikephil.charting.formatter.LargeValueFormatter;
-import com.github.mikephil.charting.interfaces.datasets.IBubbleDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
@@ -37,7 +38,7 @@ import webinar.pubnub.insitu.R;
 import webinar.pubnub.insitu.Utils;
 import webinar.pubnub.insitu.managers.ChartManager;
 import webinar.pubnub.insitu.managers.SymptomManager;
-import webinar.pubnub.insitu.model.MyBubbleChartData;
+import webinar.pubnub.insitu.model.MyLineChartData;
 
 /**
  * Created by Konstantinos Michail on 4/25/2016.
@@ -48,11 +49,18 @@ public class LineChartFragment extends Fragment implements
     private static final int SHOW_DISTRESS = 1;
     private static final int SHOW_INTENSITY = 0;
     private static final int SHOW_INTENSITY_AND_DISTRESS = 2;
+    private static final int SHOW_MEDICATION = 3;
+    private static final int SHOW_MEDICATION_AND_INTENSITY = 4;
+    private static final int SHOW_MEDICATION_AND_DISTRESS = 5;
+    private static final int SHOW_ALL = 6;
     private static final int SHOW_SINGLE_DAY = 0;
     private static final int SHOW_RANGE = 1;
-    private static final int SHOW_ACTIVITIES = 0;
-    private static final int SHOW_WEATHER = 1;
-    private static final int SHOW_BODY_PARTS = 2;
+    private static final int SHOW_BY_HOUR = 0;
+    private static final int SHOW_BY_DAY = 1;
+    private static final int SHOW_BY_WEEK = 2;
+    private static final int SHOW_BY_MONTH = 3;
+    private static final int SHOW_BY_YEAR = 4;
+
     private static final String TAG = "Exploration";
     //By default show intensity
     private static LineChartFragment lineChartFragment;
@@ -60,12 +68,6 @@ public class LineChartFragment extends Fragment implements
     ArrayList<DateTime> dateRange = new ArrayList<>();
     @Bind(R.id.line_chart)
     LineChart lineChart;
-    @Bind(R.id.by_activities_button)
-    ButtonFloat activitiesButtonFloat;
-    @Bind(R.id.by_body_part_button)
-    ButtonFloat bodyPartButtonFloat;
-    @Bind(R.id.by_weather_button)
-    ButtonFloat weatherButtonFloat;
     @Bind(R.id.intensity_button)
     ButtonFloat intensityButtonFloat;
     @Bind(R.id.distress_button)
@@ -74,12 +76,23 @@ public class LineChartFragment extends Fragment implements
     ButtonFloat pickRangeButtonFloat;
     @Bind(R.id.pick_day_button)
     ButtonFloat pickDayButtonFloat;
+    @Bind(R.id.by_hour_button)
+    ButtonRectangle hourButton;
+    @Bind(R.id.by_day_button)
+    ButtonRectangle dayButton;
+    @Bind(R.id.by_week_button)
+    ButtonRectangle weekButton;
+    @Bind(R.id.by_month_button)
+    ButtonRectangle monthButton;
+    @Bind(R.id.by_year_button)
+    ButtonRectangle yearButton;
+
     SymptomManager symptomManager;
     // int[] to represent the options.
     // OPTIONS[0]= dates ==> single or range,
     // OPTIONS[1]= intensity or distress
-    // OPTIONS[2]= by activities,weather or body parts
-    private int[] OPTIONS = new int[]{SHOW_SINGLE_DAY, SHOW_INTENSITY, SHOW_ACTIVITIES};
+    // OPTIONS[2]= by hour, day,month or year
+    private int[] OPTIONS = new int[]{SHOW_SINGLE_DAY, SHOW_INTENSITY, SHOW_BY_HOUR};
     private OnLineChartInteractionListener mListener;
 
     public LineChartFragment() {
@@ -90,23 +103,41 @@ public class LineChartFragment extends Fragment implements
         return lineChartFragment;
     }
 
-    @OnClick(R.id.by_activities_button)
-    void chartByActivities() {
-        OPTIONS[2] = SHOW_ACTIVITIES;
-        updateChartByOptions();
+    void resetOptions() {
+        OPTIONS[2] = -1;
     }
 
-    @OnClick(R.id.by_body_part_button)
-    void chartByBodyPart() {
-        OPTIONS[2] = SHOW_BODY_PARTS;
+    @OnClick(R.id.by_hour_button)
+    void byHour() {
+        OPTIONS[2] = SHOW_BY_HOUR;
+        switchToAverage(SHOW_BY_HOUR);
 
-        updateChartByOptions();
     }
 
-    @OnClick(R.id.by_weather_button)
-    void chartByWeather() {
-        OPTIONS[2] = SHOW_WEATHER;
-        updateChartByOptions();
+    @OnClick(R.id.by_day_button)
+    void byDay() {
+        OPTIONS[2] = SHOW_BY_DAY;
+        switchToAverage(SHOW_BY_DAY);
+    }
+
+    @OnClick(R.id.by_day_button)
+    void byWeek() {
+        OPTIONS[2] = SHOW_BY_WEEK;
+        switchToAverage(SHOW_BY_WEEK);
+    }
+
+    @OnClick(R.id.by_month_button)
+    void byMonth() {
+        switchToAverage(SHOW_BY_MONTH);
+        OPTIONS[2] = SHOW_BY_MONTH;
+
+    }
+
+    @OnClick(R.id.by_year_button)
+    void byYear() {
+        OPTIONS[2] = SHOW_BY_YEAR;
+        switchToAverage(SHOW_BY_YEAR);
+
     }
 
     @OnClick(R.id.intensity_button)
@@ -199,6 +230,47 @@ public class LineChartFragment extends Fragment implements
 
     }
 
+    void checkDateRange(long from, long until) {
+        if (!symptomManager.noSymptoms()) {
+            switch (Utils.getDateResolution(from, until)) {
+                case Constants.DAY_VIEW:
+                    hourButton.setVisibility(View.VISIBLE);
+                    dayButton.setVisibility(View.GONE);
+                    weekButton.setVisibility(View.GONE);
+                    monthButton.setVisibility(View.GONE);
+                    yearButton.setVisibility(View.GONE);
+                    break;
+                case Constants.WEEK_VIEW:
+                    hourButton.setVisibility(View.VISIBLE);
+                    dayButton.setVisibility(View.VISIBLE);
+                    weekButton.setVisibility(View.GONE);
+                    monthButton.setVisibility(View.GONE);
+                    yearButton.setVisibility(View.GONE);
+                    break;
+                case Constants.MONTH_VIEW:
+                    hourButton.setVisibility(View.VISIBLE);
+                    dayButton.setVisibility(View.VISIBLE);
+                    weekButton.setVisibility(View.VISIBLE);
+                    monthButton.setVisibility(View.GONE);
+                    yearButton.setVisibility(View.GONE);
+                    break;
+                case Constants.YEAR_VIEW:
+                    hourButton.setVisibility(View.VISIBLE);
+                    dayButton.setVisibility(View.VISIBLE);
+                    weekButton.setVisibility(View.VISIBLE);
+                    monthButton.setVisibility(View.VISIBLE);
+                    yearButton.setVisibility(View.VISIBLE);
+                    break;
+            }
+        }else {
+            hourButton.setVisibility(View.GONE);
+            dayButton.setVisibility(View.GONE);
+            weekButton.setVisibility(View.GONE);
+            monthButton.setVisibility(View.GONE);
+            yearButton.setVisibility(View.GONE);
+        }
+    }
+
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -207,10 +279,8 @@ public class LineChartFragment extends Fragment implements
         ButterKnife.bind(this, view);
 
         ChartManager.getInstance().setup(lineChart);
-
         updateChartByOptions();
 //        setData();
-
     }
 
     void updateChartByOptions() {
@@ -218,16 +288,29 @@ public class LineChartFragment extends Fragment implements
             Log.i(TAG, "null dt");
             dt = DateTime.now();
         }
+        long from;
+        long until;
         switch (OPTIONS[0]) {
             case SHOW_SINGLE_DAY:
                 pickDayButtonFloat.setBackgroundColor(ContextCompat.getColor(getContext(), android.R.color.holo_blue_bright));
                 pickRangeButtonFloat.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.high));
-                ChartManager.getInstance().updateBubbleChartByDay(OPTIONS[2], OPTIONS[1], dt.getMillis());
+//                ChartManager.getInstance().updateLineChartByDay(OPTIONS[2], OPTIONS[1], dt.getMillis());
+                from = Utils.getDayStart(dt.getMillis(), 1);
+                until = Utils.getDaysEnd(dt.getMillis());
+                ChartManager.getInstance().updateLineChartTimeline(OPTIONS[1], from, until);
+                checkDateRange(from, until);
+
+
                 break;
             case SHOW_RANGE:
                 pickRangeButtonFloat.setBackgroundColor(ContextCompat.getColor(getContext(), android.R.color.holo_blue_bright));
                 pickDayButtonFloat.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.high));
-                ChartManager.getInstance().updateBubbleChartByRange(OPTIONS[2], OPTIONS[1], dateRange.get(0).getMillis(), dateRange.get(1).getMillis());
+                from = dateRange.get(0).getMillis();
+                until = dateRange.get(1).getMillis();
+                ChartManager.getInstance().updateLineChartTimeline(OPTIONS[1], from, until);
+                checkDateRange(from, until);
+
+
                 break;
         }
 
@@ -245,51 +328,47 @@ public class LineChartFragment extends Fragment implements
                 distressButtonFloat.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.graph_color2));
                 intensityButtonFloat.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.graph_color7));
                 break;
-        }
-
-        switch (OPTIONS[2]) {
-            case SHOW_ACTIVITIES:
-                activitiesButtonFloat.setBackgroundColor(ContextCompat.getColor(getContext(), android.R.color.holo_blue_bright));
-                bodyPartButtonFloat.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorPrimaryDark));
-                weatherButtonFloat.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorPrimaryDark));
+            case SHOW_MEDICATION:
                 break;
-            case SHOW_BODY_PARTS:
-                bodyPartButtonFloat.setBackgroundColor(ContextCompat.getColor(getContext(), android.R.color.holo_blue_bright));
-                weatherButtonFloat.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorPrimaryDark));
-                activitiesButtonFloat.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorPrimaryDark));
-
+            case SHOW_MEDICATION_AND_INTENSITY:
                 break;
-            case SHOW_WEATHER:
-                weatherButtonFloat.setBackgroundColor(ContextCompat.getColor(getContext(), android.R.color.holo_blue_bright));
-                bodyPartButtonFloat.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorPrimaryDark));
-                activitiesButtonFloat.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorPrimaryDark));
-
+            case SHOW_MEDICATION_AND_DISTRESS:
+                break;
+            case SHOW_ALL:
                 break;
         }
+
+
     }
 
     private void setData() {
 
-        TreeMap<Integer, RealmResults<MyBubbleChartData>>
+        TreeMap<Integer, RealmResults<MyLineChartData>>
                 realmResults = new TreeMap<>();
         ArrayList<ILineDataSet> dataSets = new ArrayList<>();
 
 
-        RealmResults<MyBubbleChartData> result = ChartManager.getInstance().getBubbleChartData();
-        RealmResults<MyBubbleChartData> distinctObjects = result.where().distinct("setId");
-        for (MyBubbleChartData cd : distinctObjects) {
+        RealmResults<MyLineChartData> result = ChartManager.getInstance().getLineChartData();
+        RealmResults<MyLineChartData> distinctObjects = result.where().distinct("setId");
+        for (MyLineChartData cd : distinctObjects) {
             realmResults.put(cd.getSetId(), result.where().equalTo("setId", cd.getSetId()).findAll());
         }
 
-        RealmResults<MyBubbleChartData> finalResult = null;
-        for (TreeMap.Entry<Integer, RealmResults<MyBubbleChartData>> chartDatas : realmResults.entrySet()) {
+        RealmResults<MyLineChartData> finalResult = null;
+        for (TreeMap.Entry<Integer, RealmResults<MyLineChartData>> chartDatas : realmResults.entrySet()) {
             finalResult = chartDatas.getValue();
 
-            RealmLineDataSet<MyBubbleChartData> set = new RealmLineDataSet<MyBubbleChartData>(finalResult, "value", "classId");
+            RealmLineDataSet<MyLineChartData> set = new RealmLineDataSet<MyLineChartData>(finalResult, "value", "classId");
 
             set.setColor(ContextCompat.getColor(getContext(), getBubbleColor(chartDatas.getKey())));
-
+            set.setDrawCubic(true);
+            set.setDrawFilled(true);
+            set.setCubicIntensity(0.05f);
+            set.setFillColor(ContextCompat.getColor(getContext(), getBubbleColor(chartDatas.getKey())));
+            set.setValueFormatter(new LargeValueFormatter());
+            set.setDrawValues(false);
             dataSets.add(set);
+            lineChart.getAxisLeft().addLimitLine(getAvarageLimitLine(finalResult, chartDatas.getKey()));
 
 
         }
@@ -297,22 +376,78 @@ public class LineChartFragment extends Fragment implements
         // create a data object with the dataset list
         if (finalResult != null) {
             RealmLineData data = new RealmLineData(finalResult, "className", dataSets);
-            ChartManager.getInstance().styleData(data);
+            data.setValueTextSize(12f);
+            data.setValueTextColor(Color.DKGRAY);
+            data.setValueFormatter(new LargeValueFormatter());
+
+
             lineChart.setData(data);
-            lineChart.getXAxis().setDrawGridLines(true);
+//            lineChart.getXAxis().setDrawGridLines(true);
             lineChart.getAxisLeft().setDrawGridLines(false);
             lineChart.setPinchZoom(true);
+
             lineChart.setAutoScaleMinMaxEnabled(false);
             lineChart.getLegend().setEnabled(false);
             lineChart.getXAxis().setLabelRotationAngle(30);
             lineChart.getXAxis().setLabelsToSkip(0);
             lineChart.getAxisLeft().setAxisMinValue(0);
-            lineChart.getAxisLeft().setAxisMaxValue(11);
+            lineChart.getAxisLeft().setAxisMaxValue(10);
             lineChart.getAxisLeft().setValueFormatter(new LargeValueFormatter());
             lineChart.animateY(1400, Easing.EasingOption.EaseInOutQuart);
         }
 
         // set data
+
+    }
+
+    private LimitLine getAvarageLimitLine(RealmResults<MyLineChartData> chartDatas, int setId) {
+        float mean;
+        LimitLine ll;
+        switch (setId) {
+            case 1:
+                mean = (float) chartDatas.where().average("value");
+                ll = new LimitLine(mean, "Distress : " + String.format("%.2f", mean));
+                ll.setLineColor(ContextCompat.getColor(getContext(), getBubbleColor(setId)));
+                ll.setLineWidth(5f);
+                ll.setTextColor(ContextCompat.getColor(getContext(), getBubbleColor(setId)));
+
+                ll.setTextSize(12f);
+                return ll;
+            case 2:
+                mean = (float) chartDatas.where().average("value");
+                ll = new LimitLine(mean, "Intensity : " + String.format("%.2f", mean));
+                ll.setLineColor(ContextCompat.getColor(getContext(), getBubbleColor(setId)));
+                ll.setLineWidth(5f);
+                ll.setTextColor(ContextCompat.getColor(getContext(), getBubbleColor(setId)));
+                ll.setTextSize(12f);
+
+                return ll;
+            default:
+                return new LimitLine(0f, "");
+        }
+    }
+
+
+//    private ArrayList<LimitLine> getLimitLines(){
+//        XAxis xAxis = lineChart.getXAxis();
+//
+//        LimitLine ll = new LimitLine(140f, "Critical Blood Pressure");
+//        ll.setLineColor(Color.RED);
+//        ll.setLineWidth(4f);
+//        ll.setTextColor(Color.BLACK);
+//        ll.setTextSize(12f);
+//// .. and more styling options
+//
+//        xAxis.addLimitLine(ll);
+//
+//    }
+
+    private void switchToAverage(int per) {
+        if (dateRange.isEmpty()){
+            ChartManager.getInstance().updateLineChartByRange(per, OPTIONS[1], Utils.getDayStart(dt.getMillis(),1),Utils.getDaysEnd(dt.getMillis()));
+        }else{
+            ChartManager.getInstance().updateLineChartByRange(per, OPTIONS[1], dateRange.get(0).getMillis(),dateRange.get(1).getMillis());
+        }
 
     }
 

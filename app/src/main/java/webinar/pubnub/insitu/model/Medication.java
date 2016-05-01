@@ -17,6 +17,52 @@ public class Medication extends RealmObject {
     double latitude;
     double longitude;
     String effects;
+    String day;
+    String hour;
+    String week;
+
+    public String getWeek() {
+        return week;
+    }
+
+    public void setWeek(String week) {
+        this.week = week;
+    }
+
+    String month;
+    String year;
+
+    public String getDay() {
+        return day;
+    }
+
+    public void setDay(String day) {
+        this.day = day;
+    }
+
+    public String getHour() {
+        return hour;
+    }
+
+    public void setHour(String hour) {
+        this.hour = hour;
+    }
+
+    public String getMonth() {
+        return month;
+    }
+
+    public void setMonth(String month) {
+        this.month = month;
+    }
+
+    public String getYear() {
+        return year;
+    }
+
+    public void setYear(String year) {
+        this.year = year;
+    }
 
     public double getLatitude() {
         return latitude;

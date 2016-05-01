@@ -161,5 +161,10 @@
     <string name="body_part_details_at">at</string>
     <string name="body_part_details_where_tv">%1$s</string>
     <string name="SelectSize">Select one</string>
+    <string name="by_day">Day</string>
+    <string name="by_month">Month</string>
+    <string name="by_year">Year</string>
+    <string name="by_hour">Hour</string>
+    <string name="by_week">Week</string>
 
 </resources>

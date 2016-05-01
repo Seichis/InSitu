@@ -91,8 +91,20 @@ public class Constants {
             R.color.graph_color13,
             R.color.graph_color14,
     };
+    public static final String[] dayNames = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
 
-
+    public static final String[] months = {"January",
+            "February",
+            "March",
+            "April",
+            "May",
+            "June",
+            "July",
+            "August",
+            "September",
+            "October",
+            "November",
+            "December"};
     private Constants() {
     }
 
@@ -146,4 +158,9 @@ public class Constants {
 
 
     public final static int START_FILL_MORE_DATA_ACTIVITY=0;
+
+    public final static int DAY_VIEW=0;
+    public final static int WEEK_VIEW=1;
+    public final static int MONTH_VIEW=2;
+    public final static int YEAR_VIEW=3;
 }

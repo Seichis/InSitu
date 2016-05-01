@@ -145,9 +145,9 @@ public class MoreInfoDialog extends DialogFragment implements
 
     private void setupViews() {
         if (medicationEditText != null) {
-            if (symptom.getDescription().getMedicineName() != null) {
-                medicationEditText.setText(symptom.getDescription().getMedicineName());
-                inputTime.setText(Utils.convertFromMillisToHourMinute(symptom.getDescription().getDateMedicationConsumption()));
+            if (symptom.getDescription().getPainkiller() != null) {
+                medicationEditText.setText(symptom.getDescription().getPainkiller());
+                inputTime.setText(Utils.convertFromMillisToHourMinute(symptom.getDescription().getDatePainkillerConsumption()));
             }
         }
         if (bodyPartDetailsFormEditText != null) {

@@ -6,20 +6,70 @@
     android:orientation="vertical"
     android:weightSum="6"
     tools:context="webinar.pubnub.insitu.fragments.LineChartFragment">
-    <include layout="@layout/buttons_activities_etc"
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1.1"/>
+        android:layout_weight="1.1"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <com.gc.materialdesign.views.ButtonRectangle
+            android:id="@+id/by_hour_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/by_hour"
+            android:visibility="gone"
+            materialdesign:animate="true" />
+
+        <com.gc.materialdesign.views.ButtonRectangle
+            android:id="@+id/by_day_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/by_day"
+            android:visibility="gone"
+            materialdesign:animate="true" />
+
+        <com.gc.materialdesign.views.ButtonRectangle
+            android:id="@+id/by_week_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/by_week"
+            android:visibility="gone"
+            materialdesign:animate="true"
+
+            />
+
+        <com.gc.materialdesign.views.ButtonRectangle
+            android:id="@+id/by_month_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/by_month"
+            android:visibility="gone"
+            materialdesign:animate="true" />
+
+        <com.gc.materialdesign.views.ButtonRectangle
+            android:id="@+id/by_year_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/by_year"
+            android:visibility="gone"
+            materialdesign:animate="true" />
+
+
+    </LinearLayout>
+
+
     <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/line_chart"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="3.8" />
 
+
     <include
         layout="@layout/header_buttons_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1.1" />
-    /
-   </LinearLayout>
+</LinearLayout>
