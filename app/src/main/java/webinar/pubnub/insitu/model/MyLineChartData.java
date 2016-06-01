@@ -3,10 +3,7 @@ package webinar.pubnub.insitu.model;
 import io.realm.RealmObject;
 import io.realm.annotations.Index;
 
-/**
- * Created by Konstantinos Michail on 4/25/2016.
- */
-public class MyLineChartData extends RealmObject{
+public class MyLineChartData extends RealmObject {
 
     int classId;
     String className;

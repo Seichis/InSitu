@@ -31,9 +31,6 @@ import webinar.pubnub.insitu.model.MyLineChartData;
 import webinar.pubnub.insitu.model.Symptom;
 import webinar.pubnub.insitu.model.SymptomContext;
 
-/**
- * Created by Konstantinos Michail on 4/20/2016.
- */
 public class ChartManager implements IChartManager {
     public static final int INTENSITY = 0;
     public static final int DISTRESS = 1;
@@ -42,8 +39,9 @@ public class ChartManager implements IChartManager {
     public static final int BY_BODY_PART = 2;
     public static final int PER_HOUR = 0;
     public static final int PER_DAY = 1;
-    public static final int PER_MONTH = 2;
-    public static final int PER_YEAR = 3;
+    public static final int PER_WEEK = 2;
+    public static final int PER_MONTH = 3;
+    public static final int PER_YEAR = 4;
     private final static String TAG = "ChartManager";
     private static final int INTENSITY_AND_DISTRESS = 2;
     static ChartManager chartManager = new ChartManager();
@@ -534,6 +532,30 @@ public class ChartManager implements IChartManager {
 
                 }
                 break;
+
+                case PER_WEEK:
+                    ArrayList<Integer> weeks = new ArrayList<>();
+                    for (Symptom s : realm.where(Symptom.class).distinct("week")) {
+                        weeks.add(Integer.parseInt(s.getWeek()));
+                    }
+                    Collections.sort(weeks);
+                    for (int i = 0; i < weeks.size(); i++) {
+
+                        RealmResults<Symptom> symptomsPerWeek = symptomManager.getAllSymptomsPerWeekByRange(String.valueOf(weeks.get(i)), from, until);
+
+                        if (symptomsPerWeek.size() == 0) {
+                            continue;
+                        }
+
+                        String id = String.valueOf(j);
+                        j++;
+                        symptomsBy.put(id + ";" + weeks.get(i), symptomsPerWeek);
+
+                        Log.i(TAG, "week" + id + " hashmap " + symptomsBy.size());
+
+                    }
+                break;
+
             case PER_MONTH:
                 for (int i = 0; i < Constants.months.length; i++) {
                     RealmResults<Symptom> symptomsPerMonth = symptomManager.getAllSymptomsPerMonthByRange(Constants.months[i], from, until);

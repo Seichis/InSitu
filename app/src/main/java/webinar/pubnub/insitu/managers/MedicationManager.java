@@ -6,6 +6,8 @@ import android.util.Log;
 
 import org.joda.time.DateTime;
 
+import java.util.ArrayList;
+
 import io.realm.Realm;
 import io.realm.RealmResults;
 import webinar.pubnub.insitu.BackgroundService;
@@ -21,13 +23,15 @@ public class MedicationManager {
     Context context;
     Realm realm;
 
+    public MedicationManager(){}
+
     public static MedicationManager getInstance() {
         return medicationManager;
     }
 
-    public void init(Context context, Realm realm) {
+    public void init(Context context) {
         this.context = context;
-        this.realm = realm;
+        realm = Realm.getDefaultInstance();
     }
 
     public void manageMedicationInput() {
@@ -60,4 +64,6 @@ public class MedicationManager {
         long tomorrowStart = Utils.getDaysEnd(until);
         return realm.where(Medication.class).between("timestamp", yesterdayStart, tomorrowStart).findAll();
     }
+
+
 }

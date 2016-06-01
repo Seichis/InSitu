@@ -18,6 +18,7 @@
             android:id="@+id/by_hour_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@color/backgroundColor"
             android:text="@string/by_hour"
             android:visibility="gone"
             materialdesign:animate="true" />
@@ -26,7 +27,9 @@
             android:id="@+id/by_day_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@color/backgroundColor"
             android:text="@string/by_day"
+
             android:visibility="gone"
             materialdesign:animate="true" />
 
@@ -34,7 +37,9 @@
             android:id="@+id/by_week_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@color/backgroundColor"
             android:text="@string/by_week"
+
             android:visibility="gone"
             materialdesign:animate="true"
 
@@ -44,6 +49,8 @@
             android:id="@+id/by_month_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+
+            android:background="@color/backgroundColor"
             android:text="@string/by_month"
             android:visibility="gone"
             materialdesign:animate="true" />
@@ -52,6 +59,8 @@
             android:id="@+id/by_year_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+
+            android:background="@color/backgroundColor"
             android:text="@string/by_year"
             android:visibility="gone"
             materialdesign:animate="true" />

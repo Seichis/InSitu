@@ -166,5 +166,26 @@
     <string name="by_year">Year</string>
     <string name="by_hour">Hour</string>
     <string name="by_week">Week</string>
+    <string name="intro_ask_age">How old are you?</string>
+    <string name="intro_welcome_personal">Welcome to your first InSitu diary.\nLet us set it up together.</string>
+    <string name="medication_welcome">Excellent! Now let us go over your medication.</string>
+    <string name="add_medication_name">Here you can add your cancer treatment medication</string>
+    <string name="use_flic_for_medication">Do you want to double click the Flic button for tracking your medication?</string>
+    <string name="flic_for_medication_yes">Use Flic button</string>
+    <string name="monday">Mo</string>
+    <string name="select_all">Select all</string>
+    <string name="deselect_all">Clear</string>
+    <string name="sunday">Su</string>
+    <string name="saturday">Sa</string>
+    <string name="friday">Fr</string>
+    <string name="thursday">Th</string>
+    <string name="wednesday">We</string>
+    <string name="tuesday">Tu</string>
+    <string name="activate_medication_alarm">Activate alarm for this medication</string>
+    <string name="automatic_collection_switch">Enable automatic collection</string>
+    <string name="medication_time_textview">at %1$s o\'clock each</string>
+    <string name="med_name_tv">Medication name and time</string>
+    <string name="med_amount_routine">Amount : </string>
+    <string name="routine_medication_tv">%1$s at %2$s o\'clock every %3$s</string>
 
 </resources>

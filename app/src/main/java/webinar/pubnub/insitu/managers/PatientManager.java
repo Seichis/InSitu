@@ -25,6 +25,7 @@ public class PatientManager {
 
     }
 
+    public PatientManager(){}
     public Patient getPatient() {
         return realm.where(Patient.class).findFirst();
     }

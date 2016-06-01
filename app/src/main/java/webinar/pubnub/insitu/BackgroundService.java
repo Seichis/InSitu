@@ -17,7 +17,6 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
-import android.nfc.Tag;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -31,7 +30,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -68,6 +66,7 @@ import webinar.pubnub.insitu.managers.DataManager;
 import webinar.pubnub.insitu.managers.DiaryManager;
 import webinar.pubnub.insitu.managers.MedicationManager;
 import webinar.pubnub.insitu.managers.PatientManager;
+import webinar.pubnub.insitu.managers.RoutineMedicationManager;
 import webinar.pubnub.insitu.managers.SettingsManager;
 import webinar.pubnub.insitu.managers.SymptomManager;
 import webinar.pubnub.insitu.model.Settings;
@@ -92,6 +91,7 @@ public class BackgroundService extends Service implements IBackgroundSettingsSer
     Settings settings;
     SettingsManager settingsManager;
     ChartManager chartManager;
+    MedicationManager medicationManager;
     private Location currentLocation;
     private GoogleApiClient locationClient;
     private Realm realm;
@@ -136,11 +136,11 @@ public class BackgroundService extends Service implements IBackgroundSettingsSer
         // These operations are small enough that
         // we can generally safely run them on the UI thread.
         // Create the Realm configuration
-        realmConfig = new RealmConfiguration.Builder(backgroundService).build();
+        realmConfig = new RealmConfiguration.Builder(backgroundService).deleteRealmIfMigrationNeeded().build();
         // Open the Realm for the UI thread.
         Realm.setDefaultConfiguration(realmConfig);
 
-        realm = Realm.getDefaultInstance();
+//        realm = Realm.getDefaultInstance();
         dataManager = DataManager.getInstance();
         dataManager.init(backgroundService);
 
@@ -159,18 +159,22 @@ public class BackgroundService extends Service implements IBackgroundSettingsSer
         chartManager = ChartManager.getInstance();
         chartManager.init(backgroundService);
 
-        medicationManager=MedicationManager.getInstance();
-        medicationManager.init(this,realm);
+        medicationManager = MedicationManager.getInstance();
+        medicationManager.init(backgroundService);
+
+        routineMedicationManager=RoutineMedicationManager.getInstance();
+        routineMedicationManager.init(backgroundService);
+
         symptomManager.fillData();
     }
-MedicationManager medicationManager;
+    RoutineMedicationManager routineMedicationManager;
     public void createOrUpdateBubble() {
         initializeBubblesManager();
     }
 
     private void addNewBubble() {
         final BubbleLayout bubbleView = (BubbleLayout) LayoutInflater.from(getApplicationContext()).inflate(R.layout.bubble_layout, null);
-        TextView numberTv=(TextView) bubbleView.getChildAt(1);
+        TextView numberTv = (TextView) bubbleView.getChildAt(1);
 
         numberTv.setText(String.valueOf(symptomManager.getTodaySymptomsWithoutDescription().size()));
         bubbleView.setOnBubbleRemoveListener(new BubbleLayout.OnBubbleRemoveListener() {
@@ -182,7 +186,7 @@ MedicationManager medicationManager;
 
             @Override
             public void onBubbleClick(BubbleLayout bubble) {
-                startActivity(new Intent(backgroundService,AddMoreInfoActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK).putExtra("rule",Constants.START_FILL_MORE_DATA_ACTIVITY));
+                startActivity(new Intent(backgroundService, AddMoreInfoActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK).putExtra("rule", Constants.START_FILL_MORE_DATA_ACTIVITY));
                 bubblesManager.removeBubble(bubbleView);
                 Toast.makeText(backgroundService, "Clicked !",
                         Toast.LENGTH_SHORT).show();
@@ -270,6 +274,8 @@ MedicationManager medicationManager;
         } else {
             Log.i("settings", settings.getPatient().getPatientName());
         }
+        startActivity(new Intent(this, CreatePatientActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+
     }
 
     private void flicSetup() {
@@ -445,8 +451,8 @@ MedicationManager medicationManager;
     @Override
     public void onLocationChanged(Location location) {
         currentLocation = location;
-        Log.i(TAG,"location changed");
-        Toast.makeText(mainActivity,"location changed",Toast.LENGTH_LONG).show();
+        Log.i(TAG, "location changed");
+        Toast.makeText(mainActivity, "location changed", Toast.LENGTH_LONG).show();
 
     }
 

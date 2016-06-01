@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_margin="20dp"
+    android:visibility="visible"
+    android:id="@+id/medication_info_layout"
+    android:weightSum="20"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="4"
+        android:layout_marginBottom="20sp"
+        android:gravity="center"
+        android:text="@string/medication_welcome"
+        android:textSize="30sp" />
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="3"
+
+        android:layout_marginBottom="10sp"
+        android:gravity="center"
+        android:text="@string/add_medication_name"
+        android:textSize="20sp" />
+
+    <com.github.clans.fab.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="2"
+        android:layout_gravity="center"
+        android:id="@+id/fab_add_medication"
+        android:layout_marginBottom="10sp"
+        android:src="@drawable/fab_add" />
+
+    <ListView
+        android:id="@+id/add_medication_lv"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="9" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="2"
+        android:layout_gravity="end|bottom"
+        android:id="@+id/save_medication_info"
+        android:layout_marginTop="23dp"
+        android:text="@string/save_patient_info"/>
+
+</LinearLayout>

@@ -7,23 +7,16 @@ import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
-import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.ogaclejapan.smarttablayout.SmartTabLayout;
-import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItemAdapter;
-import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItems;
-
 import java.util.HashMap;
 
-import butterknife.Bind;
 import butterknife.ButterKnife;
 import io.flic.lib.FlicBroadcastReceiverFlags;
 import io.flic.lib.FlicButton;
@@ -32,20 +25,14 @@ import io.flic.lib.FlicManagerInitializedCallback;
 import webinar.pubnub.insitu.fragments.ExplorationFragment;
 import webinar.pubnub.insitu.fragments.HomeFragment;
 import webinar.pubnub.insitu.fragments.LineChartFragment;
-import webinar.pubnub.insitu.managers.SettingsManager;
 import webinar.pubnub.insitu.maps.HeatmapsDemoActivity;
-import webinar.pubnub.insitu.model.Settings;
 
 public class MainActivity extends BaseActivity
-        implements NavigationView.OnNavigationItemSelectedListener,HomeFragment.OnHomeInteractionListener,ExplorationFragment.OnExplorationInteractionListener,LineChartFragment.OnLineChartInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener{
 
     private static final String TAG = "MainActivity";
     static MainActivity mainActivity;
 
-    @Bind(R.id.viewpager)
-    ViewPager viewPager;
-    @Bind(R.id.viewpagertab)
-    SmartTabLayout viewPagerTab;
     Intent serviceIntent;
     FlicButton button;
     HashMap<String, Class<? extends Fragment>> fragmentTitleMap;
@@ -59,18 +46,13 @@ public class MainActivity extends BaseActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mainActivity = this;
-
-        ButterKnife.bind(mainActivity);
-
         setupLayout();
         startBackgroundService();
-        setupTabs();
         if (getIntent().getExtras() != null) {
             Bundle extras = getIntent().getExtras();
             checkRule(extras.getInt("rule", -1));
         }
     }
-
 
 
     private void checkRule(int rule) {
@@ -83,20 +65,6 @@ public class MainActivity extends BaseActivity
                 break;
         }
     }
-    FragmentPagerItemAdapter adapter;
-    private void setupTabs() {
-        adapter = new FragmentPagerItemAdapter(
-                getSupportFragmentManager(), FragmentPagerItems.with(this)
-                .add("Home", HomeFragment.class)
-                .add("Explore", ExplorationFragment.class)
-                .add("Line", LineChartFragment.class)
-                .create());
-
-        viewPager.setAdapter(adapter);
-
-        viewPagerTab.setViewPager(viewPager);
-    }
-
 
 
     private void setupLayout() {
@@ -161,12 +129,12 @@ public class MainActivity extends BaseActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.manage_symptoms) {
-            // Handle the camera action
+        if (id == R.id.insight) {
+            startActivity(new Intent(this, InsightActivity.class));
         } else if (id == R.id.symptoms_on_map) {
             startActivity(new Intent(this, HeatmapsDemoActivity.class));
         } else if (id == R.id.raw_history) {
-            startActivity(new Intent(this,AddMoreInfoActivity.class));
+            startActivity(new Intent(this, AddMoreInfoActivity.class));
         } else if (id == R.id.app_settings) {
             startActivity(new Intent(mainActivity, SettingsActivity.class));
         } else if (id == R.id.nav_share) {
@@ -189,13 +157,13 @@ public class MainActivity extends BaseActivity
                     // continue here - permission was granted
                 }
             }
-        }else{
+        } else {
             FlicManager.getInstance(this, new FlicManagerInitializedCallback() {
                 @Override
                 public void onInitialized(FlicManager manager) {
                     button = manager.completeGrabButton(requestCode, resultCode, data);
                     if (button != null) {
-                        button.registerListenForBroadcast(FlicBroadcastReceiverFlags.UP_OR_DOWN|FlicBroadcastReceiverFlags.CLICK_OR_DOUBLE_CLICK | FlicBroadcastReceiverFlags.REMOVED);
+                        button.registerListenForBroadcast(FlicBroadcastReceiverFlags.UP_OR_DOWN | FlicBroadcastReceiverFlags.CLICK_OR_DOUBLE_CLICK | FlicBroadcastReceiverFlags.REMOVED);
 //                    button.setActiveMode(false);
                         Toast.makeText(MainActivity.this, "Grabbed a button", Toast.LENGTH_SHORT).show();
                         Log.i(TAG, "button id" + button.getButtonId());
@@ -224,19 +192,4 @@ public class MainActivity extends BaseActivity
         return button;
     }
 
-
-    @Override
-    public void OnHomeInteraction(Uri uri) {
-
-    }
-
-    @Override
-    public void OnExplorationInteraction(Uri uri) {
-
-    }
-
-    @Override
-    public void OnLineChartInteraction(Uri uri) {
-
-    }
 }

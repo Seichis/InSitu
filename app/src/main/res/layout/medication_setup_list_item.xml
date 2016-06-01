@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="5dp">
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        android:weightSum="5"
+        android:padding="5dp">
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="4"
+        android:text="@string/routine_medication_tv"
+        android:id="@+id/routine_medication_tv"
+        android:gravity="center"
+        android:textSize="20sp"/>
+        <ImageButton
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:id="@+id/edit_medication"
+            android:scaleType="centerInside"
+            android:src="@android:drawable/ic_menu_edit" />
+
+
+       </LinearLayout>
+    <Switch
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/activate_medication_alarm"
+        android:id="@+id/alarm_switch"
+        android:layout_margin="10dp"
+        android:checked="false"/>
+
+    <Switch
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/automatic_collection_switch"
+        android:id="@+id/automatic_collection_switch"
+        android:layout_margin="10dp"
+        android:checked="false"/>
+    <Switch
+        android:id="@+id/activate_flic_switch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:checked="false"
+        android:text="@string/flic_for_medication_yes" />
+
+    </LinearLayout>
+

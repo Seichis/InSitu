@@ -3,9 +3,9 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/manage_symptoms"
-            android:icon="@drawable/common_full_open_on_phone"
-            android:title="Symptom managemenr" />
+            android:id="@+id/insight"
+            android:icon="@android:drawable/ic_menu_gallery"
+            android:title="Insight" />
         <item
             android:id="@+id/symptoms_on_map"
             android:icon="@drawable/ic_menu_gallery"

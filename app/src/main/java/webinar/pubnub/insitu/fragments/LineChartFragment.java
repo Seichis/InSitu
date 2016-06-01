@@ -26,6 +26,7 @@ import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 import org.joda.time.DateTime;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.TreeMap;
 
@@ -88,6 +89,7 @@ public class LineChartFragment extends Fragment implements
     ButtonRectangle yearButton;
 
     SymptomManager symptomManager;
+    boolean showByAverage = false;
     // int[] to represent the options.
     // OPTIONS[0]= dates ==> single or range,
     // OPTIONS[1]= intensity or distress
@@ -109,34 +111,65 @@ public class LineChartFragment extends Fragment implements
 
     @OnClick(R.id.by_hour_button)
     void byHour() {
-        OPTIONS[2] = SHOW_BY_HOUR;
-        switchToAverage(SHOW_BY_HOUR);
-
+        changeState(hourButton, SHOW_BY_HOUR);
     }
 
     @OnClick(R.id.by_day_button)
     void byDay() {
-        OPTIONS[2] = SHOW_BY_DAY;
-        switchToAverage(SHOW_BY_DAY);
+        changeState(dayButton, SHOW_BY_DAY);
     }
 
-    @OnClick(R.id.by_day_button)
+    void changeState(ButtonRectangle b, int option) {
+        ArrayList<ButtonRectangle> buttonRectangles = new ArrayList<>(Arrays.asList(hourButton, dayButton, weekButton, monthButton, yearButton));
+        buttonRectangles.remove(b);
+        Log.i(TAG, "dcc " + b.getDrawingCacheBackgroundColor() + "res c" + ContextCompat.getColor(getContext(), R.color.graph_color6));
+        if (showByAverage) {
+            if (b.getDrawingCacheBackgroundColor() == ContextCompat.getColor(getContext(), R.color.graph_color6)) {
+                showByAverage = false;
+
+                b.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.backgroundColor));
+                b.setDrawingCacheBackgroundColor(ContextCompat.getColor(getContext(), R.color.backgroundColor));
+
+                updateChartByOptions();
+            } else {
+                b.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.graph_color6));
+                b.setDrawingCacheBackgroundColor(ContextCompat.getColor(getContext(), R.color.graph_color6));
+
+                OPTIONS[2] = option;
+                switchToAverage(option);
+                for (ButtonRectangle br : buttonRectangles) {
+                    br.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.backgroundColor));
+                    br.setDrawingCacheBackgroundColor(ContextCompat.getColor(getContext(), R.color.backgroundColor));
+
+                }
+            }
+        } else {
+            showByAverage = true;
+            b.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.graph_color6));
+            OPTIONS[2] = option;
+            for (ButtonRectangle br : buttonRectangles) {
+                br.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.backgroundColor));
+                br.setDrawingCacheBackgroundColor(ContextCompat.getColor(getContext(), R.color.backgroundColor));
+            }
+            switchToAverage(option);
+        }
+    }
+
+    @OnClick(R.id.by_week_button)
     void byWeek() {
-        OPTIONS[2] = SHOW_BY_WEEK;
-        switchToAverage(SHOW_BY_WEEK);
+        changeState(weekButton, SHOW_BY_WEEK);
     }
 
     @OnClick(R.id.by_month_button)
     void byMonth() {
-        switchToAverage(SHOW_BY_MONTH);
-        OPTIONS[2] = SHOW_BY_MONTH;
+        changeState(monthButton, SHOW_BY_MONTH);
+
 
     }
 
     @OnClick(R.id.by_year_button)
     void byYear() {
-        OPTIONS[2] = SHOW_BY_YEAR;
-        switchToAverage(SHOW_BY_YEAR);
+        changeState(yearButton, SHOW_BY_YEAR);
 
     }
 
@@ -232,6 +265,7 @@ public class LineChartFragment extends Fragment implements
 
     void checkDateRange(long from, long until) {
         if (!symptomManager.noSymptoms()) {
+            showByAverage = true;
             switch (Utils.getDateResolution(from, until)) {
                 case Constants.DAY_VIEW:
                     hourButton.setVisibility(View.VISIBLE);
@@ -262,7 +296,7 @@ public class LineChartFragment extends Fragment implements
                     yearButton.setVisibility(View.VISIBLE);
                     break;
             }
-        }else {
+        } else {
             hourButton.setVisibility(View.GONE);
             dayButton.setVisibility(View.GONE);
             weekButton.setVisibility(View.GONE);
@@ -290,6 +324,12 @@ public class LineChartFragment extends Fragment implements
         }
         long from;
         long until;
+        showByAverage = false;
+        ArrayList<ButtonRectangle> buttonRectangles = new ArrayList<>(Arrays.asList(hourButton, dayButton, weekButton, monthButton, yearButton));
+        for (ButtonRectangle br : buttonRectangles) {
+            br.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.backgroundColor));
+            br.setDrawingCacheBackgroundColor(ContextCompat.getColor(getContext(), R.color.backgroundColor));
+        }
         switch (OPTIONS[0]) {
             case SHOW_SINGLE_DAY:
                 pickDayButtonFloat.setBackgroundColor(ContextCompat.getColor(getContext(), android.R.color.holo_blue_bright));
@@ -297,7 +337,12 @@ public class LineChartFragment extends Fragment implements
 //                ChartManager.getInstance().updateLineChartByDay(OPTIONS[2], OPTIONS[1], dt.getMillis());
                 from = Utils.getDayStart(dt.getMillis(), 1);
                 until = Utils.getDaysEnd(dt.getMillis());
-                ChartManager.getInstance().updateLineChartTimeline(OPTIONS[1], from, until);
+                if (showByAverage) {
+                    switchToAverage(OPTIONS[2]);
+                } else {
+
+                    ChartManager.getInstance().updateLineChartTimeline(OPTIONS[1], from, until);
+                }
                 checkDateRange(from, until);
 
 
@@ -307,7 +352,11 @@ public class LineChartFragment extends Fragment implements
                 pickDayButtonFloat.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.high));
                 from = dateRange.get(0).getMillis();
                 until = dateRange.get(1).getMillis();
-                ChartManager.getInstance().updateLineChartTimeline(OPTIONS[1], from, until);
+                if (showByAverage) {
+                    switchToAverage(OPTIONS[2]);
+                } else {
+                    ChartManager.getInstance().updateLineChartTimeline(OPTIONS[1], from, until);
+                }
                 checkDateRange(from, until);
 
 
@@ -382,6 +431,7 @@ public class LineChartFragment extends Fragment implements
 
 
             lineChart.setData(data);
+
 //            lineChart.getXAxis().setDrawGridLines(true);
             lineChart.getAxisLeft().setDrawGridLines(false);
             lineChart.setPinchZoom(true);
@@ -443,10 +493,10 @@ public class LineChartFragment extends Fragment implements
 //    }
 
     private void switchToAverage(int per) {
-        if (dateRange.isEmpty()){
-            ChartManager.getInstance().updateLineChartByRange(per, OPTIONS[1], Utils.getDayStart(dt.getMillis(),1),Utils.getDaysEnd(dt.getMillis()));
-        }else{
-            ChartManager.getInstance().updateLineChartByRange(per, OPTIONS[1], dateRange.get(0).getMillis(),dateRange.get(1).getMillis());
+        if (dateRange.isEmpty()) {
+            ChartManager.getInstance().updateLineChartByRange(per, OPTIONS[1], Utils.getDayStart(dt.getMillis(), 1), Utils.getDaysEnd(dt.getMillis()));
+        } else {
+            ChartManager.getInstance().updateLineChartByRange(per, OPTIONS[1], dateRange.get(0).getMillis(), dateRange.get(1).getMillis());
         }
 
     }
