@@ -15,14 +15,16 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:padding="5dp"
+            android:id="@+id/expand_title_more_info"
             android:text="@string/more_info_head"
             android:textSize="25sp" />
+
         <View
             android:layout_width="match_parent"
             android:layout_height="2dp"
-            android:background="@color/colorPrimary"
             android:layout_marginBottom="5dp"
-            android:layout_marginTop="5dp"/>
+            android:layout_marginTop="5dp"
+            android:background="@color/colorPrimary" />
         <!--Intensity-->
         <LinearLayout
             android:layout_width="match_parent"
@@ -33,8 +35,8 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="5dp"
                 android:gravity="center"
+                android:padding="5dp"
                 android:text="@string/more_info_intensity_tv"
                 android:textSize="25sp" />
         </LinearLayout>
@@ -56,7 +58,9 @@
                 android:id="@+id/intensity_slider"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="7.8" />
+                android:layout_weight="7.8"
+                materialdesign:max="1000"
+                materialdesign:min="0" />
 
             <TextView
                 android:layout_width="0dp"
@@ -70,15 +74,15 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="2dp"
-            android:background="@color/colorPrimary"
             android:layout_marginBottom="5dp"
-            android:layout_marginTop="5dp"/>
+            android:layout_marginTop="5dp"
+            android:background="@color/colorPrimary" />
         <!--Distress-->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="5dp"
             android:gravity="center"
+            android:padding="5dp"
             android:text="@string/more_info_distress_tv"
             android:textSize="25sp" />
 
@@ -99,7 +103,9 @@
                 android:id="@+id/distress_slider"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="7.8" />
+                android:layout_weight="7.8"
+                materialdesign:max="1000"
+                materialdesign:min="0" />
 
             <TextView
                 android:layout_width="0dp"
@@ -109,17 +115,19 @@
                 android:text="@string/details_too_much" />
 
         </LinearLayout>
+
         <View
             android:layout_width="match_parent"
             android:layout_height="2dp"
-            android:background="@color/colorPrimary"
             android:layout_marginBottom="5dp"
-            android:layout_marginTop="5dp"/>
+            android:layout_marginTop="5dp"
+            android:background="@color/colorPrimary" />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="5dp"
             android:gravity="center"
+            android:padding="5dp"
             android:text="@string/body_part_title"
             android:textSize="25sp" />
 
@@ -128,43 +136,44 @@
             android:id="@+id/body_part_spinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:entries="@array/BodyParts" />
+            android:entries="@array/BodyParts"
+            />
 
         <View
             android:layout_width="match_parent"
             android:layout_height="2dp"
-            android:background="@color/colorPrimary"
             android:layout_marginBottom="5dp"
-            android:layout_marginTop="5dp"/>
+            android:layout_marginTop="5dp"
+            android:background="@color/colorPrimary" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="5dp"
             android:gravity="center"
+            android:padding="5dp"
             android:text="@string/medication_title"
             android:textSize="25sp" />
 
         <com.gc.materialdesign.views.ButtonFloat
+            android:id="@+id/button_medication_details"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@color/colorAccent"
-            materialdesign:animate="true"
             android:layout_gravity="center"
-            android:layout_marginTop="10dp"
-            android:id="@+id/button_medication_details"
+            android:background="@color/colorAccent"
             materialdesign:iconDrawable="@drawable/plus" />
+
         <View
             android:layout_width="match_parent"
             android:layout_height="2dp"
-            android:background="@color/colorPrimary"
             android:layout_marginBottom="5dp"
-            android:layout_marginTop="5dp"/>
+            android:layout_marginTop="5dp"
+            android:background="@color/colorPrimary" />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="5dp"
             android:gravity="center"
+            android:padding="5dp"
             android:text="@string/no_medication_treatment_title"
             android:textSize="25sp" />
         <!--Body part-->
@@ -173,6 +182,26 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:entries="@array/NonDrugTechniques" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="5dp"
+            android:background="@color/colorPrimary" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="5dp"
+            android:text="@string/other_symptoms"
+            android:textSize="25sp" />
+        <Spinner
+            android:id="@+id/other_symptoms_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:entries="@array/symptoms"
+            />
 
     </LinearLayout>
 </com.gc.materialdesign.views.ScrollView>

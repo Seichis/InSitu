@@ -1,14 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:whatever="http://schemas.android.com/tools"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <com.wrapp.floatlabelededittext.FloatLabeledEditText
-        android:id="@+id/body_part_details_label"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="@dimen/activity_vertical_margin">
+
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="5dp"
+        android:id="@+id/body_dialog_details_title"
+        android:text="@string/body_part_details_dialog_title"
+        android:textSize="25sp" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="10">
+
+    <com.wrapp.floatlabelededittext.FloatLabeledEditText
+        android:id="@+id/body_part_details_label"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="8"
         app:fletPaddingBottom="10dp">
 
         <com.andreabaccega.widget.FormEditText
@@ -16,8 +32,46 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/body_part_details"
-            android:inputType="textPersonName"
-            whatever:testType="personName" />
+            android:inputType="textPersonName" />
     </com.wrapp.floatlabelededittext.FloatLabeledEditText>
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:gravity="center|bottom"
+            android:padding="10dp"
+            android:textSize="20sp"
+            android:layout_weight="2"
+            android:id="@+id/body_part_details_at_tv"
+            android:text="@string/body_part_details_at"/>
+</LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="10">
+    <com.wrapp.floatlabelededittext.FloatLabeledEditText
+        android:id="@+id/body_part_details_label_where"
+        android:layout_width="0dp"
+        android:layout_weight="6"
+        android:layout_height="wrap_content"
+        app:fletPaddingBottom="10dp">
+
+        <com.andreabaccega.widget.FormEditText
+            android:id="@+id/body_part_details_where"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/body_part_details_where"
+            android:inputType="textPersonName" />
+    </com.wrapp.floatlabelededittext.FloatLabeledEditText>
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="4"
+        android:gravity="center|bottom"
+        android:padding="10dp"
+        android:textSize="20sp"
+        android:id="@+id/body_part_details_where_tv"
+        android:text="@string/body_part_details_where_tv"/>
+</LinearLayout>
 
 </LinearLayout>

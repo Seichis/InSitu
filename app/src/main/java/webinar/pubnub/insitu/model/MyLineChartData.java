@@ -2,31 +2,14 @@ package webinar.pubnub.insitu.model;
 
 import io.realm.RealmObject;
 import io.realm.annotations.Index;
-import io.realm.annotations.PrimaryKey;
 
-/**
- * Created by Konstantinos Michail on 4/21/2016.
- */
-public class MyBubbleChartData extends RealmObject {
+public class MyLineChartData extends RealmObject {
+
     int classId;
-    float bubbleSize;
     String className;
     float value;
     @Index
     int setId;
-
-    public int getSetId() {
-        return setId;
-    }
-
-    public void setSetId(int setId) {
-        this.setId = setId;
-    }
-
-    public MyBubbleChartData() {
-    }
-
-
 
     public int getClassId() {
         return classId;
@@ -34,14 +17,6 @@ public class MyBubbleChartData extends RealmObject {
 
     public void setClassId(int classId) {
         this.classId = classId;
-    }
-
-    public float getBubbleSize() {
-        return bubbleSize;
-    }
-
-    public void setBubbleSize(float bubbleSize) {
-        this.bubbleSize = bubbleSize;
     }
 
     public String getClassName() {
@@ -58,5 +33,13 @@ public class MyBubbleChartData extends RealmObject {
 
     public void setValue(float value) {
         this.value = value;
+    }
+
+    public int getSetId() {
+        return setId;
+    }
+
+    public void setSetId(int setId) {
+        this.setId = setId;
     }
 }

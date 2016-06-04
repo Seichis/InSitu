@@ -1,53 +1,69 @@
 package webinar.pubnub.insitu;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
-import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.ogaclejapan.smarttablayout.SmartTabLayout;
-import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItemAdapter;
-import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItems;
-
 import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import io.flic.lib.FlicBroadcastReceiverFlags;
 import io.flic.lib.FlicButton;
 import io.flic.lib.FlicManager;
 import io.flic.lib.FlicManagerInitializedCallback;
-import webinar.pubnub.insitu.fragments.ExplorationFragment;
-import webinar.pubnub.insitu.fragments.HomeFragment;
-import webinar.pubnub.insitu.managers.SettingsManager;
+import io.realm.RealmResults;
+import webinar.pubnub.insitu.managers.PatientManager;
+import webinar.pubnub.insitu.managers.RoutineMedicationManager;
+import webinar.pubnub.insitu.managers.SymptomManager;
 import webinar.pubnub.insitu.maps.HeatmapsDemoActivity;
-import webinar.pubnub.insitu.model.Settings;
+import webinar.pubnub.insitu.model.Patient;
+import webinar.pubnub.insitu.model.RoutineMedication;
+import webinar.pubnub.insitu.model.Symptom;
 
 public class MainActivity extends BaseActivity
-        implements NavigationView.OnNavigationItemSelectedListener,HomeFragment.OnHomeInteractionListener,ExplorationFragment.OnExplorationInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String TAG = "MainActivity";
     static MainActivity mainActivity;
 
-    @Bind(R.id.viewpager)
-    ViewPager viewPager;
-    @Bind(R.id.viewpagertab)
-    SmartTabLayout viewPagerTab;
     Intent serviceIntent;
     FlicButton button;
     HashMap<String, Class<? extends Fragment>> fragmentTitleMap;
+    Patient patient;
+    RealmResults<RoutineMedication> routineMedications;
+    Symptom symptom;
+    @Bind(R.id.patient_image)
+    ImageView patientImageView;
+    @Bind(R.id.main_head)
+    TextView mainTextView;
+    @Bind(R.id.main_head_sec)
+    TextView mainSecTextView;
+    @Bind(R.id.last_symptom_layout)
+    LinearLayout lastSymptomLinearLayout;
+    @Bind(R.id.last_pain)
+    TextView lastIntensityTextView;
+    @Bind(R.id.last_distress)
+    TextView lastDistressTextView;
 
     public static MainActivity getInstance() {
         return mainActivity;
@@ -58,19 +74,16 @@ public class MainActivity extends BaseActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mainActivity = this;
-
-        ButterKnife.bind(mainActivity);
-
+        handler=new Handler();
+        ButterKnife.bind(this);
         setupLayout();
         startBackgroundService();
-        setupTabs();
+
         if (getIntent().getExtras() != null) {
             Bundle extras = getIntent().getExtras();
             checkRule(extras.getInt("rule", -1));
         }
     }
-
-
 
     private void checkRule(int rule) {
         switch (rule) {
@@ -82,20 +95,6 @@ public class MainActivity extends BaseActivity
                 break;
         }
     }
-    FragmentPagerItemAdapter adapter;
-    private void setupTabs() {
-        adapter = new FragmentPagerItemAdapter(
-                getSupportFragmentManager(), FragmentPagerItems.with(this)
-                .add("Home", HomeFragment.class)
-                .add("Explore", ExplorationFragment.class)
-                .create());
-
-        viewPager.setAdapter(adapter);
-
-        viewPagerTab.setViewPager(viewPager);
-    }
-
-
 
     private void setupLayout() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -119,7 +118,6 @@ public class MainActivity extends BaseActivity
             Log.i(TAG, "Service running");
         }
     }
-
 
     @Override
     public void onBackPressed() {
@@ -159,12 +157,12 @@ public class MainActivity extends BaseActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.manage_symptoms) {
-            // Handle the camera action
+        if (id == R.id.insight) {
+            startActivity(new Intent(this, InsightActivity.class));
         } else if (id == R.id.symptoms_on_map) {
             startActivity(new Intent(this, HeatmapsDemoActivity.class));
         } else if (id == R.id.raw_history) {
-
+            startActivity(new Intent(this, AddMoreInfoActivity.class));
         } else if (id == R.id.app_settings) {
             startActivity(new Intent(mainActivity, SettingsActivity.class));
         } else if (id == R.id.nav_share) {
@@ -177,7 +175,7 @@ public class MainActivity extends BaseActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-
+    @Bind(R.id.medication_status_btn)ImageButton medicationStatus;
     @Override
     public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
 
@@ -187,13 +185,13 @@ public class MainActivity extends BaseActivity
                     // continue here - permission was granted
                 }
             }
-        }else{
+        } else {
             FlicManager.getInstance(this, new FlicManagerInitializedCallback() {
                 @Override
                 public void onInitialized(FlicManager manager) {
                     button = manager.completeGrabButton(requestCode, resultCode, data);
                     if (button != null) {
-                        button.registerListenForBroadcast(FlicBroadcastReceiverFlags.UP_OR_DOWN | FlicBroadcastReceiverFlags.REMOVED);
+                        button.registerListenForBroadcast(FlicBroadcastReceiverFlags.UP_OR_DOWN | FlicBroadcastReceiverFlags.CLICK_OR_DOUBLE_CLICK | FlicBroadcastReceiverFlags.REMOVED);
 //                    button.setActiveMode(false);
                         Toast.makeText(MainActivity.this, "Grabbed a button", Toast.LENGTH_SHORT).show();
                         Log.i(TAG, "button id" + button.getButtonId());
@@ -216,20 +214,64 @@ public class MainActivity extends BaseActivity
     @Override
     protected void onResume() {
         super.onResume();
+        if (BackgroundService.getInstance() != null) {
+            setupContent();
+        }
     }
+
+    private void setupContent() {
+        symptom = SymptomManager.getInstance().getLastSymptom();
+        patient = PatientManager.getInstance().getPatient();
+        if (patient != null) {
+            if (patient.getGender().equals("m")) {
+                patientImageView.setImageResource(R.drawable.avatar_jack2);
+            } else if (patient.getGender().equals("f")) {
+                patientImageView.setImageResource(R.drawable.avatar_maggie2);
+            } else {
+                patientImageView.setImageResource(android.R.drawable.picture_frame);
+            }
+            if (!patient.getPatientName().equals("")) {
+                mainTextView.setText(getString(R.string.main_head, patient.getPatientName()));
+            } else {
+                mainTextView.setText("Welcome");
+            }
+            if (symptom != null) {
+                lastSymptomLinearLayout.setVisibility(View.VISIBLE);
+                mainSecTextView.setText(getString(R.string.main_head_sec, Utils.getDateFormatForListview(symptom.getTimestamp()), symptom.getContext().getAddress()));
+                lastIntensityTextView.setText(getString(R.string.last_pain, String.valueOf(symptom.getIntensity())));
+                if (symptom.getDescription() != null) {
+                    lastDistressTextView.setText(getString(R.string.last_distress, String.valueOf(symptom.getDescription().getDistress())));
+                }
+            } else {
+                mainSecTextView.setText("No pain occurences registered");
+                lastDistressTextView.setVisibility(View.GONE);
+                lastIntensityTextView.setVisibility(View.GONE);
+            }
+            if(timer==null){
+                timer=new Timer();
+                timer.scheduleAtFixedRate(timerTask,0,30000);
+
+            }
+        }
+    }
+
+    Handler handler;
+    Timer timer;
+    TimerTask timerTask = new TimerTask() {
+        @Override
+        public void run() {
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+//                    if (RoutineMedicationManager.getInstance().isRoutineMedicationFollowed()){
+                        medicationStatus.setImageResource(android.R.drawable.btn_star_big_on);}
+//                }
+            });
+        }
+    };
 
     public FlicButton getButton() {
         return button;
     }
 
-
-    @Override
-    public void OnHomeInteraction(Uri uri) {
-
-    }
-
-    @Override
-    public void OnExplorationInteraction(Uri uri) {
-
-    }
 }

@@ -2,14 +2,25 @@ package webinar.pubnub.insitu;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RadioGroup;
 import android.widget.Switch;
+import android.widget.TextView;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
 import io.realm.Realm;
+import io.realm.RealmResults;
+import webinar.pubnub.insitu.adapters.CreateMedicationAdapter;
+import webinar.pubnub.insitu.dialogs.AddMedicationDialog;
+import webinar.pubnub.insitu.managers.RoutineMedicationManager;
 import webinar.pubnub.insitu.managers.SettingsManager;
+import webinar.pubnub.insitu.model.RoutineMedication;
 import webinar.pubnub.insitu.model.Settings;
 
 public class SettingsActivity extends AppCompatActivity {
@@ -23,8 +34,15 @@ public class SettingsActivity extends AppCompatActivity {
     Switch flicSwitch;
     @Bind(R.id.radio_group_mode)
     RadioGroup radioGroup;
+    @Bind(R.id.medication_info_layout)
+    LinearLayout medicationLayout;
+@Bind(R.id.add_med_tv)TextView addMedTv;
+@Bind(R.id.medication_welcome)TextView welcomeTV;
     Settings settings;
     SettingsManager settingsManager;
+    @Bind(R.id.add_medication_lv)
+    ListView listView;
+
     @OnClick(R.id.apply_changes)
     void applyChanges() {
         this.finish();
@@ -33,6 +51,11 @@ public class SettingsActivity extends AppCompatActivity {
     @OnClick(R.id.discard_changes)
     void discardChanges() {
         this.finish();
+    }
+
+    @OnClick(R.id.fab_add_medication)
+    void addMedication() {
+        AddMedicationDialog.newInstance("create", "").show(getSupportFragmentManager(), "addmed");
     }
 
     @OnCheckedChanged(R.id.activate_moves_switch)
@@ -82,15 +105,24 @@ public class SettingsActivity extends AppCompatActivity {
                 break;
         }
     }
+RealmResults<RoutineMedication> medications;
+    CreateMedicationAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
         ButterKnife.bind(this);
-        settingsManager=SettingsManager.getInstance();
+        addMedTv.setVisibility(View.GONE);
+        welcomeTV.setVisibility(View.GONE);
+        medicationLayout.setVisibility(View.VISIBLE);
+        settingsManager = SettingsManager.getInstance();
         settings = settingsManager.getSettings();
         backgroundService = BackgroundService.getInstance();
+        medications = RoutineMedicationManager.getInstance().getRoutineMedications();
+        adapter = new CreateMedicationAdapter(this, medications);
+
+        listView.setAdapter(adapter);
         setupViewWithSettings();
     }
 
@@ -98,13 +130,13 @@ public class SettingsActivity extends AppCompatActivity {
         if (settings.isFlicActivated()) {
             flicSwitch.setChecked(true);
         }
-        if (settings.isLifelogActivated()){
+        if (settings.isLifelogActivated()) {
             lifelogSwitch.setChecked(true);
         }
-        if(settings.isMovesActivated()){
+        if (settings.isMovesActivated()) {
             movesSwitch.setChecked(true);
         }
-        switch (settings.getMode()){
+        switch (settings.getMode()) {
             case 0:
                 radioGroup.check(R.id.no_mode);
                 break;

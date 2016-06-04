@@ -39,9 +39,9 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.3.0'
     compile 'com.android.support:design:23.3.0'
     compile 'com.github.PhilJay:MPAndroidChart:v2.2.4'
-    compile 'com.survivingwithandroid:weatherlib:1.6.0'
-    compile 'com.survivingwithandroid:weatherlib_okhttpclient:1.6.0'
-    compile 'com.squareup.okhttp:okhttp:2.3.0'
+//    compile 'com.survivingwithandroid:weatherlib:1.6.0'
+//    compile 'com.survivingwithandroid:weatherlib_okhttpclient:1.6.0'
+//    compile 'com.squareup.okhttp:okhttp:2.3.0'
     compile 'com.google.android.gms:play-services-maps:8.4.0'
     compile 'com.google.android.gms:play-services-location:8.4.0'
     compile 'com.android.support:multidex:1.0.1'
@@ -66,4 +66,5 @@ dependencies {
 
     compile 'com.wrapp.floatlabelededittext:library:0.0.6'
     compile 'com.andreabaccega:android-form-edittext:1.2.1@aar'
+    compile 'android.zetterstrom.com.forecast:forecast:1.0.0'
 }

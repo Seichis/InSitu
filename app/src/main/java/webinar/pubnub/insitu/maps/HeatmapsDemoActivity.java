@@ -17,31 +17,32 @@
 package webinar.pubnub.insitu.maps;
 
 import android.graphics.Color;
-import android.text.Html;
-import android.text.method.LinkMovementMethod;
+import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
-import android.widget.TextView;
 
+import com.gc.materialdesign.views.ButtonFloat;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
 import com.google.maps.android.heatmaps.Gradient;
 import com.google.maps.android.heatmaps.HeatmapTileProvider;
+import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
 import org.joda.time.DateTime;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.TreeMap;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import webinar.pubnub.insitu.Constants;
 import webinar.pubnub.insitu.R;
-import webinar.pubnub.insitu.managers.DiaryManager;
+import webinar.pubnub.insitu.Utils;
 import webinar.pubnub.insitu.managers.SymptomManager;
 
 /**
@@ -49,16 +50,20 @@ import webinar.pubnub.insitu.managers.SymptomManager;
  * a colored map overlay that visualises many points of weighted importance/intensity, with
  * different colors representing areas of high and low concentration/combined intensity of points.
  */
-public class HeatmapsDemoActivity extends BaseDemoActivity {
-
+public class HeatmapsDemoActivity extends BaseDemoActivity implements
+        DatePickerDialog.OnDateSetListener {
     public static final float[] ALT_HEATMAP_GRADIENT_START_POINTS = {
             0.0f, 0.10f, 0.20f, 0.60f, 1.0f
     };
+
+    static final int SHOW_DISTRESS = 1;
+    static final int SHOW_INTENSITY = 0;
+    static final int SHOW_SINGLE_DAY = 0;
+    static final int SHOW_RANGE = 1;
     /**
      * Alternative radius for convolution
      */
     private static final int ALT_HEATMAP_RADIUS = 10;
-
     private static final String TAG = "Heatmap";
     /**
      * Alternative opacity of heatmap overlay
@@ -77,6 +82,19 @@ public class HeatmapsDemoActivity extends BaseDemoActivity {
     };
     public static final Gradient ALT_HEATMAP_GRADIENT = new Gradient(ALT_HEATMAP_GRADIENT_COLORS,
             ALT_HEATMAP_GRADIENT_START_POINTS);
+    private static DateTime dt;
+    @Bind(R.id.intensity_button)
+    ButtonFloat intensityButtonFloat;
+    @Bind(R.id.distress_button)
+    ButtonFloat distressButtonFloat;
+    @Bind(R.id.pick_range_button)
+    ButtonFloat pickRangeButtonFloat;
+    @Bind(R.id.pick_day_button)
+    ButtonFloat pickDayButtonFloat;
+    //    ArrayList<String> options = new ArrayList<>();
+    SymptomManager symptomManager;
+    ArrayList<DateTime> dateRange = new ArrayList<>();
+    private int[] OPTIONS = new int[]{SHOW_SINGLE_DAY, SHOW_INTENSITY};
     private HeatmapTileProvider mProvider;
     private TileOverlay mOverlay;
     private boolean mDefaultGradient = true;
@@ -86,8 +104,20 @@ public class HeatmapsDemoActivity extends BaseDemoActivity {
      * Maps name of data set to data (list of LatLngs)
      * Also maps to the URL of the data set for attribution
      */
-    private HashMap<String, DataSet> mLists = new HashMap<String, DataSet>();
-    ArrayList<String> options = new ArrayList<>();
+    private HashMap<String, DataSet> mLists = new HashMap<>();
+    private static HeatmapsDemoActivity heatmapsDemoActivity;
+
+    public static HeatmapsDemoActivity getInstance() {
+        return heatmapsDemoActivity;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        ButterKnife.bind(this);
+        symptomManager=SymptomManager.getInstance();
+    }
+
     @Override
     protected int getLayoutId() {
         return R.layout.heatmaps_demo;
@@ -95,29 +125,9 @@ public class HeatmapsDemoActivity extends BaseDemoActivity {
 
     @Override
     protected void startDemo() {
-        options.clear();
-        options.add("Pain occurrences");
-        ArrayList<LatLng> pos = SymptomManager.getInstance().getSymptomsLatLon(DateTime.now().minusDays(10).getMillis(),DateTime.now().getMillis());
-        for (String op:options){
-            mLists.put(op,new DataSet(pos,op));
-        }
-
 
         getMap().moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(55.6761, 12.5683), 10));
-
-        // Set up the spinner/dropdown list
-        Spinner spinner = (Spinner) findViewById(R.id.spinner);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, new ArrayList<>(mLists.keySet()));
-
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
-        spinner.setOnItemSelectedListener(new SpinnerActivity());
-
-
-        // Make the handler deal with the map
-        // Input: list of WeightedLatLngs, minimum and maximum zoom levels to calculate custom
-        // intensity from, and the map to draw the heatmap on
-        // radius, gradient and opacity not specified, so default are used
+        updateMapByOptions();
     }
 
     public void changeRadius(View view) {
@@ -150,31 +160,168 @@ public class HeatmapsDemoActivity extends BaseDemoActivity {
         mDefaultOpacity = !mDefaultOpacity;
     }
 
-    // Dealing with spinner choices
-    public class SpinnerActivity implements AdapterView.OnItemSelectedListener {
-        public void onItemSelected(AdapterView<?> parent, View view,
-                                   int pos, long id) {
-            TextView attribution = ((TextView) findViewById(R.id.attribution));
+    @Override
+    public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
+        switch (OPTIONS[0]) {
+            case SHOW_SINGLE_DAY:
+                dt = Utils.getDate(year, monthOfYear + 1, dayOfMonth);
+                updateMapByOptions();
+                break;
+            case SHOW_RANGE:
+                // if empty set the from date
+                if (dateRange.isEmpty()) {
+                    dateRange.add(Utils.getDate(year, monthOfYear + 1, dayOfMonth));
+                    openCalendar();
+                } else if (dateRange.size() == 1) {
+                    dateRange.add(Utils.getDate(year, monthOfYear + 1, dayOfMonth));
+                    updateMapByOptions();
+                } else {
+                    dateRange.clear();
+                }
 
-            // Check if need to instantiate (avoid setData etc twice)
-            if (mProvider == null) {
-                mProvider = new HeatmapTileProvider.Builder().data(
-                        mLists.get(options.get(pos)).getData()).build();
-                mOverlay = getMap().addTileOverlay(new TileOverlayOptions().tileProvider(mProvider));
-                // Render links
-                attribution.setMovementMethod(LinkMovementMethod.getInstance());
-            } else {
-                mProvider.setData(mLists.get(options.get(pos)).getData());
-                mOverlay.clearTileCache();
-            }
-            // Update attribution
-            attribution.setText(Html.fromHtml(String.format(getString(R.string.attrib_format),
-                    mLists.get(options.get(pos)).getUrl())));
+        }
+    }
+
+    @OnClick(R.id.intensity_button)
+    void chartByIntensity() {
+
+                OPTIONS[1] = SHOW_INTENSITY;
+
+        updateMapByOptions();
+    }
+
+    @OnClick(R.id.distress_button)
+    void chartByDistress() {
+
+                OPTIONS[1] = SHOW_DISTRESS;
+
+
+        updateMapByOptions();
+    }
+
+    @OnClick(R.id.pick_range_button)
+    void pickRange() {
+        if (!symptomManager.noSymptoms()) {
+
+            OPTIONS[0] = SHOW_RANGE;
+            dateRange.clear();
+            openCalendar();
+        }
+    }
+
+    @OnClick(R.id.pick_day_button)
+    void pickSingleDay() {
+        if (!symptomManager.noSymptoms()) {
+            OPTIONS[0] = SHOW_SINGLE_DAY;
+            dateRange.clear();
+            openCalendar();
+        }
+    }
+
+    private void openCalendar() {
+        Calendar now = Calendar.getInstance();
+        DatePickerDialog dpd = DatePickerDialog.newInstance(
+                this,
+                now.get(Calendar.YEAR),
+                now.get(Calendar.MONTH),
+                now.get(Calendar.DAY_OF_MONTH)
+        );
+
+        dpd.dismissOnPause(true);
+        dpd.showYearPickerFirst(false);
+        dpd.setAccentColor(ContextCompat.getColor(this, Constants.colors[12]));
+
+        dpd.setMaxDate(now);
+        dpd.setMinDate(SymptomManager.getInstance().getMinDate());
+        String title = "";
+        switch (OPTIONS[0]) {
+            case SHOW_SINGLE_DAY:
+                title = "Choose a date to explore";
+                break;
+            case SHOW_RANGE:
+                if (dateRange.isEmpty()) {
+                    title = "From";
+                    dpd.autoDismiss(true);
+                } else {
+                    Calendar tmp = Calendar.getInstance();
+                    tmp.setTimeInMillis(dateRange.get(0).getMillis());
+                    dpd.setMinDate(tmp);
+                    title = "From " + Utils.getFormatedDate(dateRange.get(0)) + "\nUntil";
+                }
 
         }
 
-        public void onNothingSelected(AdapterView<?> parent) {
-            // Another interface callback
+        dpd.setTitle(title);
+
+        dpd.show(this.getFragmentManager(), "Datepickerdialog");
+    }
+
+    public void updateMapByOptions() {
+        if (dt == null) {
+            Log.i(TAG, "null dt");
+            dt = DateTime.now();
+        }
+        switch (OPTIONS[0]) {
+            case SHOW_SINGLE_DAY:
+                pickDayButtonFloat.setBackgroundColor(ContextCompat.getColor(this, android.R.color.holo_blue_bright));
+                pickRangeButtonFloat.setBackgroundColor(ContextCompat.getColor(this, R.color.high));
+                updateMapByDay(dt.getMillis());
+                break;
+            case SHOW_RANGE:
+                pickRangeButtonFloat.setBackgroundColor(ContextCompat.getColor(this, android.R.color.holo_blue_bright));
+                pickDayButtonFloat.setBackgroundColor(ContextCompat.getColor(this, R.color.high));
+                updateMapByRange(dateRange.get(0).getMillis(), dateRange.get(1).getMillis());
+                break;
+        }
+
+        switch (OPTIONS[1]) {
+            case SHOW_INTENSITY:
+                distressButtonFloat.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_gray_press));
+                intensityButtonFloat.setBackgroundColor(ContextCompat.getColor(this, R.color.graph_color7));
+
+                break;
+            case SHOW_DISTRESS:
+                intensityButtonFloat.setBackgroundColor(ContextCompat.getColor(this,R.color.dark_gray_press));
+                distressButtonFloat.setBackgroundColor(ContextCompat.getColor(this, R.color.graph_color2));
+                break;
+        }
+    }
+
+    private void updateMapByDay(long date) {
+        updateMapByRange(Utils.getDayStart(date, 1), Utils.getDaysEnd(date));
+    }
+
+    private void updateMapByRange(long from, long until) {
+        // Check if need to instantiate (avoid setData etc twice)
+        ArrayList<LatLng> pos=new ArrayList<>();
+        String label="";
+//        ArrayList<LatLng> posDistress = SymptomManager.getInstance().getSymptomsLatLonByDistress(DateTime.now().minusDays(10).getMillis(), DateTime.now().getMillis());
+        switch (OPTIONS[1]){
+            case SHOW_INTENSITY:
+                label="Intensity";
+                pos = symptomManager.getSymptomsLatLon(from,until);
+                break;
+            case SHOW_DISTRESS:
+                label="Distress";
+                pos=symptomManager.getSymptomsLatLonByDistress(from,until);
+                break;
+            default:
+                break;
+        }
+        mLists.put(label, new DataSet(pos, label));
+        try {
+            if (mProvider == null) {
+                mProvider = new HeatmapTileProvider.Builder().data(
+                        mLists.get(label).getData()).build();
+                mOverlay = getMap().addTileOverlay(new TileOverlayOptions().tileProvider(mProvider));
+                // Render links
+            } else {
+                mProvider.setData(mLists.get(label).getData());
+                mOverlay.clearTileCache();
+            }
+            // Update attribution
+        } catch (IllegalArgumentException e) {
+            Log.i(TAG, e.getMessage());
         }
     }
 

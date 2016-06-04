@@ -36,4 +36,9 @@ public class AddMoreInfoActivity extends AppCompatActivity {
         listView.setAdapter(alphaInAnimationAdapter);
     }
 
+    @Override
+    public void onBackPressed() {
+        this.finish();
+        super.onBackPressed();
+    }
 }

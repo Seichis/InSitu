@@ -3,8 +3,14 @@ package webinar.pubnub.insitu.managers;
 import android.content.Context;
 import android.location.Address;
 import android.location.Geocoder;
+import android.location.Location;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.zetterstrom.com.forecast.ForecastClient;
+import android.zetterstrom.com.forecast.ForecastConfiguration;
+import android.zetterstrom.com.forecast.models.DataPoint;
+import android.zetterstrom.com.forecast.models.Forecast;
+import android.zetterstrom.com.forecast.models.Unit;
 
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
@@ -20,14 +26,6 @@ import com.midhunarmid.movesapi.storyline.StorylineData;
 import com.midhunarmid.movesapi.summary.SummaryData;
 import com.midhunarmid.movesapi.summary.SummaryListData;
 import com.midhunarmid.movesapi.util.MovesStatus;
-import com.survivingwithandroid.weather.lib.WeatherClient;
-import com.survivingwithandroid.weather.lib.WeatherConfig;
-import com.survivingwithandroid.weather.lib.client.okhttp.WeatherDefaultClient;
-import com.survivingwithandroid.weather.lib.exception.WeatherLibException;
-import com.survivingwithandroid.weather.lib.exception.WeatherProviderInstantiationException;
-import com.survivingwithandroid.weather.lib.model.CurrentWeather;
-import com.survivingwithandroid.weather.lib.provider.openweathermap.OpenweathermapProviderType;
-import com.survivingwithandroid.weather.lib.request.WeatherRequest;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -36,6 +34,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import retrofit2.Callback;
+import retrofit2.Response;
 import webinar.pubnub.insitu.BackgroundService;
 import webinar.pubnub.insitu.model.SymptomContext;
 
@@ -54,8 +54,9 @@ public class DataManager {
     private static DataManager dataManager = new DataManager();
     BackgroundService backgroundService;
     SymptomContext symptomContext;
-    WeatherClient client;
-    WeatherClient.ClientBuilder builder;
+    String cityForWeather;
+    //    WeatherClient client;
+//    WeatherClient.ClientBuilder builder;
     private Context context;
     private MovesHandler<AuthData> authDialogHandler = new MovesHandler<AuthData>() {
         @Override
@@ -205,19 +206,11 @@ public class DataManager {
     public void init(Context context) {
         this.context = context;
         initializeMoves();
-        builder = new WeatherClient.ClientBuilder();
-        WeatherConfig config = new WeatherConfig();
-//        config.unitSystem = WeatherConfig.UNIT_SYSTEM.M;
-        config.ApiKey = "6f46363be8ca802a0ad1807cfc4614b9";// OpenweathermapProviderType
-//        config.ApiKey="fea0689d34004538e4db36555b89bf40";//Forecast IO
-//        config.ApiKey="dj0yJmk9WXM0UEN6SGtJUmlmJmQ9WVdrOVZsaHhSWFZvTmpJbWNHbzlNQS0tJnM9Y29uc3VtZXJzZWNyZXQmeD04Mw--";
-        config.lang = "en"; // If you want to use english
         backgroundService = BackgroundService.getInstance();
-        try {
-            client = builder.attach(context).httpClient(WeatherDefaultClient.class).provider(new OpenweathermapProviderType()).config(config).build();
-        } catch (WeatherProviderInstantiationException e) {
-            e.printStackTrace();
-        }
+        ForecastConfiguration configuration =
+                new ForecastConfiguration.Builder("fea0689d34004538e4db36555b89bf40").setDefaultUnit(Unit.AUTO)
+                        .build();
+        ForecastClient.create(configuration);
     }
 
     private void initializeMoves() {
@@ -229,74 +222,83 @@ public class DataManager {
     }
 
     public void fetchWeatherData() {
-        final android.location.Location location = backgroundService.getCurrentLocation();
+        Location location = backgroundService.getCurrentLocation();
 //        if (backgroundService.getCurrentLocation() == null) {
 //            location = MainActivity.getInstance().getCurrentLocation();
 //        } else {
 //            location = MainActivity.getInstance().getCurrentLocation();
 //        Log.i(TAG, location.toString());
 //        }
-        client.getCurrentCondition(new WeatherRequest(location.getLongitude(), location.getLatitude()), new WeatherClient.WeatherEventListener() {
-            @Override
-            public void onWeatherRetrieved(CurrentWeather currentWeather) {
-                Geocoder geocoder;
-                symptomContext = new SymptomContext();
-                symptomContext.setAltitude(String.valueOf(location.getAltitude()));
-                List<Address> addresses;
-                geocoder = new Geocoder(context, Locale.ENGLISH);
+        if (location != null) {
+            Log.i(TAG,location.toString());
 
-                try {
-                    addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
-                    Address address = addresses.get(0);
-                    symptomContext.setAddress(address.getAddressLine(0)); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
-                    symptomContext.setCity(address.getLocality());
-                    symptomContext.setPostCode(address.getPostalCode());
-                    symptomContext.setCountry(address.getCountryName());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            Geocoder geocoder;
+            symptomContext = new SymptomContext();
+            symptomContext.setAltitude(String.valueOf(location.getAltitude()));
+            List<Address> addresses;
+            geocoder = new Geocoder(context, Locale.ENGLISH);
+
+            try {
+                addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+                Address address = addresses.get(0);
+                symptomContext.setAddress(address.getAddressLine(0)); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
+                symptomContext.setCity(address.getLocality());
+                symptomContext.setPostCode(address.getPostalCode());
+                symptomContext.setCountry(address.getCountryName());
                 symptomContext.setLatitude(location.getLatitude());
                 symptomContext.setLongitude(location.getLongitude());
-                symptomContext.setHumidity(currentWeather.weather.currentCondition.getHumidity());
-                symptomContext.setTemperature(currentWeather.weather.temperature.getTemp());
-                Log.i(TAG, "condition" + currentWeather.weather.currentCondition.getCondition());
-                Log.i(TAG, "description" + currentWeather.weather.currentCondition.getDescr());
-                Log.i(TAG, "heat index" + currentWeather.weather.currentCondition.getHeatIndex());
-                Log.i(TAG, "icon" + currentWeather.weather.currentCondition.getIcon());
-                Log.i(TAG, "solarRadiation" + currentWeather.weather.currentCondition.getSolarRadiation());
-                Log.i(TAG, "dewPoint" + currentWeather.weather.currentCondition.getDewPoint());
-                Log.i(TAG, "feels like" + currentWeather.weather.currentCondition.getFeelsLike());
-                Log.i(TAG, "humidity" + currentWeather.weather.currentCondition.getHumidity());
-                Log.i(TAG, "pressure" + currentWeather.weather.currentCondition.getPressure());
-                Log.i(TAG, "pressure ground level" + currentWeather.weather.currentCondition.getPressureGroundLevel());
-                Log.i(TAG, "pressure sea level" + currentWeather.weather.currentCondition.getPressureSeaLevel());
-                Log.i(TAG, "pressure trend" + currentWeather.weather.currentCondition.getPressureTrend());
-                Log.i(TAG, "UV" + currentWeather.weather.currentCondition.getUV());
-                Log.i(TAG, "visibility" + currentWeather.weather.currentCondition.getVisibility());
-                Log.i(TAG, "tostring" + currentWeather.weather.currentCondition.toString());
-
-//                Log.i(TAG, "temperature" + currentWeather.weather.temperature.getTemp());
-                Log.i(TAG, "temperature max" + currentWeather.weather.temperature.getMaxTemp());
-                Log.i(TAG, "temperature min" + currentWeather.weather.temperature.getMinTemp());
-
-                Log.i(TAG, "clouds perc" + currentWeather.weather.clouds.getPerc());
-
-
-            }
-
-            @Override
-            public void onWeatherError(WeatherLibException e) {
-                Log.d("WL", "Weather Error - parsing data");
+//                cityForWeather = address.getAddressLine(0);
+            } catch (IOException e) {
                 e.printStackTrace();
             }
+            ForecastClient.getInstance()
+                    .getForecast(location.getLatitude(), location.getLongitude(), new Callback<Forecast>() {
+                        @SuppressWarnings("ConstantConditions")
+                        @Override
+                        public void onResponse(Response<Forecast> response) {
+                            if (response.isSuccess()) {
+                                Forecast forecast = response.body();
+                                DataPoint currentWeather = forecast.getCurrently();
+                                if (currentWeather != null) {
+                                    symptomContext.setWeatherCondition(currentWeather.getSummary());
+                                    symptomContext.setTemperature(currentWeather.getTemperature().floatValue());
+                                    symptomContext.setApparentTemperature(currentWeather.getApparentTemperature().floatValue());
+                                    symptomContext.setHumidity(currentWeather.getHumidity().floatValue());
+                                    symptomContext.setCloudCover(currentWeather.getCloudCover().floatValue());
+                                    symptomContext.setWindBearing(currentWeather.getWindBearing().floatValue());
+                                    symptomContext.setWindSpeed(currentWeather.getWindSpeed().floatValue());
+                                    symptomContext.setDewPoint(currentWeather.getDewPoint().floatValue());
+                                    symptomContext.setHumidity(currentWeather.getHumidity().floatValue());
+                                    symptomContext.setPrecipitationProbability(currentWeather.getPrecipProbability().floatValue());
+                                    if (currentWeather.getPrecipitationType() != null) {
+                                        symptomContext.setPrecipitationType(currentWeather.getPrecipitationType().getText());
+                                    }
+                                    symptomContext.setOzone(currentWeather.getOzone().floatValue());
+                                }
+//                                Log.i(TAG, "weather condition" + forecast.getCurrently().getSummary());
+//                                Log.i(TAG, "apparentTemperature" + forecast.getCurrently().getApparentTemperature());
+//                                Log.i(TAG, "cloudCover" + forecast.getCurrently().getCloudCover());
+//                                Log.i(TAG, "pressure" + forecast.getCurrently().getPressure());
+//                                Log.i(TAG, "dewPoint" + forecast.getCurrently().getDewPoint());
+//                                Log.i(TAG, "humidity" + forecast.getCurrently().getHumidity());
+//                                Log.i(TAG, "ozone" + forecast.getCurrently().getOzone());
+//                                Log.i(TAG, "precipitationType" + forecast.getCurrently().getPrecipitationType().name());
+//                                Log.i(TAG, "temperature" + forecast.getCurrently().getTemperature());
+//                                Log.i(TAG, "precipitationProbability" + forecast.getCurrently().getPrecipProbability());
+//                                Log.i(TAG, "windSpeed" + forecast.getCurrently().getWindSpeed());
+//                                Log.i(TAG, "windBearing" + forecast.getCurrently().getWindBearing());
+//                                Log.i(TAG,""+forecast.getCurrently().());
+                            }
+                        }
 
-            @Override
-            public void onConnectionError(Throwable throwable) {
-                Log.d("WL", "Connection error");
-                throwable.printStackTrace();
-            }
-        });
+                        @Override
+                        public void onFailure(Throwable t) {
 
+                        }
+                    });
+        } else {
+            Log.i(TAG, "null location");
+        }
     }
 
 

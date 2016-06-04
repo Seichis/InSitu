@@ -52,48 +52,122 @@ public class Utils {
         return false;
     }
 
-    public static long getDayStart(long date,int pastDays){
+    public static long getDayStart(long date, int pastDays) {
         DateTime inDate = new DateTime(date, DateTimeZone.forTimeZone(TimeZone.getDefault()));
-        return (pastDays<=1)?inDate.withTimeAtStartOfDay().getMillis():inDate.minus(pastDays-1).withTimeAtStartOfDay().getMillis();
+        return (pastDays <= 1) ? inDate.withTimeAtStartOfDay().getMillis() : inDate.minus(pastDays - 1).withTimeAtStartOfDay().getMillis();
 
     }
 
-    public static long getDaysEnd(long date){
+    public static long getDaysEnd(long date) {
         DateTime inDate = new DateTime(date, DateTimeZone.forTimeZone(TimeZone.getDefault()));
-        return inDate.plusDays(1).withTimeAtStartOfDay().getMillis();
+        return inDate.plusDays(1).withTimeAtStartOfDay().getMillis()-1;
     }
 
-    public static DateTime getDate(int year,int month,int day){
+    public static DateTime getDate(int year, int month, int day) {
         DateTime dt = new DateTime((DateTimeZone.forTimeZone(TimeZone.getDefault())));
-        return dt.withDate(year,month,day);
+        return dt.withDate(year, month, day);
     }
 
-    public static String getFormatedDate(DateTime date){
+    public static String getFormatedDate(DateTime date) {
         DateTimeFormatter dtfOut = DateTimeFormat.forPattern("MM/dd/yyyy");
         return dtfOut.print(date);
     }
 
-    public static String getDateFormatForListview(long date){
+    public static String getDateFormatForListview(long date) {
         DateTime dt = DateTime.now(DateTimeZone.forTimeZone(TimeZone.getDefault()));
-        String hour="";
-        float difMinutes=(float)(dt.getMillis()-date)/(1000*60);
-        if (difMinutes<30){
-            return "Less than half an hour ago";
-        }else{
-            int hours = Math.round(difMinutes/60);
-            return "About " + hours + "ago";
+        String hour = "";
+        float difMinutes = (float) (dt.getMillis() - date) / (1000 * 60);
+        if (difMinutes < 5) {
+            return "moments ago";
+        } else if (difMinutes < 10) {
+            return "a few minutes ago";
+        } else if (difMinutes < 30) {
+            return "less than half an hour ago";
+        } else if (difMinutes < (12 * 60)) {
+            int hours = Math.round(difMinutes / 60);
+            return "about " + hours + " hours ago";
+        } else if (difMinutes < (18 * 60)) {
+            return "half a day ago";
+        } else if (difMinutes < (24 * 60)) {
+            return "a day ago";
+        } else {
+            int days = Math.round(difMinutes / (60 * 24));
+            return days + " days ago";
         }
     }
 
-    public static int[] getHourAndMin(long date){
-        int[] hourMinute=new int[2];
-        DateTime dt =new DateTime(date,DateTimeZone.forTimeZone(TimeZone.getDefault()));
-        hourMinute[0]=dt.getHourOfDay();
-        hourMinute[1]=dt.getMinuteOfHour();
+    public static int[] getHourAndMin(long date) {
+        int[] hourMinute = new int[2];
+        DateTime dt = new DateTime(date, DateTimeZone.forTimeZone(TimeZone.getDefault()));
+        hourMinute[0] = dt.getHourOfDay();
+        hourMinute[1] = dt.getMinuteOfHour();
         return hourMinute;
     }
 
-    public static long getDateFromHourAndMin(int hour,int minute) {
+    public static long getDateFromHourAndMin(int hour, int minute) {
         return DateTime.now().withHourOfDay(hour).withMinuteOfHour(minute).getMillis();
     }
+
+    public static String getHourAndMinuteFormat(int hour, int minute) {
+
+        DateTimeFormatter dtfOut = DateTimeFormat.forPattern("k:m");
+        return dtfOut.print(DateTime.now().withHourOfDay(hour).withMinuteOfHour(minute).getMillis());
+    }
+
+    public static String convertFromMillisToHourMinute(long date) {
+        DateTimeFormatter dtfOut = DateTimeFormat.forPattern("k:m");
+        return dtfOut.print(new DateTime(date, DateTimeZone.forTimeZone(TimeZone.getDefault())));
+
+    }
+
+    public static boolean isToday(long date) {
+        return (new DateTime(date, DateTimeZone.forTimeZone(TimeZone.getDefault())).dayOfYear().equals(DateTime.now().dayOfYear()));
+    }
+
+    public static String getDay(long date) {
+        return (getStringDayOfWeek(new DateTime(date, DateTimeZone.forTimeZone(TimeZone.getDefault())).dayOfWeek().get()));
+    }
+
+    private static String getStringDayOfWeek(int day) {
+        String[] dayNames = new String[]{"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
+        return dayNames[day - 1];
+    }
+
+    public static String getHour(long date) {
+        return String.valueOf(new DateTime(date, DateTimeZone.forTimeZone(TimeZone.getDefault())).getHourOfDay() + 1);
+
+    }
+
+    public static String getYear(long date) {
+        return String.valueOf(new DateTime(date, DateTimeZone.forTimeZone(TimeZone.getDefault())).getYear());
+
+    }
+
+    public static String getMonth(long date) {
+        return String.valueOf(new DateTime(date, DateTimeZone.forTimeZone(TimeZone.getDefault())).getMonthOfYear());
+    }
+ public static String getWeek(long date) {
+        return String.valueOf(new DateTime(date, DateTimeZone.forTimeZone(TimeZone.getDefault())).getWeekOfWeekyear());
+    }
+
+
+    public static int getDateResolution(long from, long until) {
+        long fromStart = getDayStart(from, 1);
+        long untilEnd = getDaysEnd(until);
+        float difDays = (float) (untilEnd - fromStart) / (1000 * 60 * 60 * 24);
+        Log.i(TAG,"days " + difDays);
+        if (difDays <= 7f) {
+            return Constants.DAY_VIEW;
+        } else if (difDays < 31f) {
+            return Constants.WEEK_VIEW;
+        } else if (difDays < 365f) {
+            return Constants.MONTH_VIEW;
+        } else if (difDays >= 365) {
+            return Constants.YEAR_VIEW;
+        } else {
+            return -1;
+
+        }
+    }
 }
+

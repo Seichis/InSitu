@@ -1,6 +1,7 @@
 package webinar.pubnub.insitu.model;
 
 import io.realm.RealmObject;
+import io.realm.annotations.Index;
 
 /**
  * Created by Konstantinos Michail on 2/11/2016.
@@ -13,10 +14,69 @@ public class Symptom extends RealmObject {
     boolean isError = false;
     long id;
     long timestamp;
-    Description description=null;
+    Description description = null;
+    float deltaIntensity;
+    @Index
+    String day;
+    @Index
+    String hour;
+    @Index
+    String month;
+    @Index
+    String week;
+    @Index
+    String year;
     private Diary diary;
 
     public Symptom() {
+    }
+
+    public String getWeek() {
+        return week;
+    }
+
+    public void setWeek(String week) {
+        this.week = week;
+    }
+
+    public String getDay() {
+        return day;
+    }
+
+    public void setDay(String day) {
+        this.day = day;
+    }
+
+    public String getHour() {
+        return hour;
+    }
+
+    public void setHour(String hour) {
+        this.hour = hour;
+    }
+
+    public String getMonth() {
+        return month;
+    }
+
+    public void setMonth(String month) {
+        this.month = month;
+    }
+
+    public String getYear() {
+        return year;
+    }
+
+    public void setYear(String year) {
+        this.year = year;
+    }
+
+    public float getDeltaIntensity() {
+        return deltaIntensity;
+    }
+
+    public void setDeltaIntensity(float deltaIntensity) {
+        this.deltaIntensity = deltaIntensity;
     }
 
     public Description getDescription() {

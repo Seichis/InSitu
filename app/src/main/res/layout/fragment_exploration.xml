@@ -4,98 +4,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:weightSum="10"
+    android:weightSum="6"
     tools:context="webinar.pubnub.insitu.fragments.ExplorationFragment">
-
-    <LinearLayout
+    <include layout="@layout/buttons_activities_etc"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_gravity="center_vertical"
-        android:layout_weight="2"
-        android:gravity="center"
-        android:orientation="horizontal">
-
-        <com.gc.materialdesign.views.ButtonFloat
-            android:id="@+id/intensity_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="15dp"
-            android:background="@color/graph_color7"
-            materialdesign:animate="true"
-            materialdesign:iconDrawable="@drawable/intensity" />
-
-        <com.gc.materialdesign.views.ButtonFloat
-            android:id="@+id/pick_day_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="15dp"
-            android:background="@color/high"
-            android:text="@string/pick_single_date"
-            android:textColor="@color/graph_color5"
-            materialdesign:animate="true"
-            materialdesign:iconDrawable="@drawable/single_day" />
-
-        <com.gc.materialdesign.views.ButtonFloat
-            android:id="@+id/pick_range_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="15dp"
-            android:background="@color/high"
-            android:text="@string/pick_range_date"
-            android:textColor="@color/graph_color5"
-            materialdesign:animate="true"
-            materialdesign:iconDrawable="@drawable/range_days" />
-
-        <com.gc.materialdesign.views.ButtonFloat
-            android:id="@+id/distress_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="15dp"
-            android:background="@color/graph_color2"
-            materialdesign:animate="true"
-            materialdesign:iconDrawable="@drawable/distress" />
-    </LinearLayout>
-
+        android:layout_weight="1.1"/>
     <com.github.mikephil.charting.charts.BubbleChart
         android:id="@+id/bubble_chart"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="6" />
+        android:layout_weight="3.8" />
 
-    <LinearLayout
+    <include
+        layout="@layout/header_buttons_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_gravity="center_vertical"
-        android:layout_weight="2"
-        android:gravity="center"
-        android:orientation="horizontal">
-
-        <com.gc.materialdesign.views.ButtonFloat
-            android:id="@+id/by_activities_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="15dp"
-            android:background="@color/colorPrimaryDark"
-            materialdesign:animate="true"
-            materialdesign:iconDrawable="@drawable/activities" />
-
-        <com.gc.materialdesign.views.ButtonFloat
-            android:id="@+id/by_weather_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="15dp"
-            android:background="@color/colorPrimaryDark"
-            materialdesign:animate="true"
-            materialdesign:iconDrawable="@drawable/weather" />
-
-        <com.gc.materialdesign.views.ButtonFloat
-            android:id="@+id/by_body_part_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="15dp"
-            android:background="@color/colorPrimaryDark"
-            materialdesign:animate="true"
-            materialdesign:iconDrawable="@drawable/body_part" />
-    </LinearLayout>
+        android:layout_weight="1.1" />
 </LinearLayout>
 

@@ -6,19 +6,98 @@ import io.realm.RealmObject;
  * Created by Konstantinos Michail on 4/20/2016.
  */
 public class Description extends RealmObject {
-    float distress=0f;
+    float distress = 0f;
     String comments;
     String painType;
-    float duration=0f;
-    String bodyPart="";
+    float duration = 0f;
+    String bodyPart = "";
     String bodyPartDetails;
     String specificActivity;
-    String medicineName;
-    float medicineAmount=0f;
-    long dateMedicationConsumption=0;
+    String dayPainkiller;
+    String hourPainkiller;
+    String monthPainkiller;
+    String yearPainkiller;
+    String weekPainkiller;
+    String otherSymptoms;
+
+    public String getOtherSymptoms() {
+        return otherSymptoms;
+    }
+
+    public void setOtherSymptoms(String otherSymptoms) {
+        this.otherSymptoms = otherSymptoms;
+    }
+
+    public String getWeekPainkiller() {
+        return weekPainkiller;
+    }
+
+    public void setWeekPainkiller(String weekPainkiller) {
+        this.weekPainkiller = weekPainkiller;
+    }
+
+    String painkiller;
+    float painkillerAmount = 0f;
+    long datePainkillerConsumption = 0;
     String nonDrugTechniques;
 
     public Description() {
+    }
+
+    public String getDayPainkiller() {
+        return dayPainkiller;
+    }
+
+    public void setDayPainkiller(String dayPainkiller) {
+        this.dayPainkiller = dayPainkiller;
+    }
+
+    public String getHourPainkiller() {
+        return hourPainkiller;
+    }
+
+    public void setHourPainkiller(String hourPainkiller) {
+        this.hourPainkiller = hourPainkiller;
+    }
+
+    public String getMonthPainkiller() {
+        return monthPainkiller;
+    }
+
+    public void setMonthPainkiller(String monthPainkiller) {
+        this.monthPainkiller = monthPainkiller;
+    }
+
+    public String getYearPainkiller() {
+        return yearPainkiller;
+    }
+
+    public void setYearPainkiller(String yearPainkiller) {
+        this.yearPainkiller = yearPainkiller;
+    }
+
+    public String getPainkiller() {
+        return painkiller;
+    }
+
+    public void setPainkiller(String painkiller) {
+        this.painkiller = painkiller;
+    }
+
+    public float getPainkillerAmount() {
+        return painkillerAmount;
+    }
+
+    public void setPainkillerAmount(float painkillerAmount) {
+        this.painkillerAmount = painkillerAmount;
+    }
+
+    public long getDatePainkillerConsumption() {
+        return datePainkillerConsumption;
+    }
+
+    public void setDatePainkillerConsumption(long datePainkillerConsumption) {
+        this.datePainkillerConsumption = datePainkillerConsumption;
     }
 
     public float getDistress() {
@@ -77,29 +156,6 @@ public class Description extends RealmObject {
         this.specificActivity = specificActivity;
     }
 
-    public String getMedicineName() {
-        return medicineName;
-    }
-
-    public void setMedicineName(String medicineName) {
-        this.medicineName = medicineName;
-    }
-
-    public float getMedicineAmount() {
-        return medicineAmount;
-    }
-
-    public void setMedicineAmount(float medicineAmount) {
-        this.medicineAmount = medicineAmount;
-    }
-
-    public long getDateMedicationConsumption() {
-        return dateMedicationConsumption;
-    }
-
-    public void setDateMedicationConsumption(long dateMedicationConsumption) {
-        this.dateMedicationConsumption = dateMedicationConsumption;
-    }
 
     public String getNonDrugTechniques() {
         return nonDrugTechniques;

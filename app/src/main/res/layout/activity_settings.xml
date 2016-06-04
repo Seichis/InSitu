@@ -104,4 +104,5 @@
 
 
     </LinearLayout>
+    <include layout="@layout/patient_medication_setup" />
 </LinearLayout>

@@ -1,59 +1,97 @@
 package webinar.pubnub.insitu.model;
 
-import com.google.android.gms.maps.model.LatLng;
-
 import io.realm.RealmObject;
-import io.realm.annotations.Ignore;
+import io.realm.annotations.Index;
 
 public class SymptomContext extends RealmObject {
     // Location variables
-
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
-    }
-
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
-    }
 
     double latitude;
     double longitude;
     private String address;
     private String postCode;
-
     private String country;
     private String placeType;
     private String city;
     // Weather variables
-    private float temperature=0;
+    private float temperature;
+    @Index
     private String weatherCondition;
-    private String windChill;
-    private String windDirection;
-    private String windSpeed;
     private float humidity;
-    private String pressure;
-    private String baroPressureRising;
-    private String visibility;
-    private String duringActivity;
-    private String afterActivity;
-
-    public String getDuringActivity() {
-        return duringActivity;
-    }
-
-    public void setDuringActivity(String duringActivity) {
-        this.duringActivity = duringActivity;
-    }
-
-    public String getAfterActivity() {
-        return afterActivity;
-    }
-
-    public void setAfterActivity(String afterActivity) {
-        this.afterActivity = afterActivity;
-    }
-
+    private float pressure;
     private String altitude;
+    float apparentTemperature;
+    float cloudCover;
+    float dewPoint;
+    float ozone;
+    float precipitationProbability;
+    float windSpeed;
+    float windBearing;
+    String precipitationType;
+
+    public float getApparentTemperature() {
+        return apparentTemperature;
+    }
+
+    public void setApparentTemperature(float apparentTemperature) {
+        this.apparentTemperature = apparentTemperature;
+    }
+
+    public float getCloudCover() {
+        return cloudCover;
+    }
+
+    public void setCloudCover(float cloudCover) {
+        this.cloudCover = cloudCover;
+    }
+
+    public float getDewPoint() {
+        return dewPoint;
+    }
+
+    public void setDewPoint(float dewPoint) {
+        this.dewPoint = dewPoint;
+    }
+
+    public float getOzone() {
+        return ozone;
+    }
+
+    public void setOzone(float ozone) {
+        this.ozone = ozone;
+    }
+
+    public float getPrecipitationProbability() {
+        return precipitationProbability;
+    }
+
+    public void setPrecipitationProbability(float precipitationProbability) {
+        this.precipitationProbability = precipitationProbability;
+    }
+
+    public float getWindSpeed() {
+        return windSpeed;
+    }
+
+    public void setWindSpeed(float windSpeed) {
+        this.windSpeed = windSpeed;
+    }
+
+    public float getWindBearing() {
+        return windBearing;
+    }
+
+    public void setWindBearing(float windBearing) {
+        this.windBearing = windBearing;
+    }
+
+    public String getPrecipitationType() {
+        return precipitationType;
+    }
+
+    public void setPrecipitationType(String precipitationType) {
+        this.precipitationType = precipitationType;
+    }
 
     public SymptomContext() {
 
@@ -63,10 +101,17 @@ public class SymptomContext extends RealmObject {
         return latitude;
     }
 
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
     public double getLongitude() {
         return longitude;
     }
 
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
 
     public String getAltitude() {
         return altitude;
@@ -104,47 +149,6 @@ public class SymptomContext extends RealmObject {
         this.weatherCondition = weatherCondition;
     }
 
-    /**
-     * @return
-     */
-    public String getWindChill() {
-        return windChill;
-    }
-
-    /**
-     * @param windChill
-     */
-    public void setWindChill(String windChill) {
-        this.windChill = windChill;
-    }
-
-    /**
-     * @return
-     */
-    public String getWindDirection() {
-        return windDirection;
-    }
-
-    /**
-     * @param windDirection
-     */
-    public void setWindDirection(String windDirection) {
-        this.windDirection = windDirection;
-    }
-
-    /**
-     * @return
-     */
-    public String getWindSpeed() {
-        return windSpeed;
-    }
-
-    /**
-     * @param windSpeed
-     */
-    public void setWindSpeed(String windSpeed) {
-        this.windSpeed = windSpeed;
-    }
 
     public float getHumidity() {
         return humidity;
@@ -158,44 +162,19 @@ public class SymptomContext extends RealmObject {
     /**
      * @return
      */
-    public String getPressure() {
+    public float getPressure() {
         return pressure;
     }
 
     /**
      * @param pressure
      */
-    public void setPressure(String pressure) {
+    public void setPressure(float pressure) {
         this.pressure = pressure;
     }
 
-    /**
-     * @return
-     */
-    public String getBaroPressureRising() {
-        return baroPressureRising;
-    }
 
-    /**
-     * @param baroPressureRising
-     */
-    public void setBaroPressureRising(String baroPressureRising) {
-        this.baroPressureRising = baroPressureRising;
-    }
 
-    /**
-     * @return
-     */
-    public String getVisibility() {
-        return visibility;
-    }
-
-    /**
-     * @param visibility
-     */
-    public void setVisibility(String visibility) {
-        this.visibility = visibility;
-    }
 
     /**
      * @return Municipality name ("Ballerup)
@@ -238,7 +217,6 @@ public class SymptomContext extends RealmObject {
     public void setPostCode(String postCode) {
         this.postCode = postCode;
     }
-
 
 
     /**

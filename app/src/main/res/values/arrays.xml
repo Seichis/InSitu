@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string-array name="BodyParts">
+        <item>Select one</item>
         <item>Head</item>
         <item>Neck</item>
         <item>Breast</item>
@@ -14,6 +15,7 @@
         <item>Knee</item>
     </string-array>
     <string-array name="NonDrugTechniques">
+        <item>Select one</item>
         <item>Massage</item>
         <item>Relaxation</item>
         <item>Acupuncture</item>
@@ -24,14 +26,511 @@
     </string-array>
 
     <string-array name="WeatherConditions">
-        <item>sky is clear</item>
-        <item>few clouds</item>
-        <item>scattered clouds</item>
-        <item>broken clouds</item>
-        <item>shower rain</item>
+        <item>Sky is clear</item>
+        <item>Few clouds</item>
+        <item>Scattered clouds</item>
+        <item>Broken clouds</item>
+        <item>Shower rain</item>
         <item>Rain</item>
         <item>Thunderstorm</item>
-        <item>snow</item>
-        <item>mist</item>
+        <item>Snow</item>
+        <item>Mist</item>
     </string-array>
+
+    <string-array name="CancerDrugs" tools:ignore="TypographyDashes">
+        <item>Abiraterone Acetate</item>
+        <item>Abitrexate (Methotrexate)</item>
+        <item>Abraxane (Paclitaxel Albumin-stabilized Nanoparticle Formulation)</item>
+        <item>ABVD</item>
+        <item>ABVE</item>
+        <item>ABVE-PC</item>
+        <item>AC</item>
+        <item>AC-T</item>
+        <item>Adcetris (Brentuximab Vedotin)</item>
+        <item>ADE</item>
+        <item>Ado-Trastuzumab Emtansine</item>
+        <item>Adriamycin (Doxorubicin Hydrochloride)</item>
+        <item>Afatinib Dimaleate</item>
+        <item>Afinitor (Everolimus)</item>
+        <item>Akynzeo (Netupitant and Palonosetron Hydrochloride)</item>
+        <item>Aldara (Imiquimod)</item>
+        <item>Aldesleukin</item>
+        <item>Alecensa (Alectinib)</item>
+        <item>Alectinib</item>
+        <item>Alemtuzumab</item>
+        <item>Alkeran for Injection (Melphalan Hydrochloride)</item>
+        <item>Alkeran Tablets (Melphalan)</item>
+        <item>Alimta (Pemetrexed Disodium)</item>
+        <item>Aloxi (Palonosetron Hydrochloride)</item>
+        <item>Ambochlorin (Chlorambucil)</item>
+        <item>Amboclorin (Chlorambucil)</item>
+        <item>Aminolevulinic Acid</item>
+        <item>Anastrozole</item>
+        <item>Aprepitant</item>
+        <item>Aredia (Pamidronate Disodium)</item>
+        <item>Arimidex (Anastrozole)</item>
+        <item>Aromasin (Exemestane)</item>
+        <item>Arranon (Nelarabine)</item>
+        <item>Arsenic Trioxide</item>
+        <item>Arzerra (Ofatumumab)</item>
+        <item>Asparaginase Erwinia chrysanthemi</item>
+        <item>Avastin (Bevacizumab)</item>
+        <item>Axitinib</item>
+        <item>Azacitidine</item>
+        <item>BEACOPP</item>
+        <item>Becenum (Carmustine)</item>
+        <item>Beleodaq (Belinostat)</item>
+        <item>Belinostat</item>
+        <item>Bendamustine Hydrochloride</item>
+        <item>BEP</item>
+        <item>Bevacizumab</item>
+        <item>Bexarotene</item>
+        <item>Bexxar (Tositumomab and Iodine I 131 Tositumomab)</item>
+        <item>Bicalutamide</item>
+        <item>BiCNU (Carmustine)</item>
+        <item>Bleomycin</item>
+        <item>Blinatumomab</item>
+        <item>Blincyto (Blinatumomab)</item>
+        <item>Bortezomib</item>
+        <item>Bosulif (Bosutinib)</item>
+        <item>Bosutinib</item>
+        <item>Brentuximab Vedotin</item>
+        <item>Busulfan</item>
+        <item>Busulfex (Busulfan)</item>
+        <item>Cabazitaxel</item>
+        <item>Cabozantinib-S-Malate</item>
+        <item>CAF</item>
+        <item>Campath (Alemtuzumab)</item>
+        <item>Camptosar (Irinotecan Hydrochloride)</item>
+        <item>Capecitabine</item>
+        <item>CAPOX</item>
+        <item>Carac (Fluorouracil--Topical)</item>
+        <item>Carboplatin</item>
+        <item>CARBOPLATIN-TAXOL</item>
+        <item>Carfilzomib</item>
+        <item>Carmubris (Carmustine)</item>
+        <item>Carmustine</item>
+        <item>Carmustine Implant</item>
+        <item>Casodex (Bicalutamide)</item>
+        <item>CeeNU (Lomustine)</item>
+        <item>CEM</item>
+        <item>Ceritinib</item>
+        <item>Cerubidine (Daunorubicin Hydrochloride)</item>
+        <item>Cervarix (Recombinant HPV Bivalent Vaccine)</item>
+        <item>Cetuximab</item>
+        <item>Chlorambucil</item>
+        <item>CHLORAMBUCIL-PREDNISONE</item>
+        <item>CHOP</item>
+        <item>Cisplatin</item>
+        <item>Clafen (Cyclophosphamide)</item>
+        <item>Clofarabine</item>
+        <item>Clofarex (Clofarabine)</item>
+        <item>Clolar (Clofarabine)</item>
+        <item>CMF</item>
+        <item>Cobimetinib</item>
+        <item>Cometriq (Cabozantinib-S-Malate)</item>
+        <item>COPDAC</item>
+        <item>COPP</item>
+        <item>COPP-ABV</item>
+        <item>Cosmegen (Dactinomycin)</item>
+        <item>Cotellic (Cobimetinib)</item>
+        <item>Crizotinib</item>
+        <item>CVP</item>
+        <item>Cyclophosphamide</item>
+        <item>Cyfos (Ifosfamide)</item>
+        <item>Cyramza (Ramucirumab)</item>
+        <item>Cytarabine</item>
+        <item>Cytarabine Liposome</item>
+        <item>Cytosar-U (Cytarabine)</item>
+        <item>Cytoxan (Cyclophosphamide)</item>
+        <item>Dabrafenib</item>
+        <item>Dacarbazine</item>
+        <item>Dacogen (Decitabine)</item>
+        <item>Dactinomycin</item>
+        <item>Daratumumab</item>
+        <item>Darzalex (Daratumumab)</item>
+        <item>Dasatinib</item>
+        <item>Daunorubicin Hydrochloride</item>
+        <item>Decitabine</item>
+        <item>Defibrotide Sodium</item>
+        <item>Defitelio (Defibrotide Sodium)</item>
+        <item>Degarelix</item>
+        <item>Denileukin Diftitox</item>
+        <item>Denosumab</item>
+        <item>DepoCyt (Cytarabine Liposome)</item>
+        <item>Dexamethasone</item>
+        <item>Dexrazoxane Hydrochloride</item>
+        <item>Dinutuximab</item>
+        <item>Docetaxel</item>
+        <item>Doxil (Doxorubicin Hydrochloride Liposome)</item>
+        <item>Doxorubicin Hydrochloride</item>
+        <item>Doxorubicin Hydrochloride Liposome</item>
+        <item>Dox-SL (Doxorubicin Hydrochloride Liposome)</item>
+        <item>DTIC-Dome (Dacarbazine)</item>
+        <item>Efudex (Fluorouracil--Topical)</item>
+        <item>Elitek (Rasburicase)</item>
+        <item>Ellence (Epirubicin Hydrochloride)</item>
+        <item>Elotuzumab</item>
+        <item>Eloxatin (Oxaliplatin)</item>
+        <item>Eltrombopag Olamine</item>
+        <item>Emend (Aprepitant)</item>
+        <item>Empliciti (Elotuzumab)</item>
+        <item>Enzalutamide</item>
+        <item>Epirubicin Hydrochloride</item>
+        <item>EPOCH</item>
+        <item>Erbitux (Cetuximab)</item>
+        <item>Eribulin Mesylate</item>
+        <item>Erivedge (Vismodegib)</item>
+        <item>Erlotinib Hydrochloride</item>
+        <item>Erwinaze (Asparaginase Erwinia chrysanthemi)</item>
+        <item>Etopophos (Etoposide Phosphate)</item>
+        <item>Etoposide</item>
+        <item>Etoposide Phosphate</item>
+        <item>Evacet (Doxorubicin Hydrochloride Liposome)</item>
+        <item>Everolimus</item>
+        <item>Evista (Raloxifene Hydrochloride)</item>
+        <item>Evomela (Melphalan Hydrochloride)</item>
+        <item>Exemestane</item>
+        <item>5-FU (Fluorouracil Injection)</item>
+        <item>5-FU (Fluorouracil--Topical)</item>
+        <item>Fareston (Toremifene)</item>
+        <item>Farydak (Panobinostat)</item>
+        <item>Faslodex (Fulvestrant)</item>
+        <item>FEC</item>
+        <item>Femara (Letrozole)</item>
+        <item>Filgrastim</item>
+        <item>Fludara (Fludarabine Phosphate)</item>
+        <item>Fludarabine Phosphate</item>
+        <item>Fluoroplex (Fluorouracil--Topical)</item>
+        <item>Fluorouracil Injection</item>
+        <item>Fluorouracil--Topical</item>
+        <item>Flutamide</item>
+        <item>Folex (Methotrexate)</item>
+        <item>Folex PFS (Methotrexate)</item>
+        <item>FOLFIRI</item>
+        <item>FOLFIRI-BEVACIZUMAB</item>
+        <item>FOLFIRI-CETUXIMAB</item>
+        <item>FOLFIRINOX</item>
+        <item>FOLFOX</item>
+        <item>Folotyn (Pralatrexate)</item>
+        <item>FU-LV</item>
+        <item>Fulvestrant</item>
+        <item>Gardasil (Recombinant HPV Quadrivalent Vaccine)</item>
+        <item>Gardasil 9 (Recombinant HPV Nonavalent Vaccine)</item>
+        <item>Gazyva (Obinutuzumab)</item>
+        <item>Gefitinib</item>
+        <item>Gemcitabine Hydrochloride</item>
+        <item>GEMCITABINE-CISPLATIN</item>
+        <item>GEMCITABINE-OXALIPLATIN</item>
+        <item>Gemtuzumab Ozogamicin</item>
+        <item>Gemzar (Gemcitabine Hydrochloride)</item>
+        <item>Gilotrif (Afatinib Dimaleate)</item>
+        <item>Gleevec (Imatinib Mesylate)</item>
+        <item>Gliadel (Carmustine Implant)</item>
+        <item>Gliadel wafer (Carmustine Implant)</item>
+        <item>Glucarpidase</item>
+        <item>Goserelin Acetate</item>
+        <item>Halaven (Eribulin Mesylate)</item>
+        <item>Herceptin (Trastuzumab)</item>
+        <item>HPV Bivalent Vaccine, Recombinant</item>
+        <item>HPV Nonavalent Vaccine, Recombinant</item>
+        <item>HPV Quadrivalent Vaccine, Recombinant</item>
+        <item>Hycamtin (Topotecan Hydrochloride)</item>
+        <item>Hyper-CVAD</item>
+        <item>Ibrance (Palbociclib)</item>
+        <item>Ibritumomab Tiuxetan</item>
+        <item>Ibrutinib</item>
+        <item>ICE</item>
+        <item>Iclusig (Ponatinib Hydrochloride)</item>
+        <item>Idamycin (Idarubicin Hydrochloride)</item>
+        <item>Idarubicin Hydrochloride</item>
+        <item>Idelalisib</item>
+        <item>Ifex (Ifosfamide)</item>
+        <item>Ifosfamide</item>
+        <item>Ifosfamidum (Ifosfamide)</item>
+        <item>IL-2 (Aldesleukin)</item>
+        <item>Imatinib Mesylate</item>
+        <item>Imbruvica (Ibrutinib)</item>
+        <item>Imiquimod</item>
+        <item>Imlygic (Talimogene Laherparepvec)</item>
+        <item>Inlyta (Axitinib)</item>
+        <item>Interferon Alfa-2b, Recombinant</item>
+        <item>Interleukin-2 (Aldesleukin)</item>
+        <item>Intron A (Recombinant Interferon Alfa-2b)</item>
+        <item>Iodine I 131 Tositumomab and Tositumomab</item>
+        <item>Ipilimumab</item>
+        <item>Iressa (Gefitinib)</item>
+        <item>Irinotecan Hydrochloride</item>
+        <item>Irinotecan Hydrochloride Liposome</item>
+        <item>Istodax (Romidepsin)</item>
+        <item>Ixabepilone</item>
+        <item>Ixazomib Citrate</item>
+        <item>Ixempra (Ixabepilone)</item>
+        <item>Jakafi (Ruxolitinib Phosphate)</item>
+        <item>Jevtana (Cabazitaxel)</item>
+        <item>Kadcyla (Ado-Trastuzumab Emtansine)</item>
+        <item>Keoxifene (Raloxifene Hydrochloride)</item>
+        <item>Kepivance (Palifermin)</item>
+        <item>Keytruda (Pembrolizumab)</item>
+        <item>Kyprolis (Carfilzomib)</item>
+        <item>Lanreotide Acetate</item>
+        <item>Lapatinib Ditosylate</item>
+        <item>Lenalidomide</item>
+        <item>Lenvatinib Mesylate</item>
+        <item>Lenvima (Lenvatinib Mesylate)</item>
+        <item>Letrozole</item>
+        <item>Leucovorin Calcium</item>
+        <item>Leukeran (Chlorambucil)</item>
+        <item>Leuprolide Acetate</item>
+        <item>Levulan (Aminolevulinic Acid)</item>
+        <item>Linfolizin (Chlorambucil)</item>
+        <item>LipoDox (Doxorubicin Hydrochloride Liposome)</item>
+        <item>Lomustine</item>
+        <item>Lonsurf (Trifluridine and Tipiracil Hydrochloride)</item>
+        <item>Lupron (Leuprolide Acetate)</item>
+        <item>Lupron Depot (Leuprolide Acetate)</item>
+        <item>Lupron Depot-Ped (Leuprolide Acetate)</item>
+        <item>Lupron Depot-3 Month (Leuprolide Acetate)</item>
+        <item>Lupron Depot-4 Month (Leuprolide Acetate)</item>
+        <item>Lynparza (Olaparib)</item>
+        <item>Marqibo (Vincristine Sulfate Liposome)</item>
+        <item>Matulane (Procarbazine Hydrochloride)</item>
+        <item>Mechlorethamine Hydrochloride</item>
+        <item>Megestrol Acetate</item>
+        <item>Mekinist (Trametinib)</item>
+        <item>Melphalan</item>
+        <item>Melphalan Hydrochloride</item>
+        <item>Mercaptopurine</item>
+        <item>Mesna</item>
+        <item>Mesnex (Mesna)</item>
+        <item>Methazolastone (Temozolomide)</item>
+        <item>Methotrexate</item>
+        <item>Methotrexate LPF (Methotrexate)</item>
+        <item>Mexate (Methotrexate)</item>
+        <item>Mexate-AQ (Methotrexate)</item>
+        <item>Mitomycin C</item>
+        <item>Mitoxantrone Hydrochloride</item>
+        <item>Mitozytrex (Mitomycin C)</item>
+        <item>MOPP</item>
+        <item>Mozobil (Plerixafor)</item>
+        <item>Mustargen (Mechlorethamine Hydrochloride)</item>
+        <item>Mutamycin (Mitomycin C)</item>
+        <item>Myleran (Busulfan)</item>
+        <item>Mylosar (Azacitidine)</item>
+        <item>Mylotarg (Gemtuzumab Ozogamicin)</item>
+        <item>Nanoparticle Paclitaxel (Paclitaxel Albumin-stabilized Nanoparticle Formulation)</item>
+        <item>Navelbine (Vinorelbine Tartrate)</item>
+        <item>Necitumumab</item>
+        <item>Nelarabine</item>
+        <item>Neosar (Cyclophosphamide)</item>
+        <item>Netupitant and Palonosetron Hydrochloride</item>
+        <item>Neupogen (Filgrastim)</item>
+        <item>Nexavar (Sorafenib Tosylate)</item>
+        <item>Nilotinib</item>
+        <item>Ninlaro (Ixazomib Citrate)</item>
+        <item>Nivolumab</item>
+        <item>Nolvadex (Tamoxifen Citrate)</item>
+        <item>Nplate (Romiplostim)</item>
+        <item>Obinutuzumab</item>
+        <item>Odomzo (Sonidegib)</item>
+        <item>OEPA</item>
+        <item>Ofatumumab</item>
+        <item>OFF</item>
+        <item>Olaparib</item>
+        <item>Omacetaxine Mepesuccinate</item>
+        <item>Oncaspar (Pegaspargase)</item>
+        <item>Ondansetron Hydrochloride</item>
+        <item>Onivyde (Irinotecan Hydrochloride Liposome)</item>
+        <item>Ontak (Denileukin Diftitox)</item>
+        <item>Opdivo (Nivolumab)</item>
+        <item>OPPA</item>
+        <item>Osimertinib</item>
+        <item>Oxaliplatin</item>
+        <item>Paclitaxel</item>
+        <item>Paclitaxel Albumin-stabilized Nanoparticle Formulation</item>
+        <item>PAD</item>
+        <item>Palbociclib</item>
+        <item>Palifermin</item>
+        <item>Palonosetron Hydrochloride</item>
+        <item>Palonosetron Hydrochloride and Netupitant</item>
+        <item>Pamidronate Disodium</item>
+        <item>Panitumumab</item>
+        <item>Panobinostat</item>
+        <item>Paraplat (Carboplatin)</item>
+        <item>Paraplatin (Carboplatin)</item>
+        <item>Pazopanib Hydrochloride</item>
+        <item>PCV</item>
+        <item>Pegaspargase</item>
+        <item>Peginterferon Alfa-2b</item>
+        <item>PEG-Intron (Peginterferon Alfa-2b)</item>
+        <item>Pembrolizumab</item>
+        <item>Pemetrexed Disodium</item>
+        <item>Perjeta (Pertuzumab)</item>
+        <item>Pertuzumab</item>
+        <item>Platinol (Cisplatin)</item>
+        <item>Platinol-AQ (Cisplatin)</item>
+        <item>Plerixafor</item>
+        <item>Pomalidomide</item>
+        <item>Pomalyst (Pomalidomide)</item>
+        <item>Ponatinib Hydrochloride</item>
+        <item>Portrazza (Necitumumab)</item>
+        <item>Pralatrexate</item>
+        <item>Prednisone</item>
+        <item>Procarbazine Hydrochloride</item>
+        <item>Proleukin (Aldesleukin)</item>
+        <item>Prolia (Denosumab)</item>
+        <item>Promacta (Eltrombopag Olamine)</item>
+        <item>Provenge (Sipuleucel-T)</item>
+        <item>Purinethol (Mercaptopurine)</item>
+        <item>Purixan (Mercaptopurine)</item>
+        <item>Radium 223 Dichloride</item>
+        <item>Raloxifene Hydrochloride</item>
+        <item>Ramucirumab</item>
+        <item>Rasburicase</item>
+        <item>R-CHOP</item>
+        <item>R-CVP</item>
+        <item>Recombinant Human Papillomavirus (HPV) Bivalent Vaccine</item>
+        <item>Recombinant Human Papillomavirus (HPV) Nonavalent Vaccine</item>
+        <item>Recombinant Human Papillomavirus (HPV) Quadrivalent Vaccine</item>
+        <item>Recombinant Interferon Alfa-2b</item>
+        <item>Regorafenib</item>
+        <item>R-EPOCH</item>
+        <item>Revlimid (Lenalidomide)</item>
+        <item>Rheumatrex (Methotrexate)</item>
+        <item>Rituxan (Rituximab)</item>
+        <item>Rituximab</item>
+        <item>Rolapitant Hydrochloride</item>
+        <item>Romidepsin</item>
+        <item>Romiplostim</item>
+        <item>Rubidomycin (Daunorubicin Hydrochloride)</item>
+        <item>Ruxolitinib Phosphate</item>
+        <item>Sclerosol Intrapleural Aerosol (Talc)</item>
+        <item>Siltuximab</item>
+        <item>Sipuleucel-T</item>
+        <item>Somatuline Depot (Lanreotide Acetate)</item>
+        <item>Sonidegib</item>
+        <item>Sorafenib Tosylate</item>
+        <item>Sprycel (Dasatinib)</item>
+        <item>STANFORD V</item>
+        <item>Sterile Talc Powder (Talc)</item>
+        <item>Steritalc (Talc)</item>
+        <item>Stivarga (Regorafenib)</item>
+        <item>Sunitinib Malate</item>
+        <item>Sutent (Sunitinib Malate)</item>
+        <item>Sylatron (Peginterferon Alfa-2b)</item>
+        <item>Sylvant (Siltuximab)</item>
+        <item>Synovir (Thalidomide)</item>
+        <item>Synribo (Omacetaxine Mepesuccinate)</item>
+        <item>Tabloid (Thioguanine)</item>
+        <item>TAC</item>
+        <item>Tafinlar (Dabrafenib)</item>
+        <item>Tagrisso (Osimertinib)</item>
+        <item>Talc</item>
+        <item>Talimogene Laherparepvec</item>
+        <item>Tamoxifen Citrate</item>
+        <item>Tarabine PFS (Cytarabine)</item>
+        <item>Tarceva (Erlotinib Hydrochloride)</item>
+        <item>Targretin (Bexarotene)</item>
+        <item>Tasigna (Nilotinib)</item>
+        <item>Taxol (Paclitaxel)</item>
+        <item>Taxotere (Docetaxel)</item>
+        <item>Temodar (Temozolomide)</item>
+        <item>Temozolomide</item>
+        <item>Temsirolimus</item>
+        <item>Thalidomide</item>
+        <item>Thalomid (Thalidomide)</item>
+        <item>Thioguanine</item>
+        <item>Thiotepa</item>
+        <item>Tolak (Fluorouracil--Topical)</item>
+        <item>Topotecan Hydrochloride</item>
+        <item>Toremifene</item>
+        <item>Torisel (Temsirolimus)</item>
+        <item>Tositumomab and Iodine I 131 Tositumomab</item>
+        <item>Totect (Dexrazoxane Hydrochloride)</item>
+        <item>TPF</item>
+        <item>Trabectedin</item>
+        <item>Trametinib</item>
+        <item>Trastuzumab</item>
+        <item>Treanda (Bendamustine Hydrochloride)</item>
+        <item>Trifluridine and Tipiracil Hydrochloride</item>
+        <item>Trisenox (Arsenic Trioxide)</item>
+        <item>Tykerb (Lapatinib Ditosylate)</item>
+        <item>Unituxin (Dinutuximab)</item>
+        <item>Uridine Triacetate</item>
+        <item>VAC</item>
+        <item>Vandetanib</item>
+        <item>VAMP</item>
+        <item>Varubi (Rolapitant Hydrochloride)</item>
+        <item>Vectibix (Panitumumab)</item>
+        <item>VeIP</item>
+        <item>Velban (Vinblastine Sulfate)</item>
+        <item>Velcade (Bortezomib)</item>
+        <item>Velsar (Vinblastine Sulfate)</item>
+        <item>Vemurafenib</item>
+        <item>Venclexta (Venetoclax)</item>
+        <item>Venetoclax</item>
+        <item>Viadur (Leuprolide Acetate)</item>
+        <item>Vidaza (Azacitidine)</item>
+        <item>Vinblastine Sulfate</item>
+        <item>Vincasar PFS (Vincristine Sulfate)</item>
+        <item>Vincristine Sulfate</item>
+        <item>Vincristine Sulfate Liposome</item>
+        <item>Vinorelbine Tartrate</item>
+        <item>VIP</item>
+        <item>Vismodegib</item>
+        <item>Vistogard (Uridine Triacetate)</item>
+        <item>Voraxaze (Glucarpidase)</item>
+        <item>Vorinostat</item>
+        <item>Votrient (Pazopanib Hydrochloride)</item>
+        <item>Wellcovorin (Leucovorin Calcium)</item>
+        <item>Xalkori (Crizotinib)</item>
+        <item>Xeloda (Capecitabine)</item>
+        <item>XELIRI</item>
+        <item>XELOX</item>
+        <item>Xgeva (Denosumab)</item>
+        <item>Xofigo (Radium 223 Dichloride)</item>
+        <item>Xtandi (Enzalutamide)</item>
+        <item>Yervoy (Ipilimumab)</item>
+        <item>Yondelis (Trabectedin)</item>
+        <item>Zaltrap (Ziv-Aflibercept)</item>
+        <item>Zarxio (Filgrastim)</item>
+        <item>Zelboraf (Vemurafenib)</item>
+        <item>Zevalin (Ibritumomab Tiuxetan)</item>
+        <item>Zinecard (Dexrazoxane Hydrochloride)</item>
+        <item>Ziv-Aflibercept</item>
+        <item>Zofran (Ondansetron Hydrochloride)</item>
+        <item>Zoladex (Goserelin Acetate)</item>
+        <item>Zoledronic Acid</item>
+        <item>Zolinza (Vorinostat)</item>
+        <item>Zometa (Zoledronic Acid)</item>
+        <item>Zydelig (Idelalisib)</item>
+        <item>Zykadia (Ceritinib)</item>
+        <item>Zytiga (Abiraterone Acetate)</item>
+    </string-array>
+
+
+    <string-array name="symptoms">
+        <item>Anemia</item>
+        <item>Appetite Loss</item>
+        <item>Bleeding and Bruising (Thrombocytopenia)</item>
+        <item>Constipation</item>
+        <item>Delirium</item>
+        <item>Diarrhea</item>
+        <item>Edema</item>
+        <item>Fatigue</item>
+        <item>Hair Loss (Alopecia)</item>
+        <item>Infection and Neutropenia</item>
+        <item>Lymphedema</item>
+        <item>Memory or Concentration Problems</item>
+        <item>Mouth and Throat Problems</item>
+        <item>Nausea and Vomiting</item>
+        <item>Nerve Problems (Peripheral Neuropathy)</item>
+        <item>Sexual and Fertility Problems (Men)</item>
+        <item>Sexual and Fertility Problems (Women)</item>
+        <item>Skin and Nail Changes</item>
+        <item>Sleep Problems</item>
+        <item>Urinary and Bladder Problems</item>
+    </string-array>
+
+
 </resources>

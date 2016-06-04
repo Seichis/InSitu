@@ -10,7 +10,7 @@ import io.realm.RealmObject;
 public class Patient extends RealmObject {
 
     byte[] profilePic;
-    String patientName;
+    String patientName="";
     String gender;
     int age;
     long id;

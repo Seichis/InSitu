@@ -34,16 +34,12 @@ public class ManageDiariesFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-    @Bind(R.id.create_diary_fab)
-    FloatingActionButton createDiaryButton;
-    @Bind(R.id.add_symptoms_fab)
-    FloatingActionButton addSymptomsButton;
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
     private OnManageDiariesInteractionListener mListener;
-    @Bind(R.id.menu_manage_diaries)
-    FloatingActionMenu manageDiariesActionMenu;
+//    @Bind(R.id.menu_manage_diaries)
+//    FloatingActionMenu manageDiariesActionMenu;
 
     public ManageDiariesFragment() {
         // Required empty public constructor
@@ -99,20 +95,20 @@ public class ManageDiariesFragment extends Fragment {
 
 
 
-    private void setupFloatingMenu() {
-        manageDiariesActionMenu.setClosedOnTouchOutside(true);
-        manageDiariesActionMenu.hideMenuButton(false);
-        manageDiariesActionMenu.setOnMenuButtonClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (manageDiariesActionMenu.isOpened()) {
-                    Toast.makeText(getActivity(), manageDiariesActionMenu.getMenuButtonLabelText(), Toast.LENGTH_SHORT).show();
-                }
-
-                manageDiariesActionMenu.toggle(true);
-            }
-        });
-    }
+//    private void setupFloatingMenu() {
+//        manageDiariesActionMenu.setClosedOnTouchOutside(true);
+//        manageDiariesActionMenu.hideMenuButton(false);
+//        manageDiariesActionMenu.setOnMenuButtonClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (manageDiariesActionMenu.isOpened()) {
+//                    Toast.makeText(getActivity(), manageDiariesActionMenu.getMenuButtonLabelText(), Toast.LENGTH_SHORT).show();
+//                }
+//
+//                manageDiariesActionMenu.toggle(true);
+//            }
+//        });
+//    }
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {

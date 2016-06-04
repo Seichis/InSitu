@@ -173,9 +173,6 @@ public class BaseActivity extends AppCompatActivity {
 
                 // Check if the only required permission has been granted
                 if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // Camera permission has been granted, preview can be displayed
-                    Snackbar.make(view, R.string.permision_available_location,
-                            Snackbar.LENGTH_SHORT).show();
 
                 } else {
                     Snackbar.make(view, R.string.permissions_not_granted,
@@ -183,19 +180,6 @@ public class BaseActivity extends AppCompatActivity {
 
                 }
                 // END_INCLUDE(permission_result)
-
-                break;
-            case SYSTEM_WINDOW_ALERT:
-                if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // Camera permission has been granted, preview can be displayed
-                    Snackbar.make(view, R.string.permision_available_system_alert,
-                            Snackbar.LENGTH_SHORT).show();
-
-                } else {
-                    Snackbar.make(view, R.string.permissions_not_granted,
-                            Snackbar.LENGTH_SHORT).show();
-
-                }
 
                 break;
             default:
@@ -222,19 +206,28 @@ public class BaseActivity extends AppCompatActivity {
                         public void onClick(View view) {
                             ActivityCompat.requestPermissions(getParent(),
                                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
-                                            Manifest.permission.ACCESS_COARSE_LOCATION,
-                                            Manifest.permission.SYSTEM_ALERT_WINDOW,},
+                                            },
                                     REQUEST_FINE_LOCATION);
-                            checkPermissions();
-
                         }
                     })
                     .show();
-        } else {
+        }else if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                Manifest.permission.ACCESS_COARSE_LOCATION)) {
+            // Provide an additional rationale to the user if the permission was not granted
+            // and the user would benefit from additional context for the use of the permission.
+            // For example if the user has previously denied the permission.
 
-            // Camera permission has not been granted yet. Request it directly.
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    REQUEST_FINE_LOCATION);
+            Snackbar.make(view, R.string.permission_location_rationale,
+                    Snackbar.LENGTH_INDEFINITE)
+                    .setAction(R.string.ok, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            ActivityCompat.requestPermissions(getParent(),
+                                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                                    REQUEST_COARSE_LOCATION);
+                        }
+                    })
+                    .show();
         }
         // END_INCLUDE(camera_permission_request)
     }
@@ -243,17 +236,12 @@ public class BaseActivity extends AppCompatActivity {
     protected void checkPermissions() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) { // Permission was added in API Level 16
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) !=
+                    PackageManager.PERMISSION_GRANTED ||ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) !=
                     PackageManager.PERMISSION_GRANTED) {
-                requestFineLocationPermission();
+
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION},REQUEST_FINE_LOCATION);
+//                requestFineLocationPermission();
             }
-//            else if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) !=
-//                    PackageManager.PERMISSION_GRANTED) {
-//                requestCoarseLocationPermission();
-//            }else if(ContextCompat.checkSelfPermission(this, Manifest.permission.SYSTEM_ALERT_WINDOW) !=
-//                    PackageManager.PERMISSION_GRANTED)  {
-//                requestSystemWindowPermission();
-//
-//            }
         }
     }
 }
