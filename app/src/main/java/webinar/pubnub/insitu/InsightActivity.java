@@ -35,9 +35,9 @@ public class InsightActivity extends AppCompatActivity implements HomeFragment.O
     private void setupTabs() {
         adapter = new FragmentPagerItemAdapter(
                 getSupportFragmentManager(), FragmentPagerItems.with(this)
-                .add("Home", HomeFragment.class)
-                .add("Explore", ExplorationFragment.class)
-                .add("Line", LineChartFragment.class)
+                .add("Pie Chart", HomeFragment.class)
+                .add("Bubble Chart", ExplorationFragment.class)
+                .add("Line Chart", LineChartFragment.class)
                 .create());
 
         viewPager.setAdapter(adapter);

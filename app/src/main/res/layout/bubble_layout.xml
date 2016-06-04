@@ -11,7 +11,7 @@
         android:layout_height="70dp"
         android:layout_gravity="center"
         android:background="@drawable/profile_decorator"
-        android:src="@drawable/profile"
+        android:src="@drawable/avatar_maggie2"
         android:scaleType="centerCrop"/>
 
     <TextView

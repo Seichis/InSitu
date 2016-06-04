@@ -10,7 +10,7 @@ public class Medication extends RealmObject {
 
     @Index
     String medicationType;
-    String medicationName;
+    String medicationName="";
     float amount;
     long timestamp;
 
@@ -20,6 +20,15 @@ public class Medication extends RealmObject {
     String day;
     String hour;
     String week;
+    boolean isRoutine=false;
+
+    public boolean getRoutine() {
+        return isRoutine;
+    }
+
+    public void setRoutine(boolean routine) {
+        isRoutine = routine;
+    }
 
     public String getWeek() {
         return week;

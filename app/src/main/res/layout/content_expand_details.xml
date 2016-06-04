@@ -182,6 +182,26 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:entries="@array/NonDrugTechniques" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="5dp"
+            android:background="@color/colorPrimary" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="5dp"
+            android:text="@string/other_symptoms"
+            android:textSize="25sp" />
+        <Spinner
+            android:id="@+id/other_symptoms_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:entries="@array/symptoms"
+            />
 
     </LinearLayout>
 </com.gc.materialdesign.views.ScrollView>

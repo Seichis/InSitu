@@ -18,7 +18,7 @@ import java.util.TimeZone;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
-import io.realm.internal.Util;
+import io.realm.Sort;
 import webinar.pubnub.insitu.BackgroundService;
 import webinar.pubnub.insitu.Constants;
 import webinar.pubnub.insitu.R;
@@ -55,20 +55,23 @@ public class SymptomManager implements ISymptomManager {
         return symptomManager;
     }
 
+    public Symptom getLastSymptom() {
+        return realm.allObjects(Symptom.class).where().findAllSorted("timestamp", Sort.DESCENDING).first();
+    }
+
     public boolean noSymptoms() {
         return realm.where(Symptom.class).findFirst() == null;
     }
 
     public void init(Context context) {
         this.context = context;
-//        dataManager.init(context);
+
         realm = Realm.getDefaultInstance();
     }
 
     public void manageSymptomInput(double input) {
 
         if (symptomInputList.size() == 0) {
-//            timeStamp = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.UK).format(new Date());
             symptom = new Symptom();
             symptom.setError(false);
             symptom.setTimestamp(DateTime.now().getMillis());
@@ -157,21 +160,18 @@ public class SymptomManager implements ISymptomManager {
         realm.commitTransaction();
         resetSymptomInput();
         // Update the data for the charts
-//        ChartManager.getInstance().updatePieChartDataByDay(DateTime.now().minus(84000000).getMillis());
         ChartManager.getInstance().updatePieChartDataByActivityByDay(DateTime.now().getMillis());
         BackgroundService.getInstance().createOrUpdateBubble();
         ChartManager.getInstance().updateBubbleChartByDay(ChartManager.BY_ACTIVITIES, ChartManager.INTENSITY, DateTime.now().getMillis());
         if (HeatmapsDemoActivity.getInstance() != null) {
             HeatmapsDemoActivity.getInstance().updateMapByOptions();
         }
-//        ChartManager.getInstance().updateBubbleChartByRange(ChartManager.BY_ACTIVITIES,ChartManager.INTENSITY,DateTime.now().minusDays(5).getMillis(), DateTime.now().getMillis());
 
     }
 
 
     @Override
     public RealmResults<Symptom> getAllSymptomsByDay(long date) {
-//        DateTime now = DateTime.now(DateTimeZone.forTimeZone(TimeZone.getDefault()));
         long yesterdayStart = Utils.getDayStart(date, 1);
         long tomorrowStart = Utils.getDaysEnd(date);
         Log.i(TAG, "yest  " + yesterdayStart + "today  " + tomorrowStart);
@@ -239,6 +239,7 @@ public class SymptomManager implements ISymptomManager {
     public RealmResults<Symptom> getAllSymptomsByBodyPartByRange(String bodyPart, long from, long until) {
         return getAllSymptomsByRange(from, until).where().equalTo("description.bodyPart", bodyPart).findAll();
     }
+
     public RealmResults<Symptom> getAllSymptomsByBodyPartByDay(String bodyPart, long date) {
         return getAllSymptomsByDay(date).where().equalTo("description.bodyPart", bodyPart).findAll();
     }
@@ -246,15 +247,19 @@ public class SymptomManager implements ISymptomManager {
     public RealmResults<Symptom> getAllSymptomsPerDayByRange(String day, long from, long until) {
         return getAllSymptomsByRange(from, until).where().equalTo("day", day).findAll();
     }
+
     public RealmResults<Symptom> getAllSymptomsPerHourByRange(String hour, long from, long until) {
         return getAllSymptomsByRange(from, until).where().equalTo("hour", hour).findAll();
     }
+
     public RealmResults<Symptom> getAllSymptomsPerMonthByRange(String month, long from, long until) {
         return getAllSymptomsByRange(from, until).where().equalTo("month", month).findAll();
     }
+
     public RealmResults<Symptom> getAllSymptomsPerYearByRange(String year, long from, long until) {
         return getAllSymptomsByRange(from, until).where().equalTo("year", year).findAll();
     }
+
     public RealmResults<Symptom> getAllSymptomsPerWeekByRange(String week, long from, long until) {
         return getAllSymptomsByRange(from, until).where().equalTo("week", week).findAll();
     }
@@ -284,7 +289,7 @@ public class SymptomManager implements ISymptomManager {
 
 
     public void fillData() {
-        String[] cancerDrugs= context.getResources().getStringArray(R.array.CancerDrugs);
+        String[] cancerDrugs = context.getResources().getStringArray(R.array.CancerDrugs);
 
         realm.beginTransaction();
         realm.clear(Symptom.class);
@@ -303,35 +308,35 @@ public class SymptomManager implements ISymptomManager {
             s.setHour(Utils.getHour(timestamp));
             s.setDay(Utils.getDay(timestamp));
             s.setWeek(Utils.getWeek(timestamp));
-            s.setMonth(Constants.months[Integer.parseInt(Utils.getMonth(timestamp))-1]);
+            s.setMonth(Constants.months[Integer.parseInt(Utils.getMonth(timestamp)) - 1]);
             s.setYear(Utils.getYear(timestamp));
             float intensity = (float) Utils.randInt(0, 10);
             s.setIntensity(intensity);
             long medicationTimestamp = now.minusHours(Utils.randInt(0, 15000)).getMillis();
 
-            Medication medication= new Medication();
-            medication.setMedicationName(cancerDrugs[Utils.randInt(0,cancerDrugs.length-1)]);
+            Medication medication = new Medication();
+            medication.setMedicationName(cancerDrugs[Utils.randInt(0, cancerDrugs.length - 1)]);
             medication.setTimestamp(medicationTimestamp);
             medication.setHour(Utils.getHour(medicationTimestamp));
             medication.setDay(Utils.getDay(medicationTimestamp));
             medication.setWeek(Utils.getWeek(medicationTimestamp));
-            medication.setMonth(Constants.months[Integer.parseInt(Utils.getMonth(medicationTimestamp))-1]);
+            medication.setMonth(Constants.months[Integer.parseInt(Utils.getMonth(medicationTimestamp)) - 1]);
             medication.setYear(Utils.getYear(medicationTimestamp));
-            medication.setAmount(Utils.randInt(1,3));
+            medication.setAmount(Utils.randInt(1, 3));
 
             // Adding description
             Description description = new Description();
             String[] bp = context.getResources().getStringArray(R.array.BodyParts);
             description.setBodyPart(bp[Utils.randInt(0, bp.length - 1)]);
             if ((Utils.randInt(2, 1000) % 2) == 0) {
-                long painkillerTimestamp=timestamp + DateTime.now().plus(Utils.randInt(500000, 7200000)).getMillis();
+                long painkillerTimestamp = timestamp + DateTime.now().plus(Utils.randInt(500000, 7200000)).getMillis();
                 description.setHourPainkiller(Utils.getHour(painkillerTimestamp));
                 description.setDayPainkiller(Utils.getDay(painkillerTimestamp));
                 description.setWeekPainkiller(Utils.getWeek(painkillerTimestamp));
 
-                description.setMonthPainkiller(Constants.months[Integer.parseInt(Utils.getMonth(painkillerTimestamp))-1]);
+                description.setMonthPainkiller(Constants.months[Integer.parseInt(Utils.getMonth(painkillerTimestamp)) - 1]);
                 description.setYearPainkiller(Utils.getYear(painkillerTimestamp));
-                description.setDatePainkillerConsumption(Utils.randInt(1,3));
+                description.setDatePainkillerConsumption(Utils.randInt(1, 3));
             }
             description.setDistress(intensity + (float) Utils.randInt(0, (int) (10f - intensity)));
             s.setDescription(description);
@@ -482,6 +487,21 @@ public class SymptomManager implements ISymptomManager {
         }
         realm.commitTransaction();
     }
+
+    public void addOtherSymptoms(Symptom s, String s1) {
+        realm.beginTransaction();
+        Description description;
+
+        if (s.getDescription() == null) {
+            description = realm.createObject(Description.class);
+            description.setOtherSymptoms(s1);
+            s.setDescription(description);
+        } else {
+            s.getDescription().setOtherSymptoms(s1);
+        }
+        realm.commitTransaction();
+    }
+
 
     public void addNewIntensity(Symptom s, float i) {
         realm.beginTransaction();

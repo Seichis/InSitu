@@ -133,7 +133,7 @@
     <string name="symptom_data_overview">Intensity : %1$.0f\nTime :%2$s</string>
     <string name="fixed_diary_name">%1$s\\\' diary</string>
     <string name="pie_center"><![CDATA[
-    <p style="color:#F44336;font-size:large;text-alignment:center">At a glance<br>
+    <p style="color:#F44336;font-size:large;text-alignment:center">Occurrences<br>
     %1$d<br>
    %2$.1f</p>
     ]]>
@@ -187,5 +187,12 @@
     <string name="med_name_tv">Medication name and time</string>
     <string name="med_amount_routine">Amount : </string>
     <string name="routine_medication_tv">%1$s at %2$s o\'clock every %3$s</string>
+    <string name="main_head">Welcome %1$s </string>
+    <string name="next_med">Medication status</string>
+    <string name="pain_status">Painkiller status</string>
+    <string name="last_distress"> %1$s </string>
+    <string name="last_pain"> %1$s </string>
+    <string name="main_head_sec">The last pain occurrence happened %1$s at %2$s </string>
+    <string name="other_symptoms">Concurrent symptoms</string>
 
 </resources>

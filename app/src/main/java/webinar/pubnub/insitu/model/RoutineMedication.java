@@ -13,8 +13,17 @@ public class RoutineMedication extends RealmObject {
     RealmList<RealmString> daysRepeat;
     String hourOfRoutineConsumption;
     String medicationType;
-    String medicationName;
+    String medicationName="";
     String amount;
+    String id;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getMedicationType() {
         return medicationType;

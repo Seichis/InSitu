@@ -274,7 +274,7 @@ public class BackgroundService extends Service implements IBackgroundSettingsSer
         } else {
             Log.i("settings", settings.getPatient().getPatientName());
         }
-        startActivity(new Intent(this, CreatePatientActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+//        startActivity(new Intent(this, CreatePatientActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
 
     }
 

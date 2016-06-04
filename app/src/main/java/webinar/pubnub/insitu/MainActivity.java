@@ -1,9 +1,9 @@
 package webinar.pubnub.insitu;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
@@ -13,22 +13,35 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import io.flic.lib.FlicBroadcastReceiverFlags;
 import io.flic.lib.FlicButton;
 import io.flic.lib.FlicManager;
 import io.flic.lib.FlicManagerInitializedCallback;
-import webinar.pubnub.insitu.fragments.ExplorationFragment;
-import webinar.pubnub.insitu.fragments.HomeFragment;
-import webinar.pubnub.insitu.fragments.LineChartFragment;
+import io.realm.RealmResults;
+import webinar.pubnub.insitu.managers.PatientManager;
+import webinar.pubnub.insitu.managers.RoutineMedicationManager;
+import webinar.pubnub.insitu.managers.SymptomManager;
 import webinar.pubnub.insitu.maps.HeatmapsDemoActivity;
+import webinar.pubnub.insitu.model.Patient;
+import webinar.pubnub.insitu.model.RoutineMedication;
+import webinar.pubnub.insitu.model.Symptom;
 
 public class MainActivity extends BaseActivity
-        implements NavigationView.OnNavigationItemSelectedListener{
+        implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String TAG = "MainActivity";
     static MainActivity mainActivity;
@@ -36,6 +49,21 @@ public class MainActivity extends BaseActivity
     Intent serviceIntent;
     FlicButton button;
     HashMap<String, Class<? extends Fragment>> fragmentTitleMap;
+    Patient patient;
+    RealmResults<RoutineMedication> routineMedications;
+    Symptom symptom;
+    @Bind(R.id.patient_image)
+    ImageView patientImageView;
+    @Bind(R.id.main_head)
+    TextView mainTextView;
+    @Bind(R.id.main_head_sec)
+    TextView mainSecTextView;
+    @Bind(R.id.last_symptom_layout)
+    LinearLayout lastSymptomLinearLayout;
+    @Bind(R.id.last_pain)
+    TextView lastIntensityTextView;
+    @Bind(R.id.last_distress)
+    TextView lastDistressTextView;
 
     public static MainActivity getInstance() {
         return mainActivity;
@@ -46,14 +74,16 @@ public class MainActivity extends BaseActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mainActivity = this;
+        handler=new Handler();
+        ButterKnife.bind(this);
         setupLayout();
         startBackgroundService();
+
         if (getIntent().getExtras() != null) {
             Bundle extras = getIntent().getExtras();
             checkRule(extras.getInt("rule", -1));
         }
     }
-
 
     private void checkRule(int rule) {
         switch (rule) {
@@ -65,7 +95,6 @@ public class MainActivity extends BaseActivity
                 break;
         }
     }
-
 
     private void setupLayout() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -89,7 +118,6 @@ public class MainActivity extends BaseActivity
             Log.i(TAG, "Service running");
         }
     }
-
 
     @Override
     public void onBackPressed() {
@@ -147,7 +175,7 @@ public class MainActivity extends BaseActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-
+    @Bind(R.id.medication_status_btn)ImageButton medicationStatus;
     @Override
     public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
 
@@ -186,7 +214,61 @@ public class MainActivity extends BaseActivity
     @Override
     protected void onResume() {
         super.onResume();
+        if (BackgroundService.getInstance() != null) {
+            setupContent();
+        }
     }
+
+    private void setupContent() {
+        symptom = SymptomManager.getInstance().getLastSymptom();
+        patient = PatientManager.getInstance().getPatient();
+        if (patient != null) {
+            if (patient.getGender().equals("m")) {
+                patientImageView.setImageResource(R.drawable.avatar_jack2);
+            } else if (patient.getGender().equals("f")) {
+                patientImageView.setImageResource(R.drawable.avatar_maggie2);
+            } else {
+                patientImageView.setImageResource(android.R.drawable.picture_frame);
+            }
+            if (!patient.getPatientName().equals("")) {
+                mainTextView.setText(getString(R.string.main_head, patient.getPatientName()));
+            } else {
+                mainTextView.setText("Welcome");
+            }
+            if (symptom != null) {
+                lastSymptomLinearLayout.setVisibility(View.VISIBLE);
+                mainSecTextView.setText(getString(R.string.main_head_sec, Utils.getDateFormatForListview(symptom.getTimestamp()), symptom.getContext().getAddress()));
+                lastIntensityTextView.setText(getString(R.string.last_pain, String.valueOf(symptom.getIntensity())));
+                if (symptom.getDescription() != null) {
+                    lastDistressTextView.setText(getString(R.string.last_distress, String.valueOf(symptom.getDescription().getDistress())));
+                }
+            } else {
+                mainSecTextView.setText("No pain occurences registered");
+                lastDistressTextView.setVisibility(View.GONE);
+                lastIntensityTextView.setVisibility(View.GONE);
+            }
+            if(timer==null){
+                timer=new Timer();
+                timer.scheduleAtFixedRate(timerTask,0,30000);
+
+            }
+        }
+    }
+
+    Handler handler;
+    Timer timer;
+    TimerTask timerTask = new TimerTask() {
+        @Override
+        public void run() {
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+//                    if (RoutineMedicationManager.getInstance().isRoutineMedicationFollowed()){
+                        medicationStatus.setImageResource(android.R.drawable.btn_star_big_on);}
+//                }
+            });
+        }
+    };
 
     public FlicButton getButton() {
         return button;

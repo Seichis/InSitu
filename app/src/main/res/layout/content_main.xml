@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -12,5 +12,152 @@
     tools:context=".MainActivity"
     tools:showIn="@layout/app_bar_main">
 
+    <LinearLayout
+        android:id="@+id/main_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+ 
 
-</RelativeLayout>
+        <TextView
+            android:id="@+id/main_head"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="20dp"
+            android:text="@string/main_head"
+            android:textSize="30sp" />
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_margin="20dp"
+            android:id="@+id/patient_image"
+            android:layout_gravity="center"
+            android:scaleType="fitXY"
+            />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:background="@color/graph_color3"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"/>
+        <TextView
+            android:id="@+id/main_head_sec"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/main_head_sec"
+            android:textSize="25sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:orientation="horizontal"
+            android:padding="10dp"
+            android:weightSum="4"
+
+            android:visibility="visible"
+            android:layout_marginBottom="10dp"
+            android:id="@+id/last_symptom_layout">
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:src="@drawable/intensity"
+                android:background="@drawable/circle_image_intensity"
+                android:layout_height="match_parent" />
+            <TextView
+                android:id="@+id/last_pain"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:padding="10dp"
+                android:layout_gravity="center"
+                android:text="@string/last_pain"
+                android:textSize="30sp" />
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:src="@drawable/distress"
+                android:background="@drawable/circle_image_distress"
+                android:layout_height="match_parent" />
+            <TextView
+                android:id="@+id/last_distress"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_gravity="center"
+                android:padding="10dp"
+                android:text="@string/last_distress"
+                android:textSize="30sp" />
+        </LinearLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:background="@color/graph_color3"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="10dp"
+            android:weightSum="6">
+
+            <TextView
+                android:id="@+id/next_med"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="5"
+                android:text="@string/next_med"
+                android:textSize="20sp" />
+
+            <ImageButton
+                android:id="@+id/medication_status_btn"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@android:color/holo_red_light"
+                android:src="@android:drawable/stat_notify_error"
+                android:textSize="20sp" />
+
+        </LinearLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:background="@color/graph_color3"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="10dp"
+            android:weightSum="6">
+
+            <TextView
+                android:id="@+id/painkiller_status"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="5"
+                android:text="@string/pain_status"
+                android:textSize="20sp" />
+
+            <ImageButton
+                android:id="@+id/painkiller_status_btn"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@android:color/holo_red_light"
+                android:src="@android:drawable/stat_notify_error"
+                android:textSize="20sp" />
+
+        </LinearLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:background="@color/graph_color3"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"/>
+    </LinearLayout>
+</ScrollView>

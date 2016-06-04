@@ -10,7 +10,9 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.andreabaccega.widget.FormEditText;
@@ -51,6 +53,7 @@ public class MoreInfoDialog extends DialogFragment implements
     @Nullable
     @Bind(R.id.body_dialog_details_title)
     TextView bodyDetailsTitle;
+
 
     public static MoreInfoDialog newInstance(int symptomId, int layout) {
         MoreInfoDialog fragment = new MoreInfoDialog();
@@ -127,6 +130,7 @@ public class MoreInfoDialog extends DialogFragment implements
                             symptomManager.addMedicationDescription(symptom, medicationEditText.getText().toString());
 
                         }
+
                         String bodyPartDetails = "";
                         if (bodyPartDetailsFormEditText != null && bodyPartDetailsFormEditText.getText().length() > 0) {
                             bodyPartDetails += bodyPartDetailsFormEditText.getText().toString();
@@ -137,6 +141,7 @@ public class MoreInfoDialog extends DialogFragment implements
                         if (!bodyPartDetails.isEmpty()) {
                             symptomManager.addBodyPartDescription(symptom, bodyPartDetails);
                         }
+
                         dialogInterface.dismiss();
                     }
                 })
@@ -162,6 +167,7 @@ public class MoreInfoDialog extends DialogFragment implements
         if (bodyDetailsTitle != null) {
             bodyDetailsTitle.setText(getString(R.string.body_part_details_dialog_title, symptom.getDescription().getBodyPart()));
         }
+
     }
 
     @Override

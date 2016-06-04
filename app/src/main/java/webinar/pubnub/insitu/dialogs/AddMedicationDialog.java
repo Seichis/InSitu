@@ -21,13 +21,14 @@ import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.UUID;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
+import io.realm.Realm;
 import io.realm.RealmList;
-import webinar.pubnub.insitu.CreatePatientActivity;
 import webinar.pubnub.insitu.R;
 import webinar.pubnub.insitu.managers.RoutineMedicationManager;
 import webinar.pubnub.insitu.model.RealmString;
@@ -72,28 +73,30 @@ public class AddMedicationDialog extends DialogFragment implements
     boolean isAccessed;
     ArrayList<CheckBox> checkBoxes;
 
+    public static AddMedicationDialog newInstance(String mode, String routineMedicationId) {
+        AddMedicationDialog fragment = new AddMedicationDialog();
+        Bundle args = new Bundle();
+        args.putInt("layout", R.layout.add_medication_dialog);
+        args.putString("mode", mode);
+        args.putString("id", routineMedicationId);
+        fragment.setArguments(args);
+
+        return fragment;
+    }
+
     @OnCheckedChanged(R.id.select_deselect_all)
     void selectDeselect() {
-        if (selectDeselectCheckBox.getText().toString().equals(getString(R.string.deselect_all))){
-            for(CheckBox cb :  checkBoxes){
+        if (selectDeselectCheckBox.getText().toString().equals(getString(R.string.deselect_all))) {
+            for (CheckBox cb : checkBoxes) {
                 cb.setChecked(false);
                 selectDeselectCheckBox.setText(getString(R.string.select_all));
             }
-        }else {
-            for(CheckBox cb :  checkBoxes){
+        } else {
+            for (CheckBox cb : checkBoxes) {
                 cb.setChecked(true);
                 selectDeselectCheckBox.setText(getString(R.string.deselect_all));
             }
         }
-    }
-
-    public static AddMedicationDialog newInstance() {
-        AddMedicationDialog fragment = new AddMedicationDialog();
-        Bundle args = new Bundle();
-        args.putInt("layout", R.layout.add_medication_dialog);
-        fragment.setArguments(args);
-
-        return fragment;
     }
 
     @OnClick(R.id.pick_time_routine_med)
@@ -108,7 +111,7 @@ public class AddMedicationDialog extends DialogFragment implements
         View view = inflater.inflate(layout, null);
         ButterKnife.bind(this, view);
         isAccessed = false;
-        checkBoxes=new ArrayList<>();
+        checkBoxes = new ArrayList<>();
         checkBoxes.add(fridayCheckBox);
         checkBoxes.add(mondayCheckBox);
         checkBoxes.add(tuesdayCheckBox);
@@ -116,34 +119,90 @@ public class AddMedicationDialog extends DialogFragment implements
         checkBoxes.add(sundayCheckBox);
         checkBoxes.add(thursdayCheckBox);
         checkBoxes.add(wednesdayCheckBox);
-        routineMedication = new RoutineMedication();
+        if (getArguments().getString("mode", null).equals("edit")) {
+            routineMedication = RoutineMedicationManager.getInstance().getById(getArguments().getString("id"));
+            ArrayList<String> days = new ArrayList<>();
+            for (RealmString rs : routineMedication.getDaysRepeat()) {
+                days.add(rs.getValue());
+            }
+            for (CheckBox cb : checkBoxes) {
+                if (!days.contains(cb.getText().toString())) {
+                    cb.setChecked(false);
+                }
+            }
+            inputMedEditText.setText(routineMedication.getMedicationName());
+            medTimeTv.setText(getContext().getString(R.string.medication_time_textview, routineMedication.getHourOfRoutineConsumption()));
+            medTimeTv.setVisibility(View.VISIBLE);
+            alarmSwitch.setChecked(routineMedication.isAlarmEnabled());
+            automaticSwitch.setChecked(routineMedication.isAutomaticLogging());
+            flicSwitch.setChecked(routineMedication.isFlicButtonLogging());
+        } else {
+            routineMedication = new RoutineMedication();
+        }
+
         return new AlertDialog.Builder(getActivity())
                 .setView(view)
                 .setPositiveButton(R.string.done, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        if ((isAccessed && (inputMedEditText.getText().length() == 0 || inputAmountMed.getText().length() == 0)) || (!isAccessed && (inputAmountMed.getText().length() > 0 || inputMedEditText.getText().length() > 0))) {
-                            Toast.makeText(getContext(), "Please fill all details regarding the medication", Toast.LENGTH_LONG).show();
-                            dialogInterface.dismiss();
-                        } else {
+                        if (getArguments().getString("mode", null).equals("edit")) {
+                            Realm realm = Realm.getDefaultInstance();
+                            realm.beginTransaction();
                             routineMedication.setMedicationName(inputMedEditText.getText().toString());
                             routineMedication.setAmount(inputAmountMed.getText().toString());
                             routineMedication.setAlarmEnabled(alarmSwitch.isChecked());
                             routineMedication.setAutomaticLogging(automaticSwitch.isChecked());
                             routineMedication.setFlicButtonLogging(flicSwitch.isChecked());
-
-                            RealmList<RealmString> days = new RealmList<>();
+                            RealmList<RealmString> days = routineMedication.getDaysRepeat();
                             for (CheckBox cb : checkBoxes) {
                                 if (cb.isChecked()) {
-                                    RealmString day = new RealmString();
-                                    day.setValue(cb.getText().toString());
-                                    days.add(day);
+                                    RealmString day = realm.where(RealmString.class).equalTo("val", cb.getText().toString()).findFirst();
+
+                                    if (day == null) {
+                                        day = new RealmString();
+                                        day.setValue(cb.getText().toString());
+                                        days.add(day);
+                                    } else {
+                                        if (!days.contains(day)) {
+                                            days.add(day);
+                                        }
+                                    }
                                 }
                             }
                             routineMedication.setDaysRepeat(days);
-                            RoutineMedicationManager.getInstance().createRoutineMed(routineMedication);
-//                            CreatePatientActivity.getInstance().refreshRoutineMedicationList();
+                            realm.commitTransaction();
                             dialogInterface.dismiss();
+                        } else {
+                            if ((isAccessed && (inputMedEditText.getText().length() == 0 || inputAmountMed.getText().length() == 0)) || (!isAccessed && (inputAmountMed.getText().length() > 0 || inputMedEditText.getText().length() > 0))) {
+                                Toast.makeText(getContext(), "Please fill all details regarding the medication", Toast.LENGTH_LONG).show();
+                                dialogInterface.dismiss();
+                            } else {
+                                routineMedication.setMedicationName(inputMedEditText.getText().toString());
+                                routineMedication.setAmount(inputAmountMed.getText().toString());
+                                routineMedication.setAlarmEnabled(alarmSwitch.isChecked());
+                                routineMedication.setAutomaticLogging(automaticSwitch.isChecked());
+                                routineMedication.setFlicButtonLogging(flicSwitch.isChecked());
+                                routineMedication.setId(UUID.randomUUID().toString());
+                                RealmList<RealmString> days = new RealmList<>();
+                                for (CheckBox cb : checkBoxes) {
+                                    if (cb.isChecked()) {
+                                        Realm realm=Realm.getDefaultInstance();
+                                        RealmString day = realm.where(RealmString.class).equalTo("val", cb.getText().toString()).findFirst();
+                                        if (day == null) {
+                                            day = new RealmString();
+                                            day.setValue(cb.getText().toString());
+                                            days.add(day);
+                                        } else {
+
+                                                days.add(day);
+                                        }
+                                    }
+                                }
+                                routineMedication.setDaysRepeat(days);
+                                RoutineMedicationManager.getInstance().createRoutineMed(routineMedication);
+//                            CreatePatientActivity.getInstance().refreshRoutineMedicationList();
+                                dialogInterface.dismiss();
+                            }
                         }
                     }
                 })

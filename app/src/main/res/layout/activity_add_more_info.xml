@@ -19,14 +19,9 @@
             android:id="@+id/activity_mylist_listview"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="4"
+            android:layout_weight="5"
             android:clipToPadding="false"
             android:divider="@drawable/divider" />
 
-        <include
-            layout="@layout/header_buttons_layout"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
     </LinearLayout>
 </FrameLayout>

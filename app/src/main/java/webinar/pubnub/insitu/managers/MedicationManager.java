@@ -9,10 +9,13 @@ import org.joda.time.DateTime;
 import java.util.ArrayList;
 
 import io.realm.Realm;
+import io.realm.RealmList;
 import io.realm.RealmResults;
 import webinar.pubnub.insitu.BackgroundService;
 import webinar.pubnub.insitu.Utils;
 import webinar.pubnub.insitu.model.Medication;
+import webinar.pubnub.insitu.model.RealmString;
+import webinar.pubnub.insitu.model.RoutineMedication;
 
 /**
  * Created by Konstantinos Michail on 4/25/2016.
@@ -43,6 +46,7 @@ public class MedicationManager {
             medication.setLatitude(location.getLatitude());
             medication.setLongitude(location.getLongitude());
         }
+        medication.setRoutine(isRoutineMedication(medication));
         Log.i(TAG, String.valueOf(medication.getTimestamp()));
         realm.commitTransaction();
     }
@@ -65,5 +69,30 @@ public class MedicationManager {
         return realm.where(Medication.class).between("timestamp", yesterdayStart, tomorrowStart).findAll();
     }
 
+    public boolean isRoutineMedication(Medication medication){
+        RealmResults<RoutineMedication> routineMedications=RoutineMedicationManager.getInstance().getRoutineMedications();
+        long medDate=medication.getTimestamp();
+        String day=Utils.getDay(medDate).toLowerCase();
+        for (RoutineMedication rtm:routineMedications){
+            String[] hourMin=rtm.getHourOfRoutineConsumption().split(":");
+            RealmList<RealmString> days=rtm.getDaysRepeat();
+
+//            if(medication.getMedicationName().equals(rtm.getMedicationName())){
+//                return true;
+//            }
+
+            for (RealmString rls:days){
+                if (day.startsWith(rls.getValue().toLowerCase())){
+                    long routineMedDate=Utils.getDateFromHourAndMin(Integer.parseInt(hourMin[0]),Integer.parseInt(hourMin[1]));
+                    float difMinutes = Math.abs((float) (medDate - routineMedDate) / (1000 * 60));
+                    if (difMinutes<=60){
+                        return true;
+                    }
+                }
+            }
+
+        }
+        return false;
+    }
 
 }

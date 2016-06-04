@@ -18,6 +18,15 @@ public class Description extends RealmObject {
     String monthPainkiller;
     String yearPainkiller;
     String weekPainkiller;
+    String otherSymptoms;
+
+    public String getOtherSymptoms() {
+        return otherSymptoms;
+    }
+
+    public void setOtherSymptoms(String otherSymptoms) {
+        this.otherSymptoms = otherSymptoms;
+    }
 
     public String getWeekPainkiller() {
         return weekPainkiller;

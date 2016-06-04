@@ -24,13 +24,13 @@ import webinar.pubnub.insitu.fragments.ManageDiariesFragment;
 import webinar.pubnub.insitu.managers.DiaryManager;
 import webinar.pubnub.insitu.managers.PatientManager;
 import webinar.pubnub.insitu.managers.RoutineMedicationManager;
-import webinar.pubnub.insitu.model.Medication;
 import webinar.pubnub.insitu.model.RoutineMedication;
 
 public class CreatePatientActivity extends AppCompatActivity implements ManageDiariesFragment.OnManageDiariesInteractionListener {
     private static final String TAG = "CreatePatient";
     // 0 male,1 female
     static int GENDER = -1;
+    static CreatePatientActivity createPatientActivity;
     @Bind(R.id.no_patient_layout)
     LinearLayout noPatientLayout;
     @Bind(R.id.save_patient_info)
@@ -46,12 +46,15 @@ public class CreatePatientActivity extends AppCompatActivity implements ManageDi
     @Bind(R.id.add_medication_lv)
     ListView listView;
     CreateMedicationAdapter adapter;
-    static CreatePatientActivity createPatientActivity;
-    RealmResults<RoutineMedication> routineMedications;
+    RealmResults<RoutineMedication> medications;
+
+    public static CreatePatientActivity getInstance() {
+        return createPatientActivity;
+    }
 
     @OnClick(R.id.fab_add_medication)
     void addMedication() {
-        AddMedicationDialog.newInstance().show(getSupportFragmentManager(),"addmed");
+        AddMedicationDialog.newInstance("create", "").show(getSupportFragmentManager(), "addmed");
     }
 
     @OnClick(R.id.male)
@@ -89,6 +92,7 @@ public class CreatePatientActivity extends AppCompatActivity implements ManageDi
             PatientManager.getInstance().createNewProfile(name, gender);
             DiaryManager.getInstance().createDiary(getString(R.string.fixed_diary_name, name), "Pain management");
             noPatientLayout.setVisibility(View.GONE);
+            medicationLayout.setVisibility(View.VISIBLE);
             setupDiaryLayout();
 
         }
@@ -109,7 +113,6 @@ public class CreatePatientActivity extends AppCompatActivity implements ManageDi
         this.finish();
     }
 
-    RealmResults<RoutineMedication> medications;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -121,21 +124,22 @@ public class CreatePatientActivity extends AppCompatActivity implements ManageDi
             medicationLayout.setVisibility(View.VISIBLE);
         } else {
             noPatientLayout.setVisibility(View.VISIBLE);
-            medicationLayout.setVisibility(View.VISIBLE);
+            medicationLayout.setVisibility(View.GONE);
         }
         medications = RoutineMedicationManager.getInstance().getRoutineMedications();
         Log.i(TAG, "med created, meds size : " + medications.size());
-        adapter=new CreateMedicationAdapter(this,medications);
+        adapter = new CreateMedicationAdapter(this, medications);
 
         listView.setAdapter(adapter);
-        createPatientActivity=this;
+        createPatientActivity = this;
     }
 
-    public static CreatePatientActivity getInstance(){
-        return createPatientActivity;
+    @OnClick(R.id.save_medication_info)
+    void done() {
+        this.finish();
     }
 
-//    public void refreshRoutineMedicationList(){
+    //    public void refreshRoutineMedicationList(){
 //
 //        medications = RoutineMedicationManager.getInstance().getRoutineMedications();
 //        Log.i(TAG, "med created, meds size : " + medications.size());

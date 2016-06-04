@@ -2,6 +2,7 @@ package webinar.pubnub.insitu.adapters;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,7 +56,8 @@ public class MyExpandableListItemAdapter extends ExpandableListItemAdapter<Sympt
 
     }
 
-
+    @Bind(R.id.other_symptoms_input)
+    Spinner otherSymptoms;
     @NonNull
     @Override
     public View getTitleView(final int position, final View convertView, @NonNull final ViewGroup parent) {
@@ -114,6 +116,22 @@ public class MyExpandableListItemAdapter extends ExpandableListItemAdapter<Sympt
                     String stmp = parent.getItemAtPosition(position).toString();
                     symptomManager.addNonDrugTechnique(s, stmp);
                 }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        otherSymptoms.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (position > 0) {
+                    String stmp = parent.getItemAtPosition(position).toString();
+                    symptomManager.addOtherSymptoms(s, stmp);
+                }
+
             }
 
             @Override

@@ -509,4 +509,28 @@
     </string-array>
 
 
+    <string-array name="symptoms">
+        <item>Anemia</item>
+        <item>Appetite Loss</item>
+        <item>Bleeding and Bruising (Thrombocytopenia)</item>
+        <item>Constipation</item>
+        <item>Delirium</item>
+        <item>Diarrhea</item>
+        <item>Edema</item>
+        <item>Fatigue</item>
+        <item>Hair Loss (Alopecia)</item>
+        <item>Infection and Neutropenia</item>
+        <item>Lymphedema</item>
+        <item>Memory or Concentration Problems</item>
+        <item>Mouth and Throat Problems</item>
+        <item>Nausea and Vomiting</item>
+        <item>Nerve Problems (Peripheral Neuropathy)</item>
+        <item>Sexual and Fertility Problems (Men)</item>
+        <item>Sexual and Fertility Problems (Women)</item>
+        <item>Skin and Nail Changes</item>
+        <item>Sleep Problems</item>
+        <item>Urinary and Bladder Problems</item>
+    </string-array>
+
+
 </resources>

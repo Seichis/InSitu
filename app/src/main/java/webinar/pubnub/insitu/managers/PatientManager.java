@@ -2,10 +2,6 @@ package webinar.pubnub.insitu.managers;
 
 import android.content.Context;
 
-
-import java.sql.SQLException;
-import java.util.List;
-
 import io.realm.Realm;
 import webinar.pubnub.insitu.model.Patient;
 
@@ -15,24 +11,28 @@ import webinar.pubnub.insitu.model.Patient;
 public class PatientManager {
     private static PatientManager patientManager = new PatientManager();
     Realm realm;
+    Context context;
+
+    public PatientManager() {
+    }
+
     public static PatientManager getInstance() {
         return patientManager;
     }
-    Context context;
+
     public void init(Context context) {
-        this.context=context;
-        realm=Realm.getDefaultInstance();
+        this.context = context;
+        realm = Realm.getDefaultInstance();
 
     }
 
-    public PatientManager(){}
     public Patient getPatient() {
-        return realm.where(Patient.class).findFirst();
+        return realm.allObjects(Patient.class).where().findFirst();
     }
 
-    public void createNewProfile(String name,String gender) {
+    public void createNewProfile(String name, String gender) {
         realm.beginTransaction();
-        Patient patient=realm.createObject(Patient.class);
+        Patient patient = realm.createObject(Patient.class);
         patient.setId(1);
         patient.setPatientName(name);
         patient.setGender(gender);
